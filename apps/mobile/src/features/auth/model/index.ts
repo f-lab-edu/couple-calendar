@@ -1,0 +1,1 @@
+export {useAppleAuth} from './useAppleAuth';
