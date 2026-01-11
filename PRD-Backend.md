@@ -32,7 +32,11 @@
 2.  **Application:**
     - **Command:** `AggregateRepository` 사용, 상태 변경.
     - **Query:** DTO 반환, 조회 전용 로직.
-3.  **Domain:** Aggregate, VO, Repository Interface.
+    - **Service:** Command/Query Handler 조율, 트랜잭션 관리, Use Case 오케스트레이션.
+3.  **Domain:**
+    - **Aggregate, VO:** 도메인 모델 및 불변 값 객체.
+    - **Repository Interface:** 영속성 추상화.
+    - **Domain Service:** 단일 Aggregate로 표현할 수 없는 비즈니스 로직 (예: 커플 매칭 검증, D-Day 계산).
 4.  **Infrastructure:**
     - **Command Impl:** Entity 매핑 및 저장.
     - **Query Impl (Projection):** DB Entity 직접 조회 최적화.

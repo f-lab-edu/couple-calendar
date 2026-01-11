@@ -6,18 +6,29 @@ import {
   ConnectCoupleCommandHandler,
 } from '../../application/commands';
 import { GetCoupleQueryHandler } from '../../application/queries';
+import { CouplesService } from '../../application/services';
+import {
+  CoupleMatchingService,
+  DDayCalculatorService,
+} from '../../domain/services';
 import { COUPLE_REPOSITORY } from '../../domain/repositories/couple.repository.interface';
 import { USER_REPOSITORY } from '../../domain/repositories/user.repository.interface';
 import { CoupleRepository } from '../../infrastructure/repositories/couple.repository';
 import { UserRepository } from '../../infrastructure/repositories/user.repository';
 
-const CommandHandlers = [CreateCoupleCommandHandler, ConnectCoupleCommandHandler];
+const CommandHandlers = [
+  CreateCoupleCommandHandler,
+  ConnectCoupleCommandHandler,
+];
 const QueryHandlers = [GetCoupleQueryHandler];
 
 @Module({
   imports: [CqrsModule],
   controllers: [CouplesController],
   providers: [
+    CouplesService,
+    CoupleMatchingService,
+    DDayCalculatorService,
     ...CommandHandlers,
     ...QueryHandlers,
     {

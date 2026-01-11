@@ -1,9 +1,5 @@
 import { ICommand, ICommandHandler, CommandHandler } from '@nestjs/cqrs';
-import {
-  Inject,
-  ForbiddenException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Inject, ForbiddenException, NotFoundException } from '@nestjs/common';
 import {
   IEventRepository,
   EVENT_REPOSITORY,
@@ -12,7 +8,10 @@ import {
   ICoupleRepository,
   COUPLE_REPOSITORY,
 } from '../../../domain/repositories/couple.repository.interface';
-import { Event, EventCategory } from '../../../domain/aggregates/event.aggregate';
+import {
+  Event,
+  EventCategory,
+} from '../../../domain/aggregates/event.aggregate';
 
 export class UpdateEventCommand implements ICommand {
   constructor(
@@ -28,9 +27,7 @@ export class UpdateEventCommand implements ICommand {
 }
 
 @CommandHandler(UpdateEventCommand)
-export class UpdateEventCommandHandler
-  implements ICommandHandler<UpdateEventCommand>
-{
+export class UpdateEventCommandHandler implements ICommandHandler<UpdateEventCommand> {
   constructor(
     @Inject(EVENT_REPOSITORY)
     private readonly eventRepository: IEventRepository,

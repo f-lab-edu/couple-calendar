@@ -1,9 +1,5 @@
 import { ICommand, ICommandHandler, CommandHandler } from '@nestjs/cqrs';
-import {
-  Inject,
-  ForbiddenException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Inject, ForbiddenException, NotFoundException } from '@nestjs/common';
 import {
   IEventRepository,
   EVENT_REPOSITORY,
@@ -22,9 +18,7 @@ export class DeleteEventCommand implements ICommand {
 }
 
 @CommandHandler(DeleteEventCommand)
-export class DeleteEventCommandHandler
-  implements ICommandHandler<DeleteEventCommand>
-{
+export class DeleteEventCommandHandler implements ICommandHandler<DeleteEventCommand> {
   constructor(
     @Inject(EVENT_REPOSITORY)
     private readonly eventRepository: IEventRepository,

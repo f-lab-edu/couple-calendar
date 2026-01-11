@@ -1,5 +1,9 @@
 import { ICommand, ICommandHandler, CommandHandler } from '@nestjs/cqrs';
-import { Inject, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  Inject,
+  ForbiddenException,
+  BadRequestException,
+} from '@nestjs/common';
 import {
   IEventRepository,
   EVENT_REPOSITORY,
@@ -8,7 +12,10 @@ import {
   ICoupleRepository,
   COUPLE_REPOSITORY,
 } from '../../../domain/repositories/couple.repository.interface';
-import { Event, EventCategory } from '../../../domain/aggregates/event.aggregate';
+import {
+  Event,
+  EventCategory,
+} from '../../../domain/aggregates/event.aggregate';
 
 export class CreateEventCommand implements ICommand {
   constructor(
@@ -23,9 +30,7 @@ export class CreateEventCommand implements ICommand {
 }
 
 @CommandHandler(CreateEventCommand)
-export class CreateEventCommandHandler
-  implements ICommandHandler<CreateEventCommand>
-{
+export class CreateEventCommandHandler implements ICommandHandler<CreateEventCommand> {
   constructor(
     @Inject(EVENT_REPOSITORY)
     private readonly eventRepository: IEventRepository,
@@ -34,8 +39,15 @@ export class CreateEventCommandHandler
   ) {}
 
   async execute(command: CreateEventCommand): Promise<Event> {
-    const { userId, coupleId, title, startTime, endTime, category, description } =
-      command;
+    const {
+      userId,
+      coupleId,
+      title,
+      startTime,
+      endTime,
+      category,
+      description,
+    } = command;
 
     const couple = await this.coupleRepository.findById(coupleId);
     if (!couple) {

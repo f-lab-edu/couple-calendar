@@ -18,9 +18,7 @@ export class ConnectCoupleCommand implements ICommand {
 }
 
 @CommandHandler(ConnectCoupleCommand)
-export class ConnectCoupleCommandHandler
-  implements ICommandHandler<ConnectCoupleCommand>
-{
+export class ConnectCoupleCommandHandler implements ICommandHandler<ConnectCoupleCommand> {
   constructor(
     @Inject(COUPLE_REPOSITORY)
     private readonly coupleRepository: ICoupleRepository,

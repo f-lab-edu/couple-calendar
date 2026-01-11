@@ -16,9 +16,7 @@ export class AuthAppleCommand implements ICommand {
 }
 
 @CommandHandler(AuthAppleCommand)
-export class AuthAppleCommandHandler
-  implements ICommandHandler<AuthAppleCommand>
-{
+export class AuthAppleCommandHandler implements ICommandHandler<AuthAppleCommand> {
   private supabase: SupabaseClient;
 
   constructor(
