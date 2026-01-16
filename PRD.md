@@ -62,7 +62,7 @@
 - **Structure:** Monorepo (Yarn Workspaces + Turborepo)
   - 루트 디렉토리에서 프로젝트를 구성해야 합니다.
 - **Frontend:** React Native (Bare Workflow)
-- **Backend:** NestJS
+- **Backend:** Kotlin + Spring Boot
 - **Database:** Supabase (PostgreSQL)
 - **Auth:** Supabase Auth (Apple Sign-in)
 
@@ -170,13 +170,15 @@ interface DDayWidgetProps {
 2.  **Application Layer (Service/Handlers):**
     *   **Command Side:** 비즈니스 로직의 흐름을 제어하고, Domain Model을 통해 상태 변경을 수행. `AggregateRepository`를 사용.
     *   **Query Side:** 데이터 조회를 담당하며, DTO로 결과를 반환.
+    *   **Service:** Command/Query Handler 조율, 트랜잭션 관리, Use Case 오케스트레이션.
 3.  **Domain Layer:**
     *   **Aggregates:** 비즈니스 로직과 상태를 캡슐화한 도메인 객체.
     *   **Value Objects:** 불변 객체.
     *   **Repository Interfaces:** `AggregateRepository` 등 도메인 객체의 저장소 인터페이스 정의.
+    *   **Domain Service:** 단일 Aggregate로 표현할 수 없는 비즈니스 로직 (예: 커플 매칭 검증, D-Day 계산).
 4.  **Infrastructure Layer:**
     *   **Command Implementation:** `AggregateRepositoryImpl` - Domain Model을 DB Entity로 변환하여 영속화.
-    *   **Query Implementation:** **Projection Layer** - 읽기 전용 로직. DB Entity(TypeORM Entity 등)를 직접 조회하여 성능 최적화.
+    *   **Query Implementation:** **Projection Layer** - 읽기 전용 로직. DB Entity(JPA Entity 등)를 직접 조회하여 성능 최적화.
 
 ### 10.3. CQRS Implementation Rules
 -   **Command:**

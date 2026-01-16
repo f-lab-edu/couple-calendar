@@ -1,8 +1,9 @@
-# PRD - Backend (NestJS)
+# PRD - Backend (Kotlin + Spring Boot)
 
 ## 1. Project Overview
 **Project Name:** Couple Calendar (API Server)
 **Role:** 모바일 앱을 위한 데이터 처리, 인증, 비즈니스 로직 수행.
+**Tech Stack:** Kotlin + Spring Boot
 
 ## 2. Key Features & Logic (Server Perspective)
 ### 2.1. Shared Calendar
@@ -21,14 +22,15 @@
 - APNS/FCM 푸시 알림 발송 트리거 (일정 등록/변경 시).
 
 ## 3. Tech Stack
-- **Framework:** NestJS
-- **Language:** TypeScript
+- **Framework:** Spring Boot 3.x
+- **Language:** Kotlin
 - **Database:** Supabase (PostgreSQL)
+- **Persistence:** Spring Data JPA (Hibernate)
 - **Auth:** Supabase Auth (Apple Sign-in Token Verification)
 
 ## 4. Architecture (Clean Architecture + CQRS)
 ### 4.1. Layers
-1.  **Presentation:** Controller (Rest API).
+1.  **Presentation:** Controller (Spring MVC/WebFlux).
 2.  **Application:**
     - **Command:** `AggregateRepository` 사용, 상태 변경.
     - **Query:** DTO 반환, 조회 전용 로직.
