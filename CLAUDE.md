@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Couple Calendar is a shared calendar app for couples to manage schedules, track anniversaries, and share important moments. It's a monorepo containing a React Native mobile app and NestJS backend.
+Couple Calendar is a shared calendar app for couples to manage schedules, track anniversaries, and share important moments. It's a monorepo containing a React Native mobile app and Kotlin/Spring Boot backend.
 
 ## Commands
 
@@ -18,13 +18,13 @@ yarn test             # Run tests across all apps
 yarn clean            # Clean all build artifacts
 ```
 
-### API (apps/api)
+### API (apps/api-kotlin)
 ```bash
-yarn workspace @couple-calendar/api start:dev     # Development with watch
-yarn workspace @couple-calendar/api test          # Run unit tests
-yarn workspace @couple-calendar/api test:watch    # Run tests in watch mode
-yarn workspace @couple-calendar/api test:e2e      # Run e2e tests
-yarn workspace @couple-calendar/api lint          # Lint API code
+cd apps/api-kotlin
+./gradlew bootRun                # Run development server
+./gradlew test                   # Run unit tests
+./gradlew build                  # Build the application
+./gradlew clean                  # Clean build artifacts
 ```
 
 ### Mobile (apps/mobile)
@@ -39,7 +39,7 @@ yarn workspace @couple-calendar/mobile pod-install # Install CocoaPods (iOS)
 ## Architecture
 
 ### Monorepo Structure
-- **apps/api**: NestJS backend with Supabase
+- **apps/api-kotlin**: Kotlin/Spring Boot backend with Supabase
 - **apps/mobile**: React Native (Bare Workflow)
 - **packages/**: Shared configs and types (planned)
 
@@ -48,24 +48,34 @@ yarn workspace @couple-calendar/mobile pod-install # Install CocoaPods (iOS)
 The API follows Clean Architecture with CQRS pattern:
 
 ```
-apps/api/src/
-├── modules/           # Feature modules (auth, users, couples, events)
-├── domain/
-│   ├── aggregates/    # Domain objects with business logic
-│   ├── repositories/  # Repository interfaces
-│   └── value-objects/ # Immutable domain values
-├── application/
-│   ├── commands/      # Write operations (use AggregateRepository)
-│   ├── queries/       # Read operations (use Entity Model directly)
-│   └── dtos/          # Data transfer objects
-├── infrastructure/    # Database implementations, external services
-├── presentation/      # Controllers
-└── common/            # Guards, decorators, filters
+apps/api-kotlin/src/main/kotlin/com/couplecalendar/
+├── domain/            # Domain layer
+│   ├── entity/        # JPA entities
+│   ├── repository/    # Repository interfaces
+│   └── service/       # Domain services
+├── application/       # Application layer
+│   ├── command/       # Write operations (Commands)
+│   ├── query/         # Read operations (Queries)
+│   ├── service/       # Application services
+│   └── dto/           # Request/Response DTOs
+├── infrastructure/    # Infrastructure layer
+│   └── repository/    # JPA repository implementations
+├── presentation/      # Presentation layer
+│   └── controller/    # REST controllers
+└── common/            # Common utilities
+    ├── security/      # Auth filter, CurrentUser annotation
+    └── exception/     # Global exception handling
 ```
 
+**Key Technologies:**
+- Spring Boot 3.2 + Kotlin 1.9
+- Spring Data JPA
+- PostgreSQL (Supabase)
+- Java 21
+
 **CQRS Rules:**
-- Commands use `AggregateRepository` interface → Domain Model
-- Queries use Entity Model directly for optimized reads
+- Commands use Domain Services + Repository interfaces
+- Queries use JPA Repository directly for optimized reads
 
 ### Frontend Architecture (Feature-Sliced Design)
 
@@ -84,10 +94,16 @@ apps/mobile/src/
 **Import Rules:** Lower layers cannot import from higher layers (shared → entities → features → widgets → pages → app)
 
 ### Key Technologies
-- **State**: Zustand + TanStack Query
-- **Auth**: Supabase Auth with Apple Sign-in
-- **Database**: Supabase (PostgreSQL)
-- **Styling**: React Native StyleSheet
+
+**Backend (api-kotlin):**
+- Spring Boot 3.2 + Kotlin 1.9
+- Spring Data JPA + PostgreSQL (Supabase)
+- Supabase Auth (JWT verification)
+
+**Frontend (mobile):**
+- React Native (Bare Workflow)
+- Zustand + TanStack Query
+- Apple Sign-in via Supabase Auth
 
 ## Domain Modules
 
