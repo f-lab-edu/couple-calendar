@@ -3,6 +3,7 @@ import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {MainPage, ProfilePage, AddEventPage, EventDetailPage} from '../../pages';
+import {useAppTheme} from '../../shared';
 import type {CalendarEvent} from '../../shared/types';
 
 export type MainStackParamList = {
@@ -15,12 +16,17 @@ const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator<MainStackParamList>();
 
 const AddEventButton: React.FC<{onPress: () => void}> = ({onPress}) => {
+  const {isDark} = useAppTheme();
+
   return (
     <TouchableOpacity style={styles.addButton} onPress={onPress}>
-      <View style={styles.addButtonInner}>
+      <View
+        style={[
+          styles.addButtonInner,
+          isDark && styles.addButtonInnerDark,
+        ]}>
         <Text style={styles.addButtonText}>+</Text>
       </View>
-      <Text style={styles.addButtonLabel}>추가</Text>
     </TouchableOpacity>
   );
 };
@@ -29,34 +35,44 @@ const TabBarIcon: React.FC<{name: string; focused: boolean}> = ({
   name,
   focused,
 }) => {
-  const getIcon = () => {
-    switch (name) {
-      case 'Home':
-        return '🏠';
-      case 'Profile':
-        return '👤';
-      default:
-        return '📅';
-    }
-  };
+  const {colors} = useAppTheme();
 
   const getLabel = () => {
     switch (name) {
       case 'Home':
-        return '홈';
+        return 'Home';
       case 'Profile':
-        return '프로필';
+        return 'Profile';
       default:
         return name;
     }
   };
 
+  const getIcon = () => {
+    switch (name) {
+      case 'Home':
+        return focused ? '⌂' : '⌂';
+      case 'Profile':
+        return focused ? '●' : '○';
+      default:
+        return '◆';
+    }
+  };
+
   return (
     <View style={styles.iconContainer}>
-      <Text style={[styles.icon, focused && styles.iconFocused]}>
+      <Text
+        style={[
+          styles.icon,
+          {color: focused ? colors.accent : colors.textSecondary},
+        ]}>
         {getIcon()}
       </Text>
-      <Text style={[styles.label, focused && styles.labelFocused]}>
+      <Text
+        style={[
+          styles.label,
+          {color: focused ? colors.accent : colors.textSecondary},
+        ]}>
         {getLabel()}
       </Text>
     </View>
@@ -67,18 +83,22 @@ const TabBarIcon: React.FC<{name: string; focused: boolean}> = ({
 const EmptyScreen: React.FC = () => null;
 
 const TabNavigator: React.FC = () => {
+  const {colors} = useAppTheme();
+
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
-        tabBarStyle: styles.tabBar,
+        tabBarStyle: [styles.tabBar, {backgroundColor: colors.tabBarBg}],
         tabBarShowLabel: false,
       }}>
       <Tab.Screen
         name="Home"
         component={MainPage}
         options={{
-          tabBarIcon: ({focused}) => <TabBarIcon name="Home" focused={focused} />,
+          tabBarIcon: ({focused}) => (
+            <TabBarIcon name="Home" focused={focused} />
+          ),
         }}
       />
       <Tab.Screen
@@ -92,7 +112,7 @@ const TabNavigator: React.FC = () => {
           ),
         })}
         listeners={({navigation}) => ({
-          tabPress: (e) => {
+          tabPress: e => {
             e.preventDefault();
             navigation.navigate('AddEvent');
           },
@@ -138,7 +158,6 @@ export const BottomTabNavigator: React.FC = () => {
 const styles = StyleSheet.create({
   tabBar: {
     position: 'absolute',
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
     borderTopWidth: 0,
     height: 80,
     paddingBottom: 20,
@@ -158,18 +177,10 @@ const styles = StyleSheet.create({
   },
   icon: {
     fontSize: 20,
-    opacity: 0.5,
-  },
-  iconFocused: {
-    opacity: 1,
   },
   label: {
     fontSize: 10,
-    color: '#888',
     marginTop: 4,
-  },
-  labelFocused: {
-    color: '#FF8B94',
   },
   addButton: {
     alignItems: 'center',
@@ -192,20 +203,13 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
+  addButtonInnerDark: {
+    shadowOpacity: 0.5,
+  },
   addButtonText: {
     fontSize: 28,
     color: '#FFF',
     fontWeight: '300',
     lineHeight: 30,
-  },
-  addButtonLabel: {
-    fontSize: 10,
-    color: '#FF8B94',
-    marginTop: 4,
-  },
-  placeholder: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });

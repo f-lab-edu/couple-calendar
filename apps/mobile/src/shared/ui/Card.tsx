@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, StyleSheet, ViewStyle} from 'react-native';
+import {useAppTheme} from '../lib/theme';
 
 interface CardProps {
   children: React.ReactNode;
@@ -7,12 +8,23 @@ interface CardProps {
 }
 
 export const Card: React.FC<CardProps> = ({children, style}) => {
-  return <View style={[styles.card, style]}>{children}</View>;
+  const {isDark, colors} = useAppTheme();
+
+  return (
+    <View
+      style={[
+        styles.card,
+        {backgroundColor: colors.surface},
+        isDark && styles.cardDark,
+        style,
+      ]}>
+      {children}
+    </View>
+  );
 };
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderRadius: 20,
     padding: 16,
     shadowColor: '#000',
@@ -23,5 +35,9 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 2,
+  },
+  cardDark: {
+    shadowOpacity: 0,
+    elevation: 0,
   },
 });

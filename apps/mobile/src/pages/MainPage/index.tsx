@@ -1,15 +1,21 @@
 import React, {useCallback} from 'react';
-import {View, StyleSheet, ScrollView} from 'react-native';
+import {View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useNavigation} from '@react-navigation/native';
+import type {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {GradientBackground} from '../../shared/ui';
-import {formatDateKey} from '../../shared';
+import {formatDateKey, useAppTheme} from '../../shared';
 import {useCalendarStore} from '../../shared/store';
 import {useEventsByMonth} from '../../shared/api';
 import {CalendarWidget} from '../../widgets/calendar';
 import {EventList} from '../../widgets/home';
-import {DdayWidget} from '../../widgets/dday';
+import type {MainStackParamList} from '../../app/navigation/BottomTabNavigator';
 
 export const MainPage: React.FC = () => {
+  const {colors} = useAppTheme();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<MainStackParamList>>();
+
   const {
     currentMonth,
     selectedDate,
@@ -42,10 +48,6 @@ export const MainPage: React.FC = () => {
   );
 
   const selectedDateEvents = events[formatDateKey(selectedDate)] || [];
-  const selectedDateTitle = selectedDate.toLocaleDateString('ko-KR', {
-    month: 'long',
-    day: 'numeric',
-  });
 
   return (
     <GradientBackground>
@@ -54,8 +56,10 @@ export const MainPage: React.FC = () => {
           style={styles.scrollView}
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}>
-          <View style={styles.ddaySection}>
-            <DdayWidget />
+          <View style={styles.header}>
+            <Text style={[styles.headerTitle, {color: colors.text}]}>
+              Shared Calendar
+            </Text>
           </View>
           <CalendarWidget
             currentDate={currentMonth}
@@ -64,10 +68,14 @@ export const MainPage: React.FC = () => {
             onMonthChange={handleMonthChange}
             onDateSelect={handleDateSelect}
           />
-          <EventList
-            events={selectedDateEvents}
-            title={`${selectedDateTitle} 일정`}
-          />
+          <EventList events={selectedDateEvents} />
+          <TouchableOpacity
+            style={styles.addEventButton}
+            onPress={() => navigation.navigate('AddEvent')}>
+            <Text style={[styles.addEventText, {color: colors.accent}]}>
+              + Add Event
+            </Text>
+          </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
     </GradientBackground>
@@ -84,10 +92,22 @@ const styles = StyleSheet.create({
   scrollContent: {
     paddingBottom: 100,
   },
-  ddaySection: {
+  header: {
     paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingTop: 12,
     paddingBottom: 16,
+  },
+  headerTitle: {
+    fontSize: 24,
+    fontWeight: '700',
+  },
+  addEventButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  addEventText: {
+    fontSize: 16,
+    fontWeight: '500',
   },
 });
 

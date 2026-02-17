@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {MONTHS} from '../../../shared';
+import {MONTHS, useAppTheme} from '../../../shared';
 
 interface CalendarHeaderProps {
   currentDate: Date;
@@ -11,6 +11,7 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
   currentDate,
   onMonthChange,
 }) => {
+  const {colors} = useAppTheme();
   const month = MONTHS[currentDate.getMonth()];
   const year = currentDate.getFullYear();
 
@@ -19,15 +20,15 @@ export const CalendarHeader: React.FC<CalendarHeaderProps> = ({
       <TouchableOpacity
         style={styles.arrowButton}
         onPress={() => onMonthChange('prev')}>
-        <Text style={styles.arrow}>{'<'}</Text>
+        <Text style={[styles.arrow, {color: colors.accent}]}>{'<'}</Text>
       </TouchableOpacity>
-      <Text style={styles.title}>
+      <Text style={[styles.title, {color: colors.text}]}>
         {month} {year}
       </Text>
       <TouchableOpacity
         style={styles.arrowButton}
         onPress={() => onMonthChange('next')}>
-        <Text style={styles.arrow}>{'>'}</Text>
+        <Text style={[styles.arrow, {color: colors.accent}]}>{'>'}</Text>
       </TouchableOpacity>
     </View>
   );
@@ -44,14 +45,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
   },
   arrowButton: {
     padding: 8,
   },
   arrow: {
     fontSize: 18,
-    color: '#FF8B94',
     fontWeight: '600',
   },
 });

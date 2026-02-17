@@ -2,13 +2,13 @@ import React, {useMemo} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import {Card} from '../../../shared/ui';
 import {
-  EventMap,
   WEEKDAYS,
   getDaysInMonth,
   getFirstDayOfMonth,
   isSameDay,
-  formatDateKey,
+  useAppTheme,
 } from '../../../shared';
+import type {EventMap} from '../../../shared';
 import {DayCell} from '../../../entities/calendar';
 import {CalendarHeader} from './CalendarHeader';
 
@@ -20,14 +20,19 @@ interface CalendarWidgetProps {
   onDateSelect: (date: Date) => void;
 }
 
+interface CalendarDay {
+  date: Date;
+  isCurrentMonth: boolean;
+}
+
 export const CalendarWidget: React.FC<CalendarWidgetProps> = ({
   currentDate,
   selectedDate,
-  events,
   onMonthChange,
   onDateSelect,
 }) => {
   const today = new Date();
+  const {colors} = useAppTheme();
 
   const calendarDays = useMemo(() => {
     const year = currentDate.getFullYear();
@@ -35,68 +40,87 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({
     const daysInMonth = getDaysInMonth(year, month);
     const firstDayOfWeek = getFirstDayOfMonth(year, month);
 
-    const days: (Date | null)[] = [];
+    const days: CalendarDay[] = [];
 
-    // Add empty cells for days before the first day of the month
-    for (let i = 0; i < firstDayOfWeek; i++) {
-      days.push(null);
+    // Add previous month's trailing days
+    if (firstDayOfWeek > 0) {
+      const prevMonthDays = getDaysInMonth(
+        month === 0 ? year - 1 : year,
+        month === 0 ? 11 : month - 1,
+      );
+      for (let i = firstDayOfWeek - 1; i >= 0; i--) {
+        days.push({
+          date: new Date(
+            month === 0 ? year - 1 : year,
+            month === 0 ? 11 : month - 1,
+            prevMonthDays - i,
+          ),
+          isCurrentMonth: false,
+        });
+      }
     }
 
-    // Add days of the month
+    // Add days of the current month
     for (let day = 1; day <= daysInMonth; day++) {
-      days.push(new Date(year, month, day));
+      days.push({
+        date: new Date(year, month, day),
+        isCurrentMonth: true,
+      });
+    }
+
+    // Add next month's leading days to fill last week
+    const remaining = 7 - (days.length % 7);
+    if (remaining < 7) {
+      for (let i = 1; i <= remaining; i++) {
+        days.push({
+          date: new Date(
+            month === 11 ? year + 1 : year,
+            month === 11 ? 0 : month + 1,
+            i,
+          ),
+          isCurrentMonth: false,
+        });
+      }
     }
 
     return days;
   }, [currentDate]);
 
-  const getDayState = (date: Date) => {
-    if (isSameDay(date, selectedDate)) {
-      return 'selected';
+  const getDayState = (day: CalendarDay) => {
+    if (!day.isCurrentMonth) {
+      return 'disabled' as const;
     }
-    if (isSameDay(date, today)) {
-      return 'today';
+    if (isSameDay(day.date, selectedDate)) {
+      return 'selected' as const;
     }
-    return 'default';
-  };
-
-  const getEventsForDate = (date: Date) => {
-    const dateKey = formatDateKey(date);
-    return events[dateKey] || [];
-  };
-
-  const renderWeekRow = (weekDays: (Date | null)[], weekIndex: number) => {
-    return (
-      <View key={weekIndex} style={styles.weekRow}>
-        {weekDays.map((date, dayIndex) => {
-          if (!date) {
-            return <View key={`empty-${dayIndex}`} style={styles.emptyCell} />;
-          }
-          return (
-            <DayCell
-              key={date.toISOString()}
-              date={date}
-              state={getDayState(date)}
-              events={getEventsForDate(date)}
-              onPress={onDateSelect}
-            />
-          );
-        })}
-      </View>
-    );
+    if (isSameDay(day.date, today)) {
+      return 'today' as const;
+    }
+    return 'default' as const;
   };
 
   const weeks = useMemo(() => {
-    const result: (Date | null)[][] = [];
+    const result: CalendarDay[][] = [];
     for (let i = 0; i < calendarDays.length; i += 7) {
-      const week = calendarDays.slice(i, i + 7);
-      while (week.length < 7) {
-        week.push(null);
-      }
-      result.push(week);
+      result.push(calendarDays.slice(i, i + 7));
     }
     return result;
   }, [calendarDays]);
+
+  const renderWeekRow = (weekDays: CalendarDay[], weekIndex: number) => {
+    return (
+      <View key={weekIndex} style={styles.weekRow}>
+        {weekDays.map(day => (
+          <DayCell
+            key={day.date.toISOString()}
+            date={day.date}
+            state={getDayState(day)}
+            onPress={onDateSelect}
+          />
+        ))}
+      </View>
+    );
+  };
 
   return (
     <Card style={styles.container}>
@@ -104,10 +128,12 @@ export const CalendarWidget: React.FC<CalendarWidgetProps> = ({
         currentDate={currentDate}
         onMonthChange={onMonthChange}
       />
-      <View style={styles.weekdaysRow}>
+      <View style={[styles.weekdaysRow, {borderBottomColor: colors.border}]}>
         {WEEKDAYS.map(day => (
           <View key={day} style={styles.weekdayCell}>
-            <Text style={styles.weekdayText}>{day}</Text>
+            <Text style={[styles.weekdayText, {color: colors.textSecondary}]}>
+              {day}
+            </Text>
           </View>
         ))}
       </View>
@@ -126,7 +152,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#F0F0F0',
   },
   weekdayCell: {
     flex: 1,
@@ -135,16 +160,11 @@ const styles = StyleSheet.create({
   weekdayText: {
     fontSize: 12,
     fontWeight: '500',
-    color: '#888',
   },
   daysContainer: {
     paddingTop: 8,
   },
   weekRow: {
     flexDirection: 'row',
-  },
-  emptyCell: {
-    flex: 1,
-    minHeight: 44,
   },
 });

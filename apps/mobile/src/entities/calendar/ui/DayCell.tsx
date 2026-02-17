@@ -1,66 +1,64 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import {DayCellState, CalendarEvent, CATEGORY_COLORS} from '../../../shared';
-import {EventDot} from './EventDot';
+import {Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {DayCellState, useAppTheme} from '../../../shared';
 
 interface DayCellProps {
   date: Date;
   state: DayCellState;
-  events: CalendarEvent[];
   onPress: (date: Date) => void;
 }
 
 export const DayCell: React.FC<DayCellProps> = ({
   date,
   state,
-  events,
   onPress,
 }) => {
+  const {isDark, colors} = useAppTheme();
   const dayNumber = date.getDate();
-  const uniqueCategories = [...new Set(events.map(e => e.category))].slice(
-    0,
-    3,
-  );
 
-  const getTextStyle = () => {
+  const getTextColor = () => {
     switch (state) {
       case 'selected':
-        return styles.selectedText;
+        return '#FFF';
       case 'today':
-        return styles.todayText;
+        return colors.accent;
       case 'disabled':
-        return styles.disabledText;
+        return colors.textDisabled;
       default:
-        return styles.defaultText;
+        return colors.text;
     }
   };
 
-  const getCellStyle = () => {
-    switch (state) {
-      case 'selected':
-        return styles.selectedCell;
-      case 'today':
-        return styles.todayCell;
-      default:
-        return null;
+  const getCellBg = () => {
+    if (state === 'selected') {
+      return colors.accent;
     }
+    if (isDark) {
+      return colors.calendarCellBg;
+    }
+    return 'transparent';
   };
 
   return (
     <TouchableOpacity
-      style={styles.container}
+      style={[
+        styles.container,
+        isDark && styles.containerDark,
+        {backgroundColor: getCellBg()},
+        state === 'today' && !isDark && styles.todayCellLight,
+        state === 'today' && isDark && styles.todayCellDark,
+      ]}
       onPress={() => onPress(date)}
       disabled={state === 'disabled'}>
-      <View style={[styles.cell, getCellStyle()]}>
-        <Text style={[styles.dayText, getTextStyle()]}>{dayNumber}</Text>
-      </View>
-      {uniqueCategories.length > 0 && (
-        <View style={styles.dotsContainer}>
-          {uniqueCategories.map((category, index) => (
-            <EventDot key={index} color={CATEGORY_COLORS[category]} />
-          ))}
-        </View>
-      )}
+      <Text
+        style={[
+          styles.dayText,
+          {color: getTextColor()},
+          state === 'selected' && styles.boldText,
+          state === 'today' && styles.boldText,
+        ]}>
+        {dayNumber}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -69,20 +67,19 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    paddingVertical: 4,
-    minHeight: 44,
-  },
-  cell: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    alignItems: 'center',
     justifyContent: 'center',
+    minHeight: 44,
+    margin: 1,
+    borderRadius: 8,
   },
-  selectedCell: {
-    backgroundColor: '#FF8B94',
+  containerDark: {
+    borderRadius: 8,
   },
-  todayCell: {
+  todayCellLight: {
+    borderWidth: 1,
+    borderColor: '#FF8B94',
+  },
+  todayCellDark: {
     borderWidth: 1,
     borderColor: '#FF8B94',
   },
@@ -90,23 +87,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-  defaultText: {
-    color: '#333',
-  },
-  selectedText: {
-    color: '#FFF',
+  boldText: {
     fontWeight: '600',
-  },
-  todayText: {
-    color: '#FF8B94',
-    fontWeight: '600',
-  },
-  disabledText: {
-    color: '#CCC',
-  },
-  dotsContainer: {
-    flexDirection: 'row',
-    marginTop: 2,
-    height: 6,
   },
 });

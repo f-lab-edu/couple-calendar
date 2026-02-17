@@ -1,23 +1,25 @@
 import React from 'react';
 import {View, Text, StyleSheet, ScrollView} from 'react-native';
-import {CalendarEvent} from '../../../shared';
+import {CalendarEvent, useAppTheme} from '../../../shared';
 import {EventCard} from './EventCard';
 
 interface EventListProps {
   events: CalendarEvent[];
-  title?: string;
 }
 
-export const EventList: React.FC<EventListProps> = ({
-  events,
-  title = "Today's Events",
-}) => {
+export const EventList: React.FC<EventListProps> = ({events}) => {
+  const {colors} = useAppTheme();
+
   if (events.length === 0) {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>{title}</Text>
+        <Text style={[styles.title, {color: colors.text}]}>
+          Today's Events
+        </Text>
         <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No events scheduled</Text>
+          <Text style={[styles.emptyText, {color: colors.textSecondary}]}>
+            No events scheduled
+          </Text>
         </View>
       </View>
     );
@@ -25,7 +27,7 @@ export const EventList: React.FC<EventListProps> = ({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+      <Text style={[styles.title, {color: colors.text}]}>Today's Events</Text>
       <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={false}>
@@ -46,7 +48,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#333',
     marginBottom: 12,
   },
   scrollView: {
@@ -58,6 +59,5 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 14,
-    color: '#888',
   },
 });

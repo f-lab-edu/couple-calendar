@@ -1,13 +1,13 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import {CalendarEvent, CATEGORY_COLORS, formatTime} from '../../../shared';
+import {CalendarEvent, formatTime, useAppTheme} from '../../../shared';
 
 interface EventCardProps {
   event: CalendarEvent;
 }
 
 export const EventCard: React.FC<EventCardProps> = ({event}) => {
-  const categoryColor = CATEGORY_COLORS[event.category];
+  const {isDark, colors} = useAppTheme();
 
   const formatTimeRange = () => {
     if (event.isAllDay) {
@@ -17,12 +17,16 @@ export const EventCard: React.FC<EventCardProps> = ({event}) => {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={[styles.colorIndicator, {backgroundColor: categoryColor}]} />
-      <View style={styles.content}>
-        <Text style={styles.title}>{event.title}</Text>
-        <Text style={styles.time}>{formatTimeRange()}</Text>
-      </View>
+    <View
+      style={[
+        styles.container,
+        {backgroundColor: colors.eventCardBg},
+        isDark && styles.containerDark,
+      ]}>
+      <Text style={[styles.title, {color: colors.text}]}>{event.title}</Text>
+      <Text style={[styles.time, {color: colors.textSecondary}]}>
+        {formatTimeRange()}
+      </Text>
     </View>
   );
 };
@@ -30,11 +34,11 @@ export const EventCard: React.FC<EventCardProps> = ({event}) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 12,
-    padding: 12,
-    marginBottom: 8,
+    justifyContent: 'space-between',
     alignItems: 'center',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 8,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -44,23 +48,17 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 1,
   },
-  colorIndicator: {
-    width: 4,
-    height: 40,
-    borderRadius: 2,
-    marginRight: 12,
-  },
-  content: {
-    flex: 1,
+  containerDark: {
+    shadowOpacity: 0,
+    elevation: 0,
   },
   title: {
     fontSize: 16,
     fontWeight: '500',
-    color: '#333',
-    marginBottom: 4,
+    flex: 1,
   },
   time: {
     fontSize: 13,
-    color: '#888',
+    marginLeft: 12,
   },
 });
