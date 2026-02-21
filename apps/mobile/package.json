@@ -12,7 +12,6 @@
   },
   "dependencies": {
     "@invertase/react-native-apple-authentication": "^2.5.1",
-    "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/datetimepicker": "^8.6.0",
     "@react-navigation/bottom-tabs": "^7.2.0",
     "@react-navigation/native": "^7.0.14",
@@ -21,6 +20,8 @@
     "react": "19.2.0",
     "react-native": "0.83.1",
     "react-native-linear-gradient": "^2.8.3",
+    "react-native-mmkv": "^4.1.2",
+    "react-native-nitro-modules": "^0.33.9",
     "react-native-safe-area-context": "^5.5.2",
     "react-native-screens": "^4.5.0",
     "zustand": "^5.0.9"

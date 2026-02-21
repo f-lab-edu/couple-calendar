@@ -1,6 +1,6 @@
 import {create} from 'zustand';
 import {createJSONStorage, persist} from 'zustand/middleware';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import {zustandMMKVStorage} from '../lib/storage';
 import type {Couple, Partner} from '../types';
 
 interface CoupleState {
@@ -32,7 +32,7 @@ export const useCoupleStore = create<CoupleState>()(
     }),
     {
       name: 'couple-storage',
-      storage: createJSONStorage(() => AsyncStorage),
+      storage: createJSONStorage(() => zustandMMKVStorage),
       partialize: (state) => ({
         couple: state.couple,
         partner: state.partner,

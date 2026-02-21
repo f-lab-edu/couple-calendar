@@ -1,7 +1,7 @@
-import {useState, useCallback} from 'react';
-import {Platform} from 'react-native';
+import { useState, useCallback } from 'react';
+import { Platform } from 'react-native';
 import appleAuth from '@invertase/react-native-apple-authentication';
-import {useAppleLogin} from '../../../shared/api';
+import { useAppleLogin } from '../../../shared/api';
 
 interface UseAppleAuthResult {
   signIn: () => Promise<void>;
@@ -12,7 +12,7 @@ interface UseAppleAuthResult {
 export const useAppleAuth = (): UseAppleAuthResult => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const {mutateAsync: login} = useAppleLogin();
+  const { mutateAsync: login } = useAppleLogin();
 
   const signIn = useCallback(async () => {
     if (Platform.OS !== 'ios') {
@@ -37,7 +37,7 @@ export const useAppleAuth = (): UseAppleAuthResult => {
 
       // Check if authorized
       if (credentialState === appleAuth.State.AUTHORIZED) {
-        const {identityToken, user, email, fullName} = appleAuthRequestResponse;
+        const { identityToken, user, email, fullName } = appleAuthRequestResponse;
 
         if (!identityToken) {
           throw new Error('No identity token received');
@@ -68,5 +68,5 @@ export const useAppleAuth = (): UseAppleAuthResult => {
     }
   }, [login]);
 
-  return {signIn, isLoading, error};
+  return { signIn, isLoading, error };
 };
