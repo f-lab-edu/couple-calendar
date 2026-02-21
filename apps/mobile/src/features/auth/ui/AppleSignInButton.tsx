@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   View,
 } from 'react-native';
+import {useAppTheme} from '../../../shared';
 import {useAppleAuth} from '../model/useAppleAuth';
 
 interface AppleSignInButtonProps {
@@ -16,6 +17,7 @@ export const AppleSignInButton: React.FC<AppleSignInButtonProps> = ({
   onError,
 }) => {
   const {signIn, isLoading, error} = useAppleAuth();
+  const {isDark} = useAppTheme();
 
   React.useEffect(() => {
     if (error && onError) {
@@ -23,18 +25,21 @@ export const AppleSignInButton: React.FC<AppleSignInButtonProps> = ({
     }
   }, [error, onError]);
 
+  const bg = isDark ? '#E8E2D8' : '#2C2420';
+  const fg = isDark ? '#1A1816' : '#F5F0EB';
+
   return (
     <TouchableOpacity
-      style={styles.button}
+      style={[styles.button, {backgroundColor: bg}]}
       onPress={signIn}
       disabled={isLoading}
-      activeOpacity={0.8}>
+      activeOpacity={0.75}>
       {isLoading ? (
-        <ActivityIndicator color="#FFFFFF" size="small" />
+        <ActivityIndicator color={fg} size="small" />
       ) : (
         <View style={styles.content}>
-          <Text style={styles.appleIcon}></Text>
-          <Text style={styles.text}>Apple로 계속하기</Text>
+          <Text style={[styles.appleIcon, {color: fg}]}>{''}</Text>
+          <Text style={[styles.text, {color: fg}]}>Apple로 계속하기</Text>
         </View>
       )}
     </TouchableOpacity>
@@ -43,27 +48,23 @@ export const AppleSignInButton: React.FC<AppleSignInButtonProps> = ({
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#000000',
-    borderRadius: 12,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
+    borderRadius: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    minWidth: 280,
+    width: '100%',
     height: 56,
   },
   content: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: 10,
   },
   appleIcon: {
-    fontSize: 20,
-    color: '#FFFFFF',
+    fontSize: 19,
   },
   text: {
-    color: '#FFFFFF',
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: '600',
+    letterSpacing: 0.3,
   },
 });
