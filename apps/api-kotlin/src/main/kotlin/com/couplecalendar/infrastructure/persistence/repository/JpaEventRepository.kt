@@ -14,8 +14,8 @@ interface JpaEventRepository : JpaRepository<EventEntity, UUID> {
     @Query("""
         SELECT e FROM EventEntity e
         WHERE e.coupleId = :coupleId
-        AND e.startTime >= :startDate
-        AND e.endTime <= :endDate
+        AND e.startTime <= :endDate
+        AND e.endTime >= :startDate
         ORDER BY e.startTime ASC
     """)
     fun findByCoupleIdAndDateRange(

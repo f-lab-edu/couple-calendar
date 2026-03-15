@@ -1,16 +1,17 @@
 package com.couplecalendar.common.security
 
 import com.couplecalendar.infrastructure.external.SupabaseAuthClient
+import com.couplecalendar.infrastructure.persistence.repository.JpaUserRepository
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
 import org.springframework.stereotype.Component
 import org.springframework.web.filter.OncePerRequestFilter
-import java.util.UUID
 
 @Component
 class AuthFilter(
-    private val supabaseAuthClient: SupabaseAuthClient
+    private val supabaseAuthClient: SupabaseAuthClient,
+    private val jpaUserRepository: JpaUserRepository
 ) : OncePerRequestFilter() {
 
     private val publicPaths = listOf(
@@ -40,9 +41,21 @@ class AuthFilter(
             val token = authHeader.substring(7)
             val verification = supabaseAuthClient.verifyToken(token)
 
+            val email = verification.email
+                ?: run {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Email not found in token")
+                    return
+                }
+
+            val userEntity = jpaUserRepository.findByEmail(email.lowercase())
+                ?: run {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "User not found")
+                    return
+                }
+
             request.setAttribute("currentUser", UserPrincipal(
-                id = UUID.fromString(verification.userId),
-                email = verification.email ?: ""
+                id = userEntity.id,
+                email = userEntity.email
             ))
 
             filterChain.doFilter(request, response)

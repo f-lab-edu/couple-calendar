@@ -9,7 +9,6 @@ import com.couplecalendar.application.dto.response.CoupleResponse
 import com.couplecalendar.application.dto.response.InviteCodeResponse
 import com.couplecalendar.application.query.couple.GetCoupleQuery
 import com.couplecalendar.application.query.couple.GetCoupleQueryHandler
-import com.couplecalendar.domain.service.CoupleMatchingService
 import com.couplecalendar.domain.service.DDayCalculatorService
 import org.springframework.stereotype.Service
 import java.time.LocalDate
@@ -20,13 +19,10 @@ class CouplesService(
     private val createCoupleCommandHandler: CreateCoupleCommandHandler,
     private val connectCoupleCommandHandler: ConnectCoupleCommandHandler,
     private val getCoupleQueryHandler: GetCoupleQueryHandler,
-    private val coupleMatchingService: CoupleMatchingService,
     private val dDayCalculatorService: DDayCalculatorService
 ) {
 
     fun createInvite(userId: UUID, request: CreateCoupleRequest): InviteCodeResponse {
-        coupleMatchingService.validateCanCreateCouple(userId)
-
         val startDate = LocalDate.parse(request.startDate)
         val command = CreateCoupleCommand(userId, startDate)
         val couple = createCoupleCommandHandler.handle(command)
