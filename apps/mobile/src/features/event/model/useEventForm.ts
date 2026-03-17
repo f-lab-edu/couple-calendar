@@ -88,7 +88,7 @@ export const useEventForm = (options: UseEventFormOptions = {}) => {
       title: formData.title.trim(),
       startTime: formData.startTime,
       endTime: formData.isAllDay
-        ? new Date(formData.startTime.setHours(23, 59, 59))
+        ? new Date(new Date(formData.startTime).setHours(23, 59, 59))
         : formData.endTime,
       isAllDay: formData.isAllDay,
       category: formData.category,
