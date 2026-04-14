@@ -26,7 +26,7 @@ coverage/
 Thumbs.db
 
 # Claude
-.claude/
+.claude/settings.local.json
 
 # Environment
 .env
@@ -67,3 +67,4 @@ Podfile.lock
 # Temporary files
 *.tmp
 *.temp
+
