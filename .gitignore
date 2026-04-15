@@ -68,3 +68,6 @@ Podfile.lock
 *.tmp
 *.temp
 
+# Harness workspace (intermediate artifacts)
+_workspace/
+_workspace_*/

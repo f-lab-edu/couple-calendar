@@ -113,3 +113,18 @@ apps/mobile/src/
 | users | User profile management |
 | couples | Partner connection via invite codes |
 | events | Shared calendar events CRUD |
+
+---
+
+## 하네스: Couple Calendar 풀스택 개발
+
+**목표:** 백엔드(Kotlin/Spring Boot) + 모바일(React Native) + 통합 QA를 조율하여 경계면 정합성이 보장된 기능을 개발한다.
+
+**트리거:** 새 기능 추가, API/화면 수정, 도메인(auth/users/couples/events) 작업, 통합 정합성 검증 등 couple-calendar 관련 개발 요청 시 `couple-calendar-dev` 스킬을 사용하라. 단순 질문은 직접 응답 가능.
+
+**에이전트:** backend-dev, mobile-dev, qa-integrator (서브 에이전트 모드, 팬아웃/팬인 + 생성-검증)
+
+**변경 이력:**
+| 날짜 | 변경 내용 | 대상 | 사유 |
+|------|----------|------|------|
+| 2026-04-15 | 초기 구성 | 전체 (에이전트 3개, 스킬 4개) | - |
