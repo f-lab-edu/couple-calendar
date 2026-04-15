@@ -48,10 +48,36 @@ export interface Partner {
 }
 
 // Anniversary Types
+export type AnniversaryType = 'CUSTOM' | 'AUTO';
+
+/**
+ * 백엔드 `AnniversaryResponse`와 1:1 매핑.
+ * - date는 ISO 8601 (YYYY-MM-DD) 문자열
+ * - id는 CUSTOM의 경우 UUID, AUTO의 경우 `auto-day-{N}` 또는 `auto-year-{N}`
+ * - description은 AUTO에서 항상 null
+ * - daysUntil은 서버에서 계산된 오늘 기준 남은 일수 (음수면 지난 날)
+ */
 export interface Anniversary {
   id: string;
-  title: string;
-  date: Date;
-  isRecurring: boolean;
   coupleId: string;
+  title: string;
+  date: string;
+  isRecurring: boolean;
+  description: string | null;
+  type: AnniversaryType;
+  daysUntil: number;
+}
+
+export interface CreateAnniversaryRequest {
+  title: string;
+  date: string;
+  isRecurring: boolean;
+  description?: string;
+}
+
+export interface UpdateAnniversaryRequest {
+  title?: string;
+  date?: string;
+  isRecurring?: boolean;
+  description?: string;
 }

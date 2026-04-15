@@ -2,14 +2,23 @@ import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {MainPage, ProfilePage, AddEventPage, EventDetailPage} from '../../pages';
+import {
+  MainPage,
+  ProfilePage,
+  AddEventPage,
+  EventDetailPage,
+  AddAnniversaryPage,
+  AnniversaryDetailPage,
+} from '../../pages';
 import {useAppTheme} from '../../shared';
-import type {CalendarEvent} from '../../shared/types';
+import type {Anniversary, CalendarEvent} from '../../shared/types';
 
 export type MainStackParamList = {
   MainTabs: undefined;
   AddEvent: undefined;
   EventDetail: {event: CalendarEvent};
+  AddAnniversary: undefined;
+  AnniversaryDetail: {anniversary: Anniversary};
 };
 
 const Tab = createBottomTabNavigator();
@@ -146,6 +155,22 @@ export const BottomTabNavigator: React.FC = () => {
       <Stack.Screen
         name="EventDetail"
         component={EventDetailPage}
+        options={{
+          presentation: 'modal',
+          animation: 'slide_from_bottom',
+        }}
+      />
+      <Stack.Screen
+        name="AddAnniversary"
+        component={AddAnniversaryPage}
+        options={{
+          presentation: 'modal',
+          animation: 'slide_from_bottom',
+        }}
+      />
+      <Stack.Screen
+        name="AnniversaryDetail"
+        component={AnniversaryDetailPage}
         options={{
           presentation: 'modal',
           animation: 'slide_from_bottom',

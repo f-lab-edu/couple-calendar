@@ -9,7 +9,9 @@ import {useCalendarStore} from '../../shared/store';
 import {useEventsByMonth} from '../../shared/api';
 import {CalendarWidget} from '../../widgets/calendar';
 import {EventList} from '../../widgets/home';
+import {DdayWidget, AnniversaryList} from '../../widgets/dday';
 import type {MainStackParamList} from '../../app/navigation/BottomTabNavigator';
+import type {Anniversary} from '../../shared/types';
 
 export const MainPage: React.FC = () => {
   const {colors} = useAppTheme();
@@ -49,6 +51,13 @@ export const MainPage: React.FC = () => {
 
   const selectedDateEvents = events[formatDateKey(selectedDate)] || [];
 
+  const handlePressAnniversary = useCallback(
+    (anniversary: Anniversary) => {
+      navigation.navigate('AnniversaryDetail', {anniversary});
+    },
+    [navigation],
+  );
+
   return (
     <GradientBackground>
       <SafeAreaView style={styles.container} edges={['top']}>
@@ -76,6 +85,21 @@ export const MainPage: React.FC = () => {
               + Add Event
             </Text>
           </TouchableOpacity>
+
+          <View style={styles.section}>
+            <DdayWidget onPressAnniversary={handlePressAnniversary} />
+          </View>
+
+          <View style={styles.section}>
+            <AnniversaryList onPressItem={handlePressAnniversary} />
+            <TouchableOpacity
+              style={styles.addAnniversaryButton}
+              onPress={() => navigation.navigate('AddAnniversary')}>
+              <Text style={[styles.addEventText, {color: colors.accent}]}>
+                + 기념일 추가
+              </Text>
+            </TouchableOpacity>
+          </View>
         </ScrollView>
       </SafeAreaView>
     </GradientBackground>
@@ -108,6 +132,14 @@ const styles = StyleSheet.create({
   addEventText: {
     fontSize: 16,
     fontWeight: '500',
+  },
+  section: {
+    paddingHorizontal: 16,
+    marginTop: 8,
+  },
+  addAnniversaryButton: {
+    paddingVertical: 12,
+    alignItems: 'center',
   },
 });
 

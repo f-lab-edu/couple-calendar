@@ -19,9 +19,9 @@ export {
 
 export {
   useAnniversaries,
-  useUpcomingAnniversaries,
   useCreateAnniversary,
+  useUpdateAnniversary,
   useDeleteAnniversary,
-  getDaysUntil,
+  formatDdayLabel,
   getDaysSince,
 } from './useAnniversaries';

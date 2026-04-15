@@ -5,3 +5,5 @@ export {OnboardingPage} from './OnboardingPage';
 export {ConnectionPage} from './ConnectionPage';
 export {AddEventPage} from './AddEventPage';
 export {EventDetailPage} from './EventDetailPage';
+export {AddAnniversaryPage} from './AddAnniversaryPage';
+export {AnniversaryDetailPage} from './AnniversaryDetailPage';

@@ -82,21 +82,27 @@ export const mockEvents: CalendarEvent[] = [
   },
 ];
 
-// Mock Anniversaries
+// Mock Anniversaries (deprecated: 실제 API 연동으로 대체됨)
 export const mockAnniversaries: Anniversary[] = [
   {
     id: 'ann-1',
-    title: '만난 날',
-    date: new Date('2024-01-15'),
-    isRecurring: true,
     coupleId: 'couple-1',
+    title: '만난 날',
+    date: '2024-01-15',
+    isRecurring: true,
+    description: null,
+    type: 'CUSTOM',
+    daysUntil: 0,
   },
   {
     id: 'ann-2',
-    title: '첫 키스',
-    date: new Date('2024-02-14'),
-    isRecurring: true,
     coupleId: 'couple-1',
+    title: '첫 키스',
+    date: '2024-02-14',
+    isRecurring: true,
+    description: null,
+    type: 'CUSTOM',
+    daysUntil: 0,
   },
 ];
 

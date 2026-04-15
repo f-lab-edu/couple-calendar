@@ -1,0 +1,1 @@
+export {AnniversaryDetailPage} from './AnniversaryDetailPage';

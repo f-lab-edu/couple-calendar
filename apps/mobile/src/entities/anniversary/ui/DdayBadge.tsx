@@ -1,47 +1,36 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import type {AnniversaryType} from '../../../shared/types';
 
 interface DdayBadgeProps {
   days: number;
   label?: string;
   size?: 'small' | 'medium' | 'large';
+  type?: AnniversaryType;
 }
 
 export const DdayBadge: React.FC<DdayBadgeProps> = ({
   days,
   label,
   size = 'medium',
+  type = 'CUSTOM',
 }) => {
   const isToday = days === 0;
   const isPast = days < 0;
-  const displayText = isToday ? 'D-Day' : isPast ? `D+${Math.abs(days)}` : `D-${days}`;
-
-  const sizeStyles = {
-    small: {
-      container: styles.containerSmall,
-      text: styles.textSmall,
-      label: styles.labelSmall,
-    },
-    medium: {
-      container: styles.containerMedium,
-      text: styles.textMedium,
-      label: styles.labelMedium,
-    },
-    large: {
-      container: styles.containerLarge,
-      text: styles.textLarge,
-      label: styles.labelLarge,
-    },
-  };
+  const displayText = isToday
+    ? 'D-Day'
+    : isPast
+    ? `D+${Math.abs(days)}`
+    : `D-${days}`;
 
   const currentSize = sizeStyles[size];
+  const colorStyle =
+    type === 'AUTO' ? styles.textAuto : isToday ? styles.textToday : styles.text;
 
   return (
     <View style={[styles.container, currentSize.container]}>
       {label && <Text style={[styles.label, currentSize.label]}>{label}</Text>}
-      <Text style={[styles.text, currentSize.text, isToday && styles.textToday]}>
-        {displayText}
-      </Text>
+      <Text style={[currentSize.text, colorStyle]}>{displayText}</Text>
     </View>
   );
 };
@@ -50,45 +39,38 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
   },
-  containerSmall: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-  },
-  containerMedium: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-  },
-  containerLarge: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-  },
   text: {
     fontWeight: '700',
     color: '#FF8B94',
   },
-  textSmall: {
-    fontSize: 14,
-  },
-  textMedium: {
-    fontSize: 20,
-  },
-  textLarge: {
-    fontSize: 32,
-  },
   textToday: {
+    fontWeight: '700',
     color: '#FF6B6B',
+  },
+  textAuto: {
+    fontWeight: '700',
+    color: '#7EC8E3',
   },
   label: {
     color: '#666666',
     marginBottom: 2,
   },
-  labelSmall: {
-    fontSize: 10,
-  },
-  labelMedium: {
-    fontSize: 12,
-  },
-  labelLarge: {
-    fontSize: 14,
-  },
 });
+
+const sizeStyles = {
+  small: {
+    container: {paddingHorizontal: 8, paddingVertical: 4} as const,
+    text: {fontSize: 14} as const,
+    label: {fontSize: 10} as const,
+  },
+  medium: {
+    container: {paddingHorizontal: 12, paddingVertical: 6} as const,
+    text: {fontSize: 20} as const,
+    label: {fontSize: 12} as const,
+  },
+  large: {
+    container: {paddingHorizontal: 16, paddingVertical: 8} as const,
+    text: {fontSize: 32} as const,
+    label: {fontSize: 14} as const,
+  },
+};
