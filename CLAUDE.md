@@ -118,13 +118,14 @@ apps/mobile/src/
 
 ## 하네스: Couple Calendar 풀스택 개발
 
-**목표:** 백엔드(Kotlin/Spring Boot) + 모바일(React Native) + 통합 QA를 조율하여 경계면 정합성이 보장된 기능을 개발한다.
+**목표:** 백엔드(Kotlin/Spring Boot) + 모바일(React Native/FSD) + 웹(React/Vite Clean Architecture) + 통합 QA를 조율하여 경계면 정합성이 보장된 기능을 개발한다.
 
-**트리거:** 새 기능 추가, API/화면 수정, 도메인(auth/users/couples/events) 작업, 통합 정합성 검증 등 couple-calendar 관련 개발 요청 시 `couple-calendar-dev` 스킬을 사용하라. 단순 질문은 직접 응답 가능.
+**트리거:** 새 기능 추가, API/화면 수정, 도메인(auth/users/couples/events/anniversary) 작업, 웹 도메인·유스케이스·DTO 구현, 통합 정합성 검증 등 couple-calendar 관련 개발 요청 시 `couple-calendar-dev` 스킬을 사용하라. 단순 질문은 직접 응답 가능.
 
-**에이전트:** backend-dev, mobile-dev, qa-integrator (서브 에이전트 모드, 팬아웃/팬인 + 생성-검증)
+**에이전트:** backend-dev, mobile-dev, web-dev, qa-integrator (서브 에이전트 모드, 팬아웃/팬인 + 생성-검증)
 
 **변경 이력:**
 | 날짜 | 변경 내용 | 대상 | 사유 |
 |------|----------|------|------|
 | 2026-04-15 | 초기 구성 | 전체 (에이전트 3개, 스킬 4개) | - |
+| 2026-04-23 | 웹 에이전트·스킬 추가, QA 3-way 확장 | agents/web-dev, skills/web-clean-arch-dev, qa-integrator + fullstack-qa + couple-calendar-dev 수정 | apps/web Clean Architecture 4주 플랜 착수에 따른 전문 에이전트 필요 |
