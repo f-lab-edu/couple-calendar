@@ -71,3 +71,5 @@ Podfile.lock
 # Harness workspace (intermediate artifacts)
 _workspace/
 _workspace_*/
+
+node_modules
