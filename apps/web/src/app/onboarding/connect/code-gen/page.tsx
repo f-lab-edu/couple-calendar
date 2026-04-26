@@ -1,49 +1,7 @@
+import ChevronLeft from "@/shared/components/icon/ChevronLeft";
+import CopyIcon from "@/shared/components/icon/CopyIcon";
 import { useRouter } from "next/navigation";
-import { Button, Text } from "woosign-system";
-
-const ChevronLeft = () => (
-  <svg
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    aria-hidden="true"
-  >
-    <path
-      d="M15 6L9 12L15 18"
-      stroke="#111827"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-  </svg>
-);
-
-const CopyIcon = () => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 16 16"
-    fill="none"
-    aria-hidden="true"
-  >
-    <rect
-      x="5"
-      y="5"
-      width="8"
-      height="8"
-      rx="1.5"
-      stroke="#374151"
-      strokeWidth="1.4"
-    />
-    <path
-      d="M3 10.5V4C3 3.44772 3.44772 3 4 3H10.5"
-      stroke="#374151"
-      strokeWidth="1.4"
-      strokeLinecap="round"
-    />
-  </svg>
-);
+import { Button, Card, Eyebrow, Text } from "woosign-system";
 
 const INVITE_CODE = "L9K27Q";
 
@@ -86,25 +44,18 @@ const CodeGenPage = () => {
         </Text>
       </div>
 
-      <div
-        className="rounded-2xl bg-white px-5 py-7 flex flex-col items-center"
+      <Card
+        variant="default"
+        fullWidth
         style={{
-          border: "1px solid #ececec",
-          boxShadow: "0 1px 2px rgba(0,0,0,0.04)",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          borderRadius: 16,
+          padding: "28px 20px",
         }}
       >
-        <Text
-          as="span"
-          variant="small"
-          weight="semibold"
-          style={{
-            fontSize: 12,
-            letterSpacing: "0.18em",
-            color: "#e5447a",
-          }}
-        >
-          INVITE CODE
-        </Text>
+        <Eyebrow tone="brand">INVITE CODE</Eyebrow>
         <Text
           as="p"
           weight="bold"
@@ -120,27 +71,25 @@ const CodeGenPage = () => {
           {formatCode(INVITE_CODE)}
         </Text>
 
-        <button
-          type="button"
-          className="mt-5 inline-flex items-center gap-2 rounded-full px-4 py-2 transition-colors hover:bg-gray-50"
-          style={{ border: "1px solid #d1d5db", backgroundColor: "#fff" }}
+        <Button
+          variant="outline"
+          size="sm"
+          leftIcon={<CopyIcon />}
+          onPress={() => {
+            /* TODO: copy */
+          }}
+          style={{ marginTop: 20, borderRadius: 999 }}
         >
-          <CopyIcon />
-          <Text
-            as="span"
-            variant="small"
-            weight="medium"
-            style={{ fontSize: 14, color: "#374151" }}
-          >
-            코드 복사
-          </Text>
-        </button>
-      </div>
+          코드 복사
+        </Button>
+      </Card>
 
-      <ul
-        className="mt-5 rounded-xl px-4 py-3 space-y-1.5"
-        style={{ backgroundColor: "#f3efe6" }}
+      <Card
+        variant="warm"
+        fullWidth
+        style={{ marginTop: 20, borderRadius: 12, padding: "12px 16px" }}
       >
+        <ul className="space-y-1.5">
         <li className="flex gap-2">
           <span style={{ color: "#6b7280" }}>•</span>
           <Text
@@ -161,7 +110,8 @@ const CodeGenPage = () => {
             코드는 다른 사람에게 노출되지 않게 주의해주세요.
           </Text>
         </li>
-      </ul>
+        </ul>
+      </Card>
 
       <div className="mt-auto pt-6">
         <Button className="w-full" size="lg" disabled>

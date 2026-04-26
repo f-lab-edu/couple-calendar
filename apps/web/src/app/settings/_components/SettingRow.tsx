@@ -1,5 +1,5 @@
-import { Text } from "woosign-system";
-import ChevronRight from "@/shared/components/ChevronRight";
+import { Card, Text } from "woosign-system";
+import ChevronRight from "@/shared/components/icon/ChevronRight";
 
 interface Props {
   title: string;
@@ -13,11 +13,18 @@ export const SettingRow = ({ title, description, destructive = false, onClick }:
   const chevronColor = destructive ? "#dc2626" : "#9ca3af";
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex w-full items-center justify-between rounded-xl bg-white px-4 py-4 text-left"
-      style={{ border: "1px solid #e5e7eb" }}
+    <Card
+      variant="outline"
+      fullWidth
+      onPress={onClick}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        borderRadius: 12,
+        padding: "16px",
+        textAlign: "left",
+      }}
     >
       <div className="flex flex-col gap-1">
         <Text
@@ -39,6 +46,6 @@ export const SettingRow = ({ title, description, destructive = false, onClick }:
         )}
       </div>
       <ChevronRight color={chevronColor} />
-    </button>
+    </Card>
   );
 };

@@ -1,7 +1,7 @@
-import ChevronRight from "@/shared/components/ChevronRight";
+import ChevronRight from "@/shared/components/icon/ChevronRight";
 import { ROUTES } from "@/shared/constants/routes";
 import { useRouter } from "next/navigation";
-import { Text, colors } from "woosign-system";
+import { Card, Text, colors } from "woosign-system";
 
 interface OptionCardProps {
   title: string;
@@ -11,17 +11,23 @@ interface OptionCardProps {
 }
 
 const OptionCard = ({ title, description, active = false, onClick }: OptionCardProps) => {
-  const bg = active ? colors.actionForest : colors.background;
   const titleColor = active ? colors.primaryForeground : colors.foreground;
   const descColor = active ? colors.primaryForeground : colors.foreground;
-  const border = active ? "transparent" : colors.border;
+  const chevronColor = active ? colors.primaryForeground : colors.foreground;
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="flex w-full items-center justify-between rounded-2xl px-4 py-4 text-left transition-colors"
-      style={{ backgroundColor: bg, border: `1px solid ${border}` }}
+    <Card
+      variant={active ? "forest" : "outline"}
+      fullWidth
+      onPress={onClick}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        borderRadius: 16,
+        padding: "16px",
+        textAlign: "left",
+      }}
     >
       <div className="flex flex-col gap-1">
         <Text as="span" variant="p" weight="semibold" style={{ lineHeight: "24px", color: titleColor }}>
@@ -31,14 +37,14 @@ const OptionCard = ({ title, description, active = false, onClick }: OptionCardP
           {description}
         </Text>
       </div>
-      <ChevronRight color={titleColor} />
-    </button>
+      <ChevronRight color={chevronColor} />
+    </Card>
   );
 };
 
 const OnboardingConnectPage = () => {
   const router = useRouter();
-  
+
   const handleCreate = () => {
     router.push(ROUTES.ONBOARDING_CONNECT_CODE_GEN);
   };

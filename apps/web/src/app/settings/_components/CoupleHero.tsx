@@ -1,4 +1,4 @@
-import { Text } from "woosign-system";
+import { Card, Text } from "woosign-system";
 
 interface Props {
   myName: string;
@@ -8,9 +8,16 @@ interface Props {
 }
 
 export const CoupleHero = ({ myName, partnerName, startedAt, dPlus }: Props) => (
-  <div
-    className="flex flex-col items-center rounded-2xl px-5 py-6"
-    style={{ backgroundColor: "#f3ece1" }}
+  <Card
+    variant="warm"
+    fullWidth
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      borderRadius: 16,
+      padding: "24px 20px",
+    }}
   >
     <div className="mb-3 flex items-center gap-3">
       <span
@@ -43,5 +50,5 @@ export const CoupleHero = ({ myName, partnerName, startedAt, dPlus }: Props) => 
     >
       {startedAt}부터 · D+{dPlus}
     </Text>
-  </div>
+  </Card>
 );

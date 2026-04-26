@@ -14,7 +14,7 @@
 		"next": "^16.2.4",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
-		"woosign-system": "0.1.4",
+		"woosign-system": "0.1.5",
 		"zod": "^4.3.6"
 	},
 	"devDependencies": {

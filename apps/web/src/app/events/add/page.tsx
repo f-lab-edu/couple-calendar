@@ -1,22 +1,15 @@
 import { useState } from "react";
-import { Button, Input, Pill, Switch } from "woosign-system";
+import { Button, Card, Input, Pill, Switch, Text } from "woosign-system";
+import TimeBlock from "./_components/TimeBlock";
+import CATEGORIES from "@/shared/constants/events/categories";
+import REMINDERS from "@/shared/constants/events/reminders";
 
-const CATEGORIES = [
-	{ id: "date", label: "데이트", dot: "#ff6b3d" },
-	{ id: "personal", label: "개인", dot: "#3ecf8e" },
-	{ id: "anniversary", label: "기념일", dot: "#ef4444" },
-	{ id: "etc", label: "기타", dot: "#9ca3af" },
-] as const;
-
-const REMINDERS = ["없음", "10분 전", "1시간 전", "하루 전", "일주일 전"] as const;
 
 const EventAddPage = () => {
 	const [title, setTitle] = useState("");
-	const [category, setCategory] =
-		useState<(typeof CATEGORIES)[number]["id"]>("date");
+	const [category, setCategory] = useState<(typeof CATEGORIES)[number]["id"]>("date");
 	const [allDay, setAllDay] = useState(false);
-	const [reminder, setReminder] =
-		useState<(typeof REMINDERS)[number]>("1시간 전");
+	const [reminder, setReminder] = useState<(typeof REMINDERS)[number]>("1시간 전");
 	const [location, setLocation] = useState("");
 	const [memo, setMemo] = useState("");
 
@@ -32,7 +25,9 @@ const EventAddPage = () => {
 				>
 					×
 				</button>
-				<h1 className="font-medium text-base text-neutral-900">새 일정</h1>
+				<Text as="h1" variant="p" weight="medium" style={{ color: "#111827" }}>
+					새 일정
+				</Text>
 				<Button
 					variant="link"
 					size="sm"
@@ -47,17 +42,26 @@ const EventAddPage = () => {
 
 			<div className="flex flex-1 flex-col gap-7 px-5 pt-2 pb-28">
 				<section>
-					<input
-						type="text"
+					<Input
 						value={title}
-						onChange={(e) => setTitle(e.target.value)}
+						onChangeText={setTitle}
 						placeholder="일정 제목"
-						className="w-full border-neutral-200 border-b pb-3 font-semibold text-2xl text-neutral-900 placeholder:text-neutral-300 focus:border-neutral-400 focus:outline-none"
+						fullWidth
+						style={{
+							border: "none",
+							borderBottom: "1px solid #e5e7eb",
+							borderRadius: 0,
+							padding: "0 0 12px",
+							fontSize: 24,
+							fontWeight: 600,
+							color: "#111827",
+							backgroundColor: "transparent",
+						}}
 					/>
 				</section>
 
 				<section className="flex flex-col gap-2.5">
-					<p className="text-neutral-500 text-xs">카테고리</p>
+					<Text as="p" variant="muted" style={{ fontSize: 12 }}>카테고리</Text>
 					<div className="flex flex-wrap gap-2">
 						{CATEGORIES.map((c) => (
 							<Pill
@@ -78,19 +82,32 @@ const EventAddPage = () => {
 				</section>
 
 				<section className="flex flex-col gap-2.5">
-					<p className="text-neutral-500 text-xs">날짜</p>
-					<button
-						type="button"
-						className="flex items-center justify-between rounded-xl border border-neutral-200 bg-white px-4 py-3 text-left text-neutral-800 text-sm"
+					<Text as="p" variant="muted" style={{ fontSize: 12 }}>날짜</Text>
+					<Card
+						variant="outline"
+						fullWidth
+						onPress={() => {
+							/* TODO: open date picker */
+						}}
+						style={{
+							display: "flex",
+							alignItems: "center",
+							justifyContent: "space-between",
+							borderRadius: 12,
+							padding: "12px 16px",
+							textAlign: "left",
+						}}
 					>
-						<span>2026. 04. 26 (일)</span>
+						<Text as="span" variant="small" style={{ color: "#1f2937" }}>
+							2026. 04. 26 (일)
+						</Text>
 						<span className="text-neutral-400">›</span>
-					</button>
+					</Card>
 				</section>
 
 				<section className="flex flex-col gap-2.5">
 					<div className="flex items-center justify-between">
-						<p className="text-neutral-500 text-xs">시간</p>
+						<Text as="p" variant="muted" style={{ fontSize: 12 }}>시간</Text>
 						<Switch
 							checked={allDay}
 							onCheckedChange={setAllDay}
@@ -107,7 +124,7 @@ const EventAddPage = () => {
 				</section>
 
 				<section className="flex flex-col gap-2.5">
-					<p className="text-neutral-500 text-xs">장소</p>
+					<Text as="p" variant="muted" style={{ fontSize: 12 }}>장소</Text>
 					<Input
 						value={location}
 						onChangeText={setLocation}
@@ -122,7 +139,7 @@ const EventAddPage = () => {
 				</section>
 
 				<section className="flex flex-col gap-2.5">
-					<p className="text-neutral-500 text-xs">알림</p>
+					<Text as="p" variant="muted" style={{ fontSize: 12 }}>알림</Text>
 					<div className="flex flex-wrap gap-2">
 						{REMINDERS.map((r) => (
 							<Pill
@@ -137,7 +154,7 @@ const EventAddPage = () => {
 				</section>
 
 				<section className="flex flex-col gap-2.5">
-					<p className="text-neutral-500 text-xs">메모</p>
+					<Text as="p" variant="muted" style={{ fontSize: 12 }}>메모</Text>
 					<Input
 						value={memo}
 						onChangeText={setMemo}
@@ -165,29 +182,5 @@ const EventAddPage = () => {
 		</div>
 	);
 };
-
-interface TimeBlockProps {
-	label: string;
-	time: string;
-	disabled?: boolean;
-}
-
-const TimeBlock = ({ label, time, disabled }: TimeBlockProps) => (
-	<button
-		type="button"
-		disabled={disabled}
-		className={`flex flex-col items-start gap-1 rounded-xl border border-neutral-200 px-4 py-2.5 text-left transition-opacity ${
-			disabled ? "opacity-40" : ""
-		}`}
-	>
-		<span className="text-[11px] text-neutral-400">{label}</span>
-		<span className="flex items-center gap-1.5 font-mono font-semibold text-base text-emerald-600">
-			{time}
-			<span aria-hidden className="text-neutral-400 text-sm">
-				⏱
-			</span>
-		</span>
-	</button>
-);
 
 export default EventAddPage;

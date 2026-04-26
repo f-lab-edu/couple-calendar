@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type ClipboardEvent, type KeyboardEvent } from "react";
+import { useRef } from "react";
 import { colors, Input } from "woosign-system";
 
 interface Props {
@@ -29,34 +29,6 @@ export const CodeInput = ({ length = 6, value, onChange }: Props) => {
     if (last && idx < length - 1) {
       inputs.current[idx + 1]?.focus();
     }
-  };
-
-  const handleKeyDown = (idx: number) => (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Backspace") {
-      if (value[idx]) {
-        setCharAt(idx, "");
-      } else if (idx > 0) {
-        inputs.current[idx - 1]?.focus();
-        setCharAt(idx - 1, "");
-      }
-    } else if (e.key === "ArrowLeft" && idx > 0) {
-      inputs.current[idx - 1]?.focus();
-    } else if (e.key === "ArrowRight" && idx < length - 1) {
-      inputs.current[idx + 1]?.focus();
-    }
-  };
-
-  const handlePaste = (e: ClipboardEvent<HTMLInputElement>) => {
-    e.preventDefault();
-    const text = e.clipboardData
-      .getData("text")
-      .toUpperCase()
-      .replace(/[^A-Z0-9]/g, "")
-      .slice(0, length);
-    if (!text) return;
-    onChange(text);
-    const focusIdx = Math.min(text.length, length - 1);
-    inputs.current[focusIdx]?.focus();
   };
 
   return (
