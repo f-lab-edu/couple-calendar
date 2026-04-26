@@ -11,9 +11,11 @@
 	},
 	"dependencies": {
 		"@tanstack/react-query": "^5.100.1",
-		"next": "^15.1.6",
+		"next": "^16.2.4",
 		"react": "^19.0.0",
-		"react-dom": "^19.0.0"
+		"react-dom": "^19.0.0",
+		"woosign-system": "0.1.4",
+		"zod": "^4.3.6"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.4.13",
