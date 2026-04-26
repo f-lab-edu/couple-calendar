@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { Button, Card, Input, Pill, Switch, Text } from "woosign-system";
-import TimeBlock from "./_components/TimeBlock";
 import CATEGORIES from "@/shared/constants/events/categories";
 import REMINDERS from "@/shared/constants/events/reminders";
-
+import TimeBlock from "./_components/TimeBlock";
 
 const EventAddPage = () => {
 	const [title, setTitle] = useState("");
@@ -18,11 +17,7 @@ const EventAddPage = () => {
 	return (
 		<div className="mx-auto flex min-h-dvh w-full max-w-[420px] flex-col bg-white">
 			<header className="flex items-center justify-between px-5 pt-4 pb-3">
-				<button
-					type="button"
-					aria-label="닫기"
-					className="grid size-8 place-items-center text-2xl text-neutral-800"
-				>
+				<button type="button" aria-label="닫기" className="grid size-8 place-items-center text-2xl text-neutral-800">
 					×
 				</button>
 				<Text as="h1" variant="p" weight="medium" style={{ color: "#111827" }}>
@@ -61,19 +56,14 @@ const EventAddPage = () => {
 				</section>
 
 				<section className="flex flex-col gap-2.5">
-					<Text as="p" variant="muted" style={{ fontSize: 12 }}>카테고리</Text>
+					<Text as="p" variant="muted" style={{ fontSize: 12 }}>
+						카테고리
+					</Text>
 					<div className="flex flex-wrap gap-2">
 						{CATEGORIES.map((c) => (
-							<Pill
-								key={c.id}
-								active={category === c.id}
-								onPress={() => setCategory(c.id)}
-							>
+							<Pill key={c.id} active={category === c.id} onPress={() => setCategory(c.id)}>
 								<span className="inline-flex items-center gap-1.5">
-									<span
-										className="inline-block size-1.5 rounded-full"
-										style={{ backgroundColor: c.dot }}
-									/>
+									<span className="inline-block size-1.5 rounded-full" style={{ backgroundColor: c.dot }} />
 									{c.label}
 								</span>
 							</Pill>
@@ -82,7 +72,9 @@ const EventAddPage = () => {
 				</section>
 
 				<section className="flex flex-col gap-2.5">
-					<Text as="p" variant="muted" style={{ fontSize: 12 }}>날짜</Text>
+					<Text as="p" variant="muted" style={{ fontSize: 12 }}>
+						날짜
+					</Text>
 					<Card
 						variant="outline"
 						fullWidth
@@ -107,13 +99,10 @@ const EventAddPage = () => {
 
 				<section className="flex flex-col gap-2.5">
 					<div className="flex items-center justify-between">
-						<Text as="p" variant="muted" style={{ fontSize: 12 }}>시간</Text>
-						<Switch
-							checked={allDay}
-							onCheckedChange={setAllDay}
-							label="종일"
-							size="sm"
-						/>
+						<Text as="p" variant="muted" style={{ fontSize: 12 }}>
+							시간
+						</Text>
+						<Switch checked={allDay} onCheckedChange={setAllDay} label="종일" size="sm" />
 					</div>
 
 					<div className="grid grid-cols-[1fr_auto_1fr] items-stretch gap-2">
@@ -124,7 +113,9 @@ const EventAddPage = () => {
 				</section>
 
 				<section className="flex flex-col gap-2.5">
-					<Text as="p" variant="muted" style={{ fontSize: 12 }}>장소</Text>
+					<Text as="p" variant="muted" style={{ fontSize: 12 }}>
+						장소
+					</Text>
 					<Input
 						value={location}
 						onChangeText={setLocation}
@@ -139,14 +130,12 @@ const EventAddPage = () => {
 				</section>
 
 				<section className="flex flex-col gap-2.5">
-					<Text as="p" variant="muted" style={{ fontSize: 12 }}>알림</Text>
+					<Text as="p" variant="muted" style={{ fontSize: 12 }}>
+						알림
+					</Text>
 					<div className="flex flex-wrap gap-2">
 						{REMINDERS.map((r) => (
-							<Pill
-								key={r}
-								active={reminder === r}
-								onPress={() => setReminder(r)}
-							>
+							<Pill key={r} active={reminder === r} onPress={() => setReminder(r)}>
 								{r}
 							</Pill>
 						))}
@@ -154,7 +143,9 @@ const EventAddPage = () => {
 				</section>
 
 				<section className="flex flex-col gap-2.5">
-					<Text as="p" variant="muted" style={{ fontSize: 12 }}>메모</Text>
+					<Text as="p" variant="muted" style={{ fontSize: 12 }}>
+						메모
+					</Text>
 					<Input
 						value={memo}
 						onChangeText={setMemo}

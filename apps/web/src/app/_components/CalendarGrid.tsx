@@ -10,16 +10,7 @@ const CalendarGrid = ({ cells, selected, onSelect }: Props) => (
 	<section>
 		<div className="grid grid-cols-7 pb-2 text-center text-xs">
 			{WEEK_LABELS.map((w, i) => (
-				<span
-					key={w}
-					className={
-						i === 0
-							? "text-[#e74c3c]"
-							: i === 6
-								? "text-[#3b82f6]"
-								: "text-neutral-500"
-					}
-				>
+				<span key={w} className={i === 0 ? "text-[#e74c3c]" : i === 6 ? "text-[#3b82f6]" : "text-neutral-500"}>
 					{w}
 				</span>
 			))}
@@ -47,20 +38,16 @@ const CalendarGrid = ({ cells, selected, onSelect }: Props) => (
 					>
 						<span
 							className={`flex h-7 w-7 items-center justify-center rounded-full text-sm tabular-nums ${
-								isSelected
-									? "bg-[#1f3a2e] font-semibold text-white"
-									: baseColor
+								isSelected ? "bg-[#1f3a2e] font-semibold text-white" : baseColor
 							}`}
 						>
 							{cell.date}
 						</span>
 						<span className="mt-1 flex h-1.5 items-center gap-0.5">
-							{dots?.map((d, idx) => (
+							{dots?.map((d) => (
 								<span
-									key={`${cell.key}-${idx}`}
-									className={`h-1.5 w-1.5 rounded-full ${
-										d === "red" ? "bg-[#e74c3c]" : "bg-[#1f7a4a]"
-									}`}
+									key={`${cell.key}-${d}`}
+									className={`h-1.5 w-1.5 rounded-full ${d === "red" ? "bg-[#e74c3c]" : "bg-[#1f7a4a]"}`}
 								/>
 							))}
 						</span>

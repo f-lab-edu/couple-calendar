@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Card, Text } from "woosign-system";
-import { ROUTES } from "@/shared/constants/routes";
 import GearIcon from "@/shared/components/GearIcon";
+import { ROUTES } from "@/shared/constants/routes";
 
 const DdayCard = () => (
 	<Card
@@ -51,11 +51,7 @@ const DdayCard = () => (
 			>
 				D+412
 			</Text>
-			<Text
-				as="p"
-				variant="small"
-				style={{ color: "rgba(255,255,255,0.7)", marginTop: 4, fontSize: 12 }}
-			>
+			<Text as="p" variant="small" style={{ color: "rgba(255,255,255,0.7)", marginTop: 4, fontSize: 12 }}>
 				2025. 03. 09 부터 함께
 			</Text>
 		</div>

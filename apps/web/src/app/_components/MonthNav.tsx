@@ -17,12 +17,7 @@ const MonthNav = ({ year, month, onPrev, onNext }: Props) => (
 		>
 			‹
 		</button>
-		<Text
-			as="span"
-			variant="small"
-			weight="medium"
-			style={{ color: "#111827", fontVariantNumeric: "tabular-nums" }}
-		>
+		<Text as="span" variant="small" weight="medium" style={{ color: "#111827", fontVariantNumeric: "tabular-nums" }}>
 			{year}. {month + 1}월
 		</Text>
 		<button

@@ -6,22 +6,11 @@ const nextConfig: NextConfig = {
 	outputFileTracingRoot: path.join(__dirname, "../../"),
 	reactCompiler: true,
 	turbopack: {
-		resolveExtensions: [
-			".web.tsx",
-			".web.ts",
-			".web.jsx",
-			".web.js",
-			".tsx",
-			".ts",
-			".jsx",
-			".js",
-			".mjs",
-			".json",
-		],
+		resolveExtensions: [".web.tsx", ".web.ts", ".web.jsx", ".web.js", ".tsx", ".ts", ".jsx", ".js", ".mjs", ".json"],
 	},
 	experimental: {
 		viewTransition: true,
-	}
+	},
 };
 
 export default nextConfig;

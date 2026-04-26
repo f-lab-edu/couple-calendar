@@ -14,24 +14,13 @@ export default function HomePage() {
 	const [cursor, setCursor] = useState({ year: 2026, month: 3 });
 	const [selected, setSelected] = useState(25);
 
-	const cells = useMemo(
-		() => buildMonthCells(cursor.year, cursor.month),
-		[cursor],
-	);
+	const cells = useMemo(() => buildMonthCells(cursor.year, cursor.month), [cursor]);
 
 	const goPrev = () => {
-		setCursor((c) =>
-			c.month === 0
-				? { year: c.year - 1, month: 11 }
-				: { year: c.year, month: c.month - 1 },
-		);
+		setCursor((c) => (c.month === 0 ? { year: c.year - 1, month: 11 } : { year: c.year, month: c.month - 1 }));
 	};
 	const goNext = () => {
-		setCursor((c) =>
-			c.month === 11
-				? { year: c.year + 1, month: 0 }
-				: { year: c.year, month: c.month + 1 },
-		);
+		setCursor((c) => (c.month === 11 ? { year: c.year + 1, month: 0 } : { year: c.year, month: c.month + 1 }));
 	};
 
 	return (
@@ -40,19 +29,10 @@ export default function HomePage() {
 
 			<section className="flex items-center justify-between">
 				<ViewToggle value={view} onChange={setView} />
-				<MonthNav
-					year={cursor.year}
-					month={cursor.month}
-					onPrev={goPrev}
-					onNext={goNext}
-				/>
+				<MonthNav year={cursor.year} month={cursor.month} onPrev={goPrev} onNext={goNext} />
 			</section>
 
-			<CalendarGrid
-				cells={cells}
-				selected={selected}
-				onSelect={setSelected}
-			/>
+			<CalendarGrid cells={cells} selected={selected} onSelect={setSelected} />
 
 			<DayEvents day={selected} month={cursor.month + 1} />
 

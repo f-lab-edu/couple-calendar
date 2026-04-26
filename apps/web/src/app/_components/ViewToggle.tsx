@@ -14,11 +14,7 @@ const ITEMS = [
 ];
 
 const ViewToggle = ({ value, onChange }: Props) => (
-	<Tabs
-		items={ITEMS}
-		value={value}
-		onChange={(k) => onChange(k as CalendarView)}
-	/>
+	<Tabs items={ITEMS} value={value} onChange={(k) => onChange(k as CalendarView)} />
 );
 
 export default ViewToggle;

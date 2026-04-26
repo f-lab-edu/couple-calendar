@@ -1,4 +1,4 @@
-import { type Step } from "@/shared/constants/onboarding-step";
+import type { Step } from "@/shared/constants/onboarding-step";
 
 export const ROUTES = {
 	LOGIN: "/login",

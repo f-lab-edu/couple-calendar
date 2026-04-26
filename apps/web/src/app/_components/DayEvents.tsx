@@ -34,9 +34,7 @@ const DayEvents = ({ day, month }: Props) => {
 			>
 				<span className="absolute top-0 bottom-0 left-0 w-1 bg-[#c0392b]" />
 				<div className="flex items-center gap-3">
-					<div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#fde2e2] text-lg">
-						❤️
-					</div>
+					<div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#fde2e2] text-lg">❤️</div>
 					<div className="min-w-0 flex-1">
 						<Badge variant="secondary">기념일</Badge>
 						<Text
