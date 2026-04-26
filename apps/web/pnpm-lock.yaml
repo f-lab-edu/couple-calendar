@@ -21,8 +21,8 @@ importers:
         specifier: ^19.0.0
         version: 19.2.5(react@19.2.5)
       woosign-system:
-        specifier: 0.1.3
-        version: 0.1.3(react@19.2.5)
+        specifier: 0.1.4
+        version: 0.1.4(react@19.2.5)
       zod:
         specifier: ^4.3.6
         version: 4.3.6
@@ -638,8 +638,8 @@ packages:
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
 
-  woosign-system@0.1.3:
-    resolution: {integrity: sha512-D15jejxfwWiALvVAhAoD+ID/j2/OLcaEHhpG0OkzGLBYs6cIyFfirqspv5XzOgvx/bKX00oTaWn25iWztkjz9Q==}
+  woosign-system@0.1.4:
+    resolution: {integrity: sha512-W2Ktw6Sf7HfDrXKFvPIjILSnbn7AxP+ZtKeRBMG5eRp/DNjCT9wgddAN5YePRDCLpoyPCqiD9UWvszv4wqoaZw==}
     engines: {node: '>=16'}
     peerDependencies:
       react: '>=17.0.0'
@@ -1116,7 +1116,7 @@ snapshots:
 
   undici-types@7.16.0: {}
 
-  woosign-system@0.1.3(react@19.2.5):
+  woosign-system@0.1.4(react@19.2.5):
     dependencies:
       react: 19.2.5
 
