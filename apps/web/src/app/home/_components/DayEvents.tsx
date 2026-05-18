@@ -1,5 +1,5 @@
 import { Badge, Card, Text } from "woosign-system";
-import { WEEK_LABELS } from "@/app/_lib/calendar";
+import { WEEK_LABELS } from "@/app/home/_lib/calendar";
 import ClockIcon from "@/shared/components/ClockIcon";
 
 interface Props {

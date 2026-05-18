@@ -1,4 +1,4 @@
-import { type Cell, EVENT_DOTS, WEEK_LABELS } from "@/app/_lib/calendar";
+import { type Cell, EVENT_DOTS, WEEK_LABELS } from "@/app/home/_lib/calendar";
 
 interface Props {
 	cells: Cell[];

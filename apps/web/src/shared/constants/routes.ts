@@ -1,6 +1,7 @@
 import type { Step } from "@/shared/constants/onboarding-step";
 
 export const ROUTES = {
+	HOME: "/home",
 	LOGIN: "/login",
 	SETTINGS: "/settings",
 	ONBOARDING: "/onboarding",

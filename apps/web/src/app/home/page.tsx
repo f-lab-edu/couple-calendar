@@ -2,12 +2,12 @@
 
 import { useMemo, useState } from "react";
 import { Fab } from "woosign-system";
-import CalendarGrid from "@/app/_components/CalendarGrid";
-import DayEvents from "@/app/_components/DayEvents";
-import DdayCard from "@/app/_components/DdayCard";
-import MonthNav from "@/app/_components/MonthNav";
-import ViewToggle, { type CalendarView } from "@/app/_components/ViewToggle";
-import { buildMonthCells } from "@/app/_lib/calendar";
+import CalendarGrid from "@/app/home/_components/CalendarGrid";
+import DayEvents from "@/app/home/_components/DayEvents";
+import DdayCard from "@/app/home/_components/DdayCard";
+import MonthNav from "@/app/home/_components/MonthNav";
+import ViewToggle, { type CalendarView } from "@/app/home/_components/ViewToggle";
+import { buildMonthCells } from "@/app/home/_lib/calendar";
 
 export default function HomePage() {
 	const [view, setView] = useState<CalendarView>("month");
