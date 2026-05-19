@@ -8,6 +8,14 @@ import DdayCard from "@/app/home/_components/DdayCard";
 import MonthNav from "@/app/home/_components/MonthNav";
 import ViewToggle, { type CalendarView } from "@/app/home/_components/ViewToggle";
 import { buildMonthCells } from "@/app/home/_lib/calendar";
+import type Event from "@/domain/entities/Event";
+import useMonthlyEvents from "@/presentation/hooks/useMonthlyEvents";
+
+const eventStartsOnLocalDay = (event: Event, year: number, month0Based: number, day: number): boolean => {
+	const start = new Date(event.startTime);
+	if (Number.isNaN(start.getTime())) return false;
+	return start.getFullYear() === year && start.getMonth() === month0Based && start.getDate() === day;
+};
 
 export default function HomePage() {
 	const [view, setView] = useState<CalendarView>("month");
@@ -15,6 +23,14 @@ export default function HomePage() {
 	const [selected, setSelected] = useState(25);
 
 	const cells = useMemo(() => buildMonthCells(cursor.year, cursor.month), [cursor]);
+
+	// cursor.month is 0-based (UI convention); the hook expects 1-based months.
+	const { data: monthlyEvents } = useMonthlyEvents(cursor.year, cursor.month + 1);
+
+	const selectedDayEvents = useMemo<Event[]>(() => {
+		if (!monthlyEvents) return [];
+		return monthlyEvents.filter((event) => eventStartsOnLocalDay(event, cursor.year, cursor.month, selected));
+	}, [monthlyEvents, cursor.year, cursor.month, selected]);
 
 	const goPrev = () => {
 		setCursor((c) => (c.month === 0 ? { year: c.year - 1, month: 11 } : { year: c.year, month: c.month - 1 }));
@@ -34,7 +50,7 @@ export default function HomePage() {
 
 			<CalendarGrid cells={cells} selected={selected} onSelect={setSelected} />
 
-			<DayEvents day={selected} month={cursor.month + 1} />
+			<DayEvents day={selected} month={cursor.month + 1} events={selectedDayEvents} />
 
 			<div className="fixed bottom-6 right-[max(24px,calc(50%-186px))]">
 				<Fab tone="ember" accessibilityLabel="새 이벤트 추가">
