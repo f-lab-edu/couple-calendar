@@ -1,11 +1,24 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import { Button, Text } from "woosign-system";
+import { loginAction } from "./actions";
 
 const LoginPage = () => {
 	const router = useRouter();
 
-	const handleAppleLogin = () => {
-		router.push("/onboarding");
+	const handleAppleLogin = async () => {
+		const user = {
+			id: "test-user-id",
+			hasCompletedOnboarding: false,
+		};
+		await loginAction(user.id);
+
+		if (user.hasCompletedOnboarding) {
+			router.push('/home');
+		} else {
+			router.push('/onboarding');
+		}
 	};
 
 	return (

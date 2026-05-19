@@ -11,6 +11,9 @@ importers:
       '@tanstack/react-query':
         specifier: ^5.100.1
         version: 5.100.3(react@19.2.5)
+      jose:
+        specifier: ^6.2.3
+        version: 6.2.3
       next:
         specifier: ^16.2.4
         version: 16.2.4(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
@@ -592,6 +595,9 @@ packages:
   jiti@2.6.1:
     resolution: {integrity: sha512-ekilCSN1jwRvIbgeg/57YFh8qQDNbwDb9xT/qu2DAHbFFZUicIl4ygVaAvzveMhMVr3LnpSKTNnwt8PoOfmKhQ==}
     hasBin: true
+
+  jose@6.2.3:
+    resolution: {integrity: sha512-YYVDInQKFJfR/xa3ojUTl8c2KoTwiL1R5Wg9YCydwH0x0B9grbzlg5HC7mMjCtUJjbQ/YnGEZIhI5tCgfTb4Hw==}
 
   lightningcss-android-arm64@1.32.0:
     resolution: {integrity: sha512-YK7/ClTt4kAK0vo6w3X+Pnm0D2cf2vPHbhOXdoNti1Ga0al1P4TBZhwjATvjNwLEBCnKvjJc2jQgHXH0NEwlAg==}
@@ -1270,6 +1276,8 @@ snapshots:
   is-node-process@1.2.0: {}
 
   jiti@2.6.1: {}
+
+  jose@6.2.3: {}
 
   lightningcss-android-arm64@1.32.0:
     optional: true
