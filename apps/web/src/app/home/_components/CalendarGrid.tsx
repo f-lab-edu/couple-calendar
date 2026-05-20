@@ -9,7 +9,7 @@ interface Props {
 }
 
 const CalendarGrid = ({ cells, selected, onSelect, categoriesByDate }: Props) => (
-	<section>
+	<section className="shrink-0">
 		<div className="grid grid-cols-7 pb-2 text-center text-xs">
 			{WEEK_LABELS.map((w, i) => (
 				<span key={w} className={i === 0 ? "text-[#e74c3c]" : i === 6 ? "text-[#3b82f6]" : "text-neutral-500"}>

@@ -1,3 +1,6 @@
+"use client";
+
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button, Card, Input, Pill, Switch, Text } from "woosign-system";
 import CATEGORIES from "@/shared/constants/events/categories";
@@ -5,6 +8,7 @@ import REMINDERS from "@/shared/constants/events/reminders";
 import TimeBlock from "./_components/TimeBlock";
 
 const EventAddPage = () => {
+	const router = useRouter();
 	const [title, setTitle] = useState("");
 	const [category, setCategory] = useState<(typeof CATEGORIES)[number]["id"]>("date");
 	const [allDay, setAllDay] = useState(false);
@@ -16,23 +20,15 @@ const EventAddPage = () => {
 
 	return (
 		<div className="mx-auto flex min-h-dvh w-full max-w-[420px] flex-col bg-white">
-			<header className="flex items-center justify-between px-5 pt-4 pb-3">
-				<button type="button" aria-label="닫기" className="grid size-8 place-items-center text-2xl text-neutral-800">
+			<header className="flex items-center justify-end px-5 pt-4 pb-3">
+				<button
+					type="button"
+					aria-label="닫기"
+					onClick={() => router.back()}
+					className="grid size-8 place-items-center text-2xl text-neutral-800"
+				>
 					×
 				</button>
-				<Text as="h1" variant="p" weight="medium" style={{ color: "#111827" }}>
-					새 일정
-				</Text>
-				<Button
-					variant="link"
-					size="sm"
-					disabled={!isSavable}
-					onPress={() => {
-						/* TODO: save */
-					}}
-				>
-					저장
-				</Button>
 			</header>
 
 			<div className="flex flex-1 flex-col gap-7 px-5 pt-2 pb-28">

@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Fab } from "woosign-system";
+import AddEventSheet from "@/app/home/_components/AddEventSheet";
 import CalendarGrid from "@/app/home/_components/CalendarGrid";
 import DayEvents from "@/app/home/_components/DayEvents";
 import DdayCard from "@/app/home/_components/DdayCard";
@@ -20,6 +21,7 @@ const eventStartsOnLocalDay = (event: Event, year: number, month0Based: number, 
 export default function HomePage() {
 	const [cursor, setCursor] = useState({ year: 2026, month: 3 });
 	const [selected, setSelected] = useState(25);
+	const [sheetOpen, setSheetOpen] = useState(false);
 
 	const cells = useMemo(() => buildMonthCells(cursor.year, cursor.month), [cursor]);
 
@@ -56,10 +58,10 @@ export default function HomePage() {
 	};
 
 	return (
-		<main className="mx-auto flex min-h-screen max-w-[420px] flex-col gap-4 bg-[#f6f5f0] px-4 py-5 text-[15px] text-neutral-800">
+		<main className="mx-auto flex h-dvh max-w-[420px] flex-col gap-4 overflow-hidden bg-[#f6f5f0] px-4 py-5 text-[15px] text-neutral-800">
 			<DdayCard />
 
-			<section className="flex items-center justify-between">
+			<section className="flex shrink-0 items-center justify-between">
 				<MonthNav year={cursor.year} month={cursor.month} onPrev={goPrev} onNext={goNext} />
 			</section>
 
@@ -73,10 +75,12 @@ export default function HomePage() {
 			<DayEvents day={selected} month={cursor.month + 1} events={selectedDayEvents} />
 
 			<div className="fixed bottom-6 right-[max(24px,calc(50%-186px))]">
-				<Fab tone="ember" accessibilityLabel="새 이벤트 추가">
+				<Fab tone="ember" accessibilityLabel="새 이벤트 추가" onPress={() => setSheetOpen(true)}>
 					<span className="-mt-0.5 text-3xl leading-none">+</span>
 				</Fab>
 			</div>
+
+			<AddEventSheet open={sheetOpen} onClose={() => setSheetOpen(false)} />
 		</main>
 	);
 }

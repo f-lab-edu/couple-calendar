@@ -128,8 +128,8 @@ const DayEvents = ({ day, month, events }: Props) => {
 	const weekday = WEEK_LABELS[date.getDay()];
 
 	return (
-		<section className="mt-2">
-			<div className="flex items-center justify-between px-1 pb-2">
+		<section className="mt-2 flex min-h-0 flex-1 flex-col">
+			<div className="flex shrink-0 items-center justify-between px-1 pb-2">
 				<Text as="p" variant="small" weight="medium" style={{ color: "#111827" }}>
 					{month}월 {day}일 {weekday}요일
 				</Text>
@@ -141,7 +141,7 @@ const DayEvents = ({ day, month, events }: Props) => {
 			{events.length === 0 ? (
 				<EmptyState />
 			) : (
-				<div className="flex flex-col gap-2">
+				<div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pb-4">
 					{events.map((event) => (
 						<EventCard key={event.id} event={event} />
 					))}
