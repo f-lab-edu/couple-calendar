@@ -1,3 +1,5 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import { Button, Card, Eyebrow, Text } from "woosign-system";
 import ChevronLeft from "@/shared/components/icon/ChevronLeft";
