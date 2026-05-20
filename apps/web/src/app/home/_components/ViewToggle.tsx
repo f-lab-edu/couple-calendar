@@ -9,8 +9,6 @@ interface Props {
 
 const ITEMS = [
 	{ key: "month", label: "월" },
-	{ key: "week", label: "주" },
-	{ key: "list", label: "목록" },
 ];
 
 const ViewToggle = ({ value, onChange }: Props) => (

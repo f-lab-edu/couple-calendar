@@ -1,12 +1,14 @@
-import { type Cell, EVENT_DOTS, WEEK_LABELS } from "@/app/home/_lib/calendar";
+import { type Cell, CATEGORY_STYLE, WEEK_LABELS } from "@/app/home/_lib/calendar";
+import type { EEventCategory } from "@/domain/entities/Event";
 
 interface Props {
 	cells: Cell[];
 	selected: number;
 	onSelect: (d: number) => void;
+	categoriesByDate: Record<number, EEventCategory[]>;
 }
 
-const CalendarGrid = ({ cells, selected, onSelect }: Props) => (
+const CalendarGrid = ({ cells, selected, onSelect, categoriesByDate }: Props) => (
 	<section>
 		<div className="grid grid-cols-7 pb-2 text-center text-xs">
 			{WEEK_LABELS.map((w, i) => (
@@ -19,7 +21,7 @@ const CalendarGrid = ({ cells, selected, onSelect }: Props) => (
 		<div className="grid grid-cols-7 gap-y-2">
 			{cells.map((cell, i) => {
 				const weekday = i % 7;
-				const dots = cell.inMonth ? EVENT_DOTS[cell.date] : undefined;
+				const categories = cell.inMonth ? categoriesByDate[cell.date] : undefined;
 				const isSelected = cell.inMonth && cell.date === selected;
 				const baseColor = !cell.inMonth
 					? "text-neutral-300"
@@ -44,10 +46,11 @@ const CalendarGrid = ({ cells, selected, onSelect }: Props) => (
 							{cell.date}
 						</span>
 						<span className="mt-1 flex h-1.5 items-center gap-0.5">
-							{dots?.map((d) => (
+							{categories?.map((category) => (
 								<span
-									key={`${cell.key}-${d}`}
-									className={`h-1.5 w-1.5 rounded-full ${d === "red" ? "bg-[#e74c3c]" : "bg-[#1f7a4a]"}`}
+									key={`${cell.key}-${category}`}
+									className="h-1.5 w-1.5 rounded-full"
+									style={{ backgroundColor: CATEGORY_STYLE[category].color }}
 								/>
 							))}
 						</span>

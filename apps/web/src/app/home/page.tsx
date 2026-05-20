@@ -6,9 +6,9 @@ import CalendarGrid from "@/app/home/_components/CalendarGrid";
 import DayEvents from "@/app/home/_components/DayEvents";
 import DdayCard from "@/app/home/_components/DdayCard";
 import MonthNav from "@/app/home/_components/MonthNav";
-import ViewToggle, { type CalendarView } from "@/app/home/_components/ViewToggle";
-import { buildMonthCells } from "@/app/home/_lib/calendar";
+import { buildMonthCells, compareCategories } from "@/app/home/_lib/calendar";
 import type Event from "@/domain/entities/Event";
+import type { EEventCategory } from "@/domain/entities/Event";
 import useMonthlyEvents from "@/presentation/hooks/useMonthlyEvents";
 
 const eventStartsOnLocalDay = (event: Event, year: number, month0Based: number, day: number): boolean => {
@@ -18,7 +18,6 @@ const eventStartsOnLocalDay = (event: Event, year: number, month0Based: number, 
 };
 
 export default function HomePage() {
-	const [view, setView] = useState<CalendarView>("month");
 	const [cursor, setCursor] = useState({ year: 2026, month: 3 });
 	const [selected, setSelected] = useState(25);
 
@@ -32,6 +31,23 @@ export default function HomePage() {
 		return monthlyEvents.filter((event) => eventStartsOnLocalDay(event, cursor.year, cursor.month, selected));
 	}, [monthlyEvents, cursor.year, cursor.month, selected]);
 
+	const categoriesByDate = useMemo<Record<number, EEventCategory[]>>(() => {
+		if (!monthlyEvents) return {};
+		const buckets: Record<number, Set<EEventCategory>> = {};
+		for (const event of monthlyEvents) {
+			const start = new Date(event.startTime);
+			if (Number.isNaN(start.getTime())) continue;
+			if (start.getFullYear() !== cursor.year || start.getMonth() !== cursor.month) continue;
+			const day = start.getDate();
+			(buckets[day] ??= new Set<EEventCategory>()).add(event.category);
+		}
+		const result: Record<number, EEventCategory[]> = {};
+		for (const [day, set] of Object.entries(buckets)) {
+			result[Number(day)] = Array.from(set).sort(compareCategories);
+		}
+		return result;
+	}, [monthlyEvents, cursor.year, cursor.month]);
+
 	const goPrev = () => {
 		setCursor((c) => (c.month === 0 ? { year: c.year - 1, month: 11 } : { year: c.year, month: c.month - 1 }));
 	};
@@ -44,11 +60,15 @@ export default function HomePage() {
 			<DdayCard />
 
 			<section className="flex items-center justify-between">
-				<ViewToggle value={view} onChange={setView} />
 				<MonthNav year={cursor.year} month={cursor.month} onPrev={goPrev} onNext={goNext} />
 			</section>
 
-			<CalendarGrid cells={cells} selected={selected} onSelect={setSelected} />
+			<CalendarGrid
+				cells={cells}
+				selected={selected}
+				onSelect={setSelected}
+				categoriesByDate={categoriesByDate}
+			/>
 
 			<DayEvents day={selected} month={cursor.month + 1} events={selectedDayEvents} />
 

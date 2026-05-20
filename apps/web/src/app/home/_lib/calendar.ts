@@ -1,24 +1,42 @@
-export type EventDot = "red" | "green";
+import type { EEventCategory } from "@/domain/entities/Event";
+
+/**
+ * Visual identity per event category. Used by the calendar grid dots and the
+ * day-event card treatment so users can tell categories apart at a glance.
+ */
+export interface CategoryStyle {
+	/** Solid hex used for dots and the card's left accent bar. */
+	color: string;
+	/** Soft background used as the badge background. */
+	softBg: string;
+	/** Korean label shown in the badge. */
+	label: string;
+}
+
+export const CATEGORY_STYLE: Record<EEventCategory, CategoryStyle> = {
+	ANNIVERSARY: { color: "#f59e0b", softBg: "#fef3c7", label: "기념일" },
+	DATE: { color: "#e74c3c", softBg: "#fde2e2", label: "데이트" },
+	INDIVIDUAL: { color: "#3b82f6", softBg: "#dbeafe", label: "개인" },
+	OTHER: { color: "#94a3b8", softBg: "#e2e8f0", label: "기타" },
+};
+
+/**
+ * Stable sort order for stacked dots — keeps anniversary first so the most
+ * meaningful signal lands at the leftmost position.
+ */
+const CATEGORY_ORDER: Record<EEventCategory, number> = {
+	ANNIVERSARY: 0,
+	DATE: 1,
+	INDIVIDUAL: 2,
+	OTHER: 3,
+};
+
+export const compareCategories = (a: EEventCategory, b: EEventCategory): number =>
+	CATEGORY_ORDER[a] - CATEGORY_ORDER[b];
 
 export type Cell = { date: number; inMonth: boolean; key: string };
 
 export const WEEK_LABELS = ["일", "월", "화", "수", "목", "금", "토"] as const;
-
-export const EVENT_DOTS: Record<number, EventDot[]> = {
-	3: ["green"],
-	5: ["red"],
-	7: ["red", "green"],
-	9: ["red"],
-	12: ["green"],
-	14: ["red"],
-	18: ["red"],
-	19: ["red"],
-	22: ["red", "green"],
-	25: ["red"],
-	26: ["red"],
-	28: ["red"],
-	29: ["red"],
-};
 
 export function buildMonthCells(year: number, month: number): Cell[] {
 	const firstDay = new Date(year, month, 1);
