@@ -1,0 +1,5 @@
+import { HttpResponse, http } from "msw";
+
+export const healthHandlers = [
+	http.get("/api/health", () => HttpResponse.json({ status: "ok", service: "couple-calendar-api" })),
+];
