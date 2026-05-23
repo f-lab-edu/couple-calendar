@@ -1,8 +1,14 @@
 import type { AuthResponse } from "@/data/dto/auth-response";
 import { MOCK_IDS } from "./ids.mock";
 
-export const mockAccessToken =
-	"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJtb2NrLXVzZXIiLCJpYXQiOjE3NDE5MDAwMDAsImV4cCI6MTc0MjAwMDAwMH0.MOCK_SIGNATURE_NOT_VALID";
+const encodeBase64Url = (value: string): string =>
+	btoa(value).replace(/=+$/, "").replace(/\+/g, "-").replace(/\//g, "_");
+
+const mockJwtHeader = encodeBase64Url(JSON.stringify({ alg: "HS256", typ: "JWT" }));
+const mockJwtPayload = encodeBase64Url(JSON.stringify({ sub: "mock-user", iat: 1741900000, exp: 1742000000 }));
+const mockJwtSignature = "MOCK_SIGNATURE_NOT_VALID";
+
+export const mockAccessToken = `${mockJwtHeader}.${mockJwtPayload}.${mockJwtSignature}`;
 
 export const mockAuthResponse: AuthResponse = {
 	accessToken: mockAccessToken,
