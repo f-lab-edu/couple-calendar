@@ -1,8 +1,14 @@
 import type { AuthResponse } from "@/data/dto/auth-response";
 import { MOCK_IDS } from "./ids.mock";
 
+const stripTrailingEquals = (value: string): string => {
+	let end = value.length;
+	while (end > 0 && value[end - 1] === "=") end -= 1;
+	return value.slice(0, end);
+};
+
 const encodeBase64Url = (value: string): string =>
-	btoa(value).replace(/=+$/, "").replace(/\+/g, "-").replace(/\//g, "_");
+	stripTrailingEquals(btoa(value)).replaceAll("+", "-").replaceAll("/", "_");
 
 const mockJwtHeader = encodeBase64Url(JSON.stringify({ alg: "HS256", typ: "JWT" }));
 const mockJwtPayload = encodeBase64Url(JSON.stringify({ sub: "mock-user", iat: 1741900000, exp: 1742000000 }));
