@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button, colors, Text } from "woosign-system";
+import useConnectCouple from "@/presentation/hooks/useConnectCouple";
 import { CodeInput } from "./_components/CodeInput";
 
 const CODE_LENGTH = 6;
@@ -10,9 +11,21 @@ const CODE_LENGTH = 6;
 const CodeInputPage = () => {
 	const router = useRouter();
 	const [code, setCode] = useState("");
+	const { mutate: connectCouple, isPending, error } = useConnectCouple();
+
 	const isComplete = code.length === CODE_LENGTH;
+
 	const handleClickBackButton = () => {
 		router.back();
+	};
+
+	const handleConnect = () => {
+		if (!isComplete || isPending) return;
+		connectCouple(code, {
+			onSuccess: () => {
+				router.replace("/home");
+			},
+		});
 	};
 
 	return (
@@ -45,16 +58,15 @@ const CodeInputPage = () => {
 
 			<CodeInput length={CODE_LENGTH} value={code} onChange={setCode} />
 
+			{error ? (
+				<Text as="p" variant="small" className="mt-3" color="#dc2626">
+					{error.message}
+				</Text>
+			) : null}
+
 			<div className="mt-auto pt-6">
-				<Button
-					className="w-full"
-					size="lg"
-					disabled={!isComplete}
-					onPress={() => {
-						// TODO: connect with code
-					}}
-				>
-					연결하기
+				<Button className="w-full" size="lg" disabled={!isComplete || isPending} onPress={handleConnect}>
+					{isPending ? "연결 중..." : "연결하기"}
 				</Button>
 			</div>
 		</div>
