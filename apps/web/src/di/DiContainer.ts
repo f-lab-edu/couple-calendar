@@ -3,6 +3,8 @@ export type Lifecycle = "singleton" | "transient";
 export interface ServiceId<T> {
 	readonly id: symbol;
 	readonly name: string;
+	// Phantom marker: keeps T referenced so resolve() infers the return type. Never set at runtime.
+	readonly _type?: T;
 }
 
 export const defineService = <T>(name: string): ServiceId<T> => ({
