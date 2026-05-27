@@ -2,8 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { Text } from "woosign-system";
-import { CoupleHero } from "./_components/CoupleHero";
-import { SettingRow } from "./_components/SettingRow";
+import { CoupleHero } from "@/presentation/settings/components/CoupleHero";
+import { SettingRow } from "@/presentation/settings/components/SettingRow";
 
 const SettingsPage = () => {
 	const router = useRouter();

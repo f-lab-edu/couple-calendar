@@ -3,8 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button, colors, Text } from "woosign-system";
-import useConnectCouple from "@/presentation/hooks/useConnectCouple";
-import { CodeInput } from "./_components/CodeInput";
+import { CodeInput } from "@/presentation/onboarding/components/CodeInput";
+import useConnectCouple from "@/presentation/onboarding/hooks/useConnectCouple";
 
 const CODE_LENGTH = 6;
 

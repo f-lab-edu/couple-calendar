@@ -1,11 +1,11 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import OnboardingConnectPage from "@/presentation/onboarding/components/OnboadingConnectPage";
+import OnboardingProfilePage from "@/presentation/onboarding/components/OnboardingProfilePage";
+import { ProgressBar } from "@/presentation/onboarding/components/ProgressBar";
 import { STEP, type Step } from "@/shared/constants/onboarding-step";
 import { ROUTES } from "@/shared/constants/routes";
-import OnboardingConnectPage from "./_components/OnboadingConnectPage";
-import OnboardingProfilePage from "./_components/OnboardingProfilePage";
-import { ProgressBar } from "./_components/ProgressBar";
 
 const OnboardingPage = () => {
 	const router = useRouter();
