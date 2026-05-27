@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import OnboardingConnectPage from "@/presentation/onboarding/components/OnboadingConnectPage";
+import OnboardingConnectPage from "@/presentation/onboarding/components/OnboardingConnectPage";
 import OnboardingProfilePage from "@/presentation/onboarding/components/OnboardingProfilePage";
 import { ProgressBar } from "@/presentation/onboarding/components/ProgressBar";
 import { STEP, type Step } from "@/shared/constants/onboarding-step";
