@@ -1,8 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Card, Input, Pill, Switch, Text } from "woosign-system";
-import TimeBlock from "@/presentation/events/components/TimeBlock";
+import { Button, Input, Pill, Switch, Text } from "woosign-system";
+import useCreateEvent from "@/presentation/events/hooks/useCreateEvent";
+import {
+	allDayEndIso,
+	allDayStartIso,
+	CATEGORY_TO_DTO,
+	type CategoryId,
+	toKstIso,
+	todayString,
+} from "@/presentation/events/lib/eventForm";
 import CATEGORIES from "@/shared/constants/events/categories";
 import REMINDERS from "@/shared/constants/events/reminders";
 
@@ -12,14 +20,34 @@ interface Props {
 }
 
 const AddEventSheet = ({ open, onClose }: Props) => {
+	const { mutate: createEvent, isPending, error } = useCreateEvent();
+
 	const [title, setTitle] = useState("");
-	const [category, setCategory] = useState<(typeof CATEGORIES)[number]["id"]>("date");
+	const [category, setCategory] = useState<CategoryId>("date");
+	const [date, setDate] = useState(todayString);
+	const [startTime, setStartTime] = useState("19:00");
+	const [endTime, setEndTime] = useState("21:00");
 	const [allDay, setAllDay] = useState(false);
 	const [reminder, setReminder] = useState<(typeof REMINDERS)[number]>("1시간 전");
 	const [location, setLocation] = useState("");
 	const [memo, setMemo] = useState("");
 
-	const isSavable = title.trim().length > 0;
+	const isSavable = title.trim().length > 0 && date.length > 0 && !isPending;
+
+	const handleSave = () => {
+		if (!isSavable) return;
+		createEvent(
+			{
+				title: title.trim(),
+				startTime: allDay ? allDayStartIso(date) : toKstIso(date, startTime),
+				endTime: allDay ? allDayEndIso(date) : toKstIso(date, endTime),
+				category: CATEGORY_TO_DTO[category],
+				description: memo.trim() || null,
+				location: location.trim() || null,
+			},
+			{ onSuccess: () => onClose() },
+		);
+	};
 
 	return (
 		<>
@@ -53,22 +81,23 @@ const AddEventSheet = ({ open, onClose }: Props) => {
 
 				<div className="flex min-h-0 flex-1 flex-col gap-7 overflow-y-auto px-5 pt-2 pb-4">
 					<section>
-						<Input
-							value={title}
-							onChangeText={setTitle}
-							placeholder="일정 제목"
-							fullWidth
-							style={{
-								border: "none",
-								borderBottom: "1px solid #e5e7eb",
-								borderRadius: 0,
-								padding: "0 0 12px",
-								fontSize: 24,
-								fontWeight: 600,
-								color: "#111827",
-								backgroundColor: "transparent",
-							}}
-						/>
+						<div style={{ borderBottom: "1px solid #e5e7eb" }}>
+							<Input
+								value={title}
+								onChangeText={setTitle}
+								placeholder="일정 제목"
+								fullWidth
+								style={{
+									borderWidth: 0,
+									borderRadius: 0,
+									padding: "0 0 12px",
+									fontSize: 24,
+									fontWeight: 600,
+									color: "#111827",
+									backgroundColor: "transparent",
+								}}
+							/>
+						</div>
 					</section>
 
 					<section className="flex flex-col gap-2.5">
@@ -91,26 +120,12 @@ const AddEventSheet = ({ open, onClose }: Props) => {
 						<Text as="p" variant="muted" style={{ fontSize: 12 }}>
 							날짜
 						</Text>
-						<Card
-							variant="outline"
-							fullWidth
-							onPress={() => {
-								/* TODO: open date picker */
-							}}
-							style={{
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "space-between",
-								borderRadius: 12,
-								padding: "12px 16px",
-								textAlign: "left",
-							}}
-						>
-							<Text as="span" variant="small" style={{ color: "#1f2937" }}>
-								2026. 04. 26 (일)
-							</Text>
-							<span className="text-neutral-400">›</span>
-						</Card>
+						<input
+							type="date"
+							value={date}
+							onChange={(e) => setDate(e.target.value)}
+							className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 outline-none focus:border-gray-400"
+						/>
 					</section>
 
 					<section className="flex flex-col gap-2.5">
@@ -121,10 +136,22 @@ const AddEventSheet = ({ open, onClose }: Props) => {
 							<Switch checked={allDay} onCheckedChange={setAllDay} label="종일" size="sm" />
 						</div>
 
-						<div className="grid grid-cols-[1fr_auto_1fr] items-stretch gap-2">
-							<TimeBlock label="시작" time="07:00 PM" disabled={allDay} />
-							<span className="self-center text-neutral-400">—</span>
-							<TimeBlock label="종료" time="09:00 PM" disabled={allDay} />
+						<div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+							<input
+								type="time"
+								value={startTime}
+								onChange={(e) => setStartTime(e.target.value)}
+								disabled={allDay}
+								className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 outline-none focus:border-gray-400 disabled:opacity-40"
+							/>
+							<span className="text-neutral-400">—</span>
+							<input
+								type="time"
+								value={endTime}
+								onChange={(e) => setEndTime(e.target.value)}
+								disabled={allDay}
+								className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 outline-none focus:border-gray-400 disabled:opacity-40"
+							/>
 						</div>
 					</section>
 
@@ -169,21 +196,19 @@ const AddEventSheet = ({ open, onClose }: Props) => {
 							multiline
 							numberOfLines={3}
 							fullWidth
+							style={{ height: "auto", alignItems: "flex-start", paddingTop: 12, paddingBottom: 12 }}
 						/>
 					</section>
 				</div>
 
 				<div className="shrink-0 border-neutral-100 border-t bg-white px-5 py-4">
-					<Button
-						variant="default"
-						size="lg"
-						fullWidth
-						disabled={!isSavable}
-						onPress={() => {
-							/* TODO: save */
-						}}
-					>
-						일정 저장
+					{error ? (
+						<Text as="p" variant="small" className="mb-2" style={{ color: "#dc2626" }}>
+							{error.message}
+						</Text>
+					) : null}
+					<Button variant="default" size="lg" fullWidth disabled={!isSavable} onPress={handleSave}>
+						{isPending ? "저장 중..." : "일정 저장"}
 					</Button>
 				</div>
 			</div>

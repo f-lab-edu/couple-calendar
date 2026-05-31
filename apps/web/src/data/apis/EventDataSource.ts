@@ -1,3 +1,4 @@
+import type { CreateEventRequest } from "@/data/dto/event-request";
 import type { EventResponse } from "@/data/dto/event-response";
 
 /**
@@ -26,5 +27,19 @@ export class EventDataSource {
 
 		const data = (await response.json()) as EventResponse[];
 		return data;
+	}
+
+	async createEvent(request: CreateEventRequest): Promise<EventResponse> {
+		const response = await fetch("/api/events", {
+			method: "POST",
+			headers: { "Content-Type": "application/json", Accept: "application/json" },
+			body: JSON.stringify(request),
+		});
+
+		if (!response.ok) {
+			throw new Error(`Failed to create event: ${response.status} ${response.statusText}`);
+		}
+
+		return (await response.json()) as EventResponse;
 	}
 }
