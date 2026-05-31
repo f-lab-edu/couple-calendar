@@ -64,8 +64,8 @@ const SettingsPage = () => {
 				<>
 					<div className="px-5 pt-2">
 						<CoupleHero
-							myName={data.me.nickname}
-							partnerName={data.partner?.nickname ?? "상대방"}
+							myName={data.me.name}
+							partnerName={data.partner?.name ?? "상대방"}
 							startedAt={formatKoreanDate(data.couple.startDate)}
 							dPlus={data.couple.daysFromStart}
 						/>
@@ -74,15 +74,13 @@ const SettingsPage = () => {
 					<div className="mt-5 flex flex-col gap-3 px-5">
 						<SettingRow
 							title="내 프로필 수정"
-							description={describeProfile(data.me.nickname, data.me.birthday)}
+							description={describeProfile(data.me.name, data.me.birthday)}
 							onClick={() => router.push(ROUTES.SETTINGS_PROFILE_EDIT)}
 						/>
 						<SettingRow
 							title="상대방 프로필"
 							description={
-								data.partner
-									? describeProfile(data.partner.nickname, data.partner.birthday)
-									: "연결 대기 중"
+								data.partner ? describeProfile(data.partner.name, data.partner.birthday) : "연결 대기 중"
 							}
 							onClick={() => router.push(ROUTES.SETTINGS_PARTNER_PROFILE)}
 						/>
