@@ -54,6 +54,20 @@ export class CoupleDataSource {
 		return (await response.json()) as CoupleResponse;
 	}
 
+	async updateStartDate(startDate: string): Promise<CoupleResponse> {
+		const response = await fetch("/api/couples/me", {
+			method: "PATCH",
+			headers: { "Content-Type": "application/json", Accept: "application/json" },
+			body: JSON.stringify({ startDate }),
+		});
+
+		if (!response.ok) {
+			throw new Error(`Failed to update start date: ${response.status} ${response.statusText}`);
+		}
+
+		return (await response.json()) as CoupleResponse;
+	}
+
 	async disconnect(): Promise<void> {
 		const response = await fetch("/api/couples/me", {
 			method: "DELETE",

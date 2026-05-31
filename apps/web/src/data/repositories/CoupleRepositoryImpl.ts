@@ -23,6 +23,11 @@ export class CoupleRepositoryImpl implements CoupleRepository {
 		return parseCouple(dto);
 	}
 
+	async updateStartDate(startDate: string): Promise<Couple> {
+		const dto = await this.dataSource.updateStartDate(startDate);
+		return parseCouple(dto);
+	}
+
 	async disconnect(): Promise<void> {
 		await this.dataSource.disconnect();
 	}

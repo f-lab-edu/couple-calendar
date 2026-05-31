@@ -3,6 +3,7 @@ import { CoupleRepositoryImpl } from "@/data/repositories/CoupleRepositoryImpl";
 import { ConnectCoupleUseCase } from "@/domain/useCases/ConnectCoupleUseCase";
 import { DisconnectCoupleUseCase } from "@/domain/useCases/DisconnectCoupleUseCase";
 import { GenerateInviteCodeUseCase } from "@/domain/useCases/GenerateInviteCodeUseCase";
+import { UpdateCoupleStartDateUseCase } from "@/domain/useCases/UpdateCoupleStartDateUseCase";
 
 /**
  * Couple 도메인 조립 루트(composition root).
@@ -17,4 +18,5 @@ export const coupleRepository = new CoupleRepositoryImpl(dataSource);
 
 export const generateInviteCodeUseCase = new GenerateInviteCodeUseCase(coupleRepository);
 export const connectCoupleUseCase = new ConnectCoupleUseCase(coupleRepository);
+export const updateCoupleStartDateUseCase = new UpdateCoupleStartDateUseCase(coupleRepository);
 export const disconnectCoupleUseCase = new DisconnectCoupleUseCase(coupleRepository);

@@ -6,8 +6,10 @@ import { Text } from "woosign-system";
 import { CoupleHero } from "@/presentation/settings/components/CoupleHero";
 import { DisconnectDialog } from "@/presentation/settings/components/DisconnectDialog";
 import { SettingRow } from "@/presentation/settings/components/SettingRow";
+import { StartDateDialog } from "@/presentation/settings/components/StartDateDialog";
 import useCoupleProfile from "@/presentation/settings/hooks/useCoupleProfile";
 import useDisconnectCouple from "@/presentation/settings/hooks/useDisconnectCouple";
+import useUpdateCoupleStartDate from "@/presentation/settings/hooks/useUpdateCoupleStartDate";
 import { ROUTES } from "@/shared/constants/routes";
 import { formatBirthday, formatKoreanDate } from "@/shared/lib/date";
 
@@ -18,7 +20,9 @@ const SettingsPage = () => {
 	const router = useRouter();
 	const { data, isLoading, isError } = useCoupleProfile();
 	const disconnect = useDisconnectCouple();
+	const updateStartDate = useUpdateCoupleStartDate();
 	const [dialogOpen, setDialogOpen] = useState(false);
+	const [startDateOpen, setStartDateOpen] = useState(false);
 
 	return (
 		<div className="flex flex-col min-h-[100dvh] bg-white">
@@ -73,6 +77,11 @@ const SettingsPage = () => {
 
 					<div className="mt-5 flex flex-col gap-3 px-5">
 						<SettingRow
+							title="우리 시작일"
+							description={formatKoreanDate(data.couple.startDate)}
+							onClick={() => setStartDateOpen(true)}
+						/>
+						<SettingRow
 							title="내 프로필 수정"
 							description={describeProfile(data.me.name, data.me.birthday)}
 							onClick={() => router.push(ROUTES.SETTINGS_PROFILE_EDIT)}
@@ -99,6 +108,17 @@ const SettingsPage = () => {
 				loading={disconnect.isPending}
 				onCancel={() => setDialogOpen(false)}
 				onConfirm={() => disconnect.mutate()}
+			/>
+
+			<StartDateDialog
+				open={startDateOpen}
+				initialDate={data?.couple.startDate.slice(0, 10) ?? ""}
+				loading={updateStartDate.isPending}
+				errorMessage={updateStartDate.isError ? updateStartDate.error?.message : undefined}
+				onCancel={() => setStartDateOpen(false)}
+				onConfirm={(startDate) =>
+					updateStartDate.mutate(startDate, { onSuccess: () => setStartDateOpen(false) })
+				}
 			/>
 		</div>
 	);
