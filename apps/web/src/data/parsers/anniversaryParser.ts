@@ -4,9 +4,13 @@ import type { AnniversaryResponse, AnniversaryType } from "../dto/anniversary-re
 type AnniversariesDto = AnniversaryResponse[]
 
 const anniversaryTypeParser = (anniversaryDtoType: AnniversaryType): EAnniversaryType => {
-  switch(anniversaryDtoType) {
-    case AnniversaryType
-      return EAnniversaryType.
+  switch (anniversaryDtoType) {
+    case "CUSTOM":
+      return "CUSTOM"
+    case "AUTO":
+      return "AUTO"
+    default:
+      throw new Error(`Unknown anniversary type from server: ${anniversaryDtoType}`)
   }
 }
 
@@ -19,7 +23,7 @@ const AnniversaryParser = (anniversariesDto: AnniversariesDto): Anniversary[] =>
       anniversaryDto.date,
       anniversaryDto.isRecurring,
       anniversaryDto.description,
-      anniversaryDto.type,
+      anniversaryTypeParser(anniversaryDto.type),
       anniversaryDto.daysUntil,
     )
   )

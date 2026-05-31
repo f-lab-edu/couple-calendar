@@ -7,7 +7,7 @@ export class AnniversaryDataSource {
 		return mockAutoAnniversaries;
 	}
 
-	async addAnniversary(anniversary: AnniversaryResponse): Promise<void> {
+	async addAnniversary(_anniversary: AnniversaryResponse): Promise<void> {
 		// 추후에 fetcher로 대체
 	}
 }

@@ -43,7 +43,6 @@ export const CodeInput = ({ length = 6, value, onChange }: Props) => {
 						borderWidth: 1,
 						borderStyle: "solid",
 						borderColor: colors.border,
-						backgroundColor: colors.background,
 						color: colors.foreground,
 					}}
 				/>

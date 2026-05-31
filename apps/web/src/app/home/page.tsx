@@ -2,15 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { Fab } from "woosign-system";
-import AddEventSheet from "@/app/home/_components/AddEventSheet";
-import CalendarGrid from "@/app/home/_components/CalendarGrid";
-import DayEvents from "@/app/home/_components/DayEvents";
-import DdayCard from "@/app/home/_components/DdayCard";
-import MonthNav from "@/app/home/_components/MonthNav";
-import { buildMonthCells, compareCategories } from "@/app/home/_lib/calendar";
 import type Event from "@/domain/entities/Event";
 import type { EEventCategory } from "@/domain/entities/Event";
-import useMonthlyEvents from "@/presentation/hooks/useMonthlyEvents";
+import AddEventSheet from "@/presentation/events/components/AddEventSheet";
+import CalendarGrid from "@/presentation/home/components/CalendarGrid";
+import DayEvents from "@/presentation/home/components/DayEvents";
+import DdayCard from "@/presentation/home/components/DdayCard";
+import MonthNav from "@/presentation/home/components/MonthNav";
+import useMonthlyEvents from "@/presentation/home/hooks/useMonthlyEvents";
+import { buildMonthCells, compareCategories } from "@/presentation/home/lib/calendar";
 
 const eventStartsOnLocalDay = (event: Event, year: number, month0Based: number, day: number): boolean => {
 	const start = new Date(event.startTime);
