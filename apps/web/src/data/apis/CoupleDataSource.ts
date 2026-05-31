@@ -1,4 +1,4 @@
-import type { CoupleResponse } from "@/data/dto/couple-response";
+import type { CoupleResponse, InviteCodeResponse } from "@/data/dto/couple-response";
 
 interface ErrorResponseBody {
 	code?: string;
@@ -6,6 +6,20 @@ interface ErrorResponseBody {
 }
 
 export class CoupleDataSource {
+	async invite(startDate: string): Promise<InviteCodeResponse> {
+		const response = await fetch("/api/couples/invite", {
+			method: "POST",
+			headers: { "Content-Type": "application/json", Accept: "application/json" },
+			body: JSON.stringify({ startDate }),
+		});
+
+		if (!response.ok) {
+			throw new Error(`Failed to create invite code: ${response.status} ${response.statusText}`);
+		}
+
+		return (await response.json()) as InviteCodeResponse;
+	}
+
 	async connect(inviteCode: string): Promise<CoupleResponse> {
 		const response = await fetch("/api/couples/connect", {
 			method: "POST",
