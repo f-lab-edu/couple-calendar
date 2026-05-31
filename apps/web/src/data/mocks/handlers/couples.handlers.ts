@@ -40,5 +40,12 @@ export const couplesHandlers = [
 		return HttpResponse.json(mockCouple);
 	}),
 
+	// NOTE(backend gap): GET /api/couples/me 는 백엔드 스펙에 없음 → mock으로 임시 대응.
+	// "/me"는 "/:id"보다 먼저 등록해야 :id 핸들러에 가로채이지 않는다.
+	http.get("/api/couples/me", () => HttpResponse.json(mockCouple)),
+
+	// NOTE(backend gap): DELETE /api/couples/me (연결 해제)도 백엔드 미구현 → mock.
+	http.delete("/api/couples/me", () => new HttpResponse(null, { status: 204 })),
+
 	http.get("/api/couples/:id", () => HttpResponse.json(mockCouple)),
 ];

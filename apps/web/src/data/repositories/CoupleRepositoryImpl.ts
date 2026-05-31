@@ -10,4 +10,13 @@ export class CoupleRepositoryImpl implements CoupleRepository {
 		const dto = await this.dataSource.connect(inviteCode);
 		return parseCouple(dto);
 	}
+
+	async getMyCouple(): Promise<Couple> {
+		const dto = await this.dataSource.getMyCouple();
+		return parseCouple(dto);
+	}
+
+	async disconnect(): Promise<void> {
+		await this.dataSource.disconnect();
+	}
 }

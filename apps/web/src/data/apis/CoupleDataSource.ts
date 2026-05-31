@@ -26,4 +26,28 @@ export class CoupleDataSource {
 
 		return (await response.json()) as CoupleResponse;
 	}
+
+	async getMyCouple(): Promise<CoupleResponse> {
+		const response = await fetch("/api/couples/me", {
+			method: "GET",
+			headers: { Accept: "application/json" },
+		});
+
+		if (!response.ok) {
+			throw new Error(`Failed to fetch couple: ${response.status} ${response.statusText}`);
+		}
+
+		return (await response.json()) as CoupleResponse;
+	}
+
+	async disconnect(): Promise<void> {
+		const response = await fetch("/api/couples/me", {
+			method: "DELETE",
+			headers: { Accept: "application/json" },
+		});
+
+		if (!response.ok) {
+			throw new Error(`Failed to disconnect couple: ${response.status} ${response.statusText}`);
+		}
+	}
 }
