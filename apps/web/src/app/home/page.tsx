@@ -10,7 +10,7 @@ import DayEvents from "@/presentation/home/components/DayEvents";
 import DdayCard from "@/presentation/home/components/DdayCard";
 import MonthNav from "@/presentation/home/components/MonthNav";
 import useMonthlyEvents from "@/presentation/home/hooks/useMonthlyEvents";
-import { buildMonthCells, compareCategories } from "@/presentation/home/lib/calendar";
+import { buildMonthCells, compareCategories, todayParts } from "@/presentation/home/lib/calendar";
 
 const eventStartsOnLocalDay = (event: Event, year: number, month0Based: number, day: number): boolean => {
 	const start = new Date(event.startTime);
@@ -19,8 +19,10 @@ const eventStartsOnLocalDay = (event: Event, year: number, month0Based: number, 
 };
 
 export default function HomePage() {
-	const [cursor, setCursor] = useState({ year: 2026, month: 3 });
-	const [selected, setSelected] = useState(25);
+	// 최초 진입 시 오늘 날짜의 달력을 보여주고, 오늘을 선택 상태로 둔다.
+	const today = useMemo(todayParts, []);
+	const [cursor, setCursor] = useState({ year: today.year, month: today.month });
+	const [selected, setSelected] = useState(today.day);
 	const [sheetOpen, setSheetOpen] = useState(false);
 
 	const cells = useMemo(() => buildMonthCells(cursor.year, cursor.month), [cursor]);
@@ -65,12 +67,7 @@ export default function HomePage() {
 				<MonthNav year={cursor.year} month={cursor.month} onPrev={goPrev} onNext={goNext} />
 			</section>
 
-			<CalendarGrid
-				cells={cells}
-				selected={selected}
-				onSelect={setSelected}
-				categoriesByDate={categoriesByDate}
-			/>
+			<CalendarGrid cells={cells} selected={selected} onSelect={setSelected} categoriesByDate={categoriesByDate} />
 
 			<DayEvents day={selected} month={cursor.month + 1} events={selectedDayEvents} />
 
