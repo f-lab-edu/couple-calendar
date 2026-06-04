@@ -36,6 +36,11 @@ const ProfileEditPage = () => {
 
 	const today = new Date().toISOString().slice(0, 10);
 
+	// 폼의 단일 필드만 갱신한다. (setForm({ ...form, key }) 반복 제거)
+	const updateField = <K extends keyof ProfileForm>(key: K, value: ProfileForm[K]) => {
+		setForm((prev) => (prev ? { ...prev, [key]: value } : prev));
+	};
+
 	const handleSave = () => {
 		if (!form) return;
 		update.mutate(
@@ -92,7 +97,7 @@ const ProfileEditPage = () => {
 							<input
 								type="text"
 								value={form.name}
-								onChange={(e) => setForm({ ...form, name: e.target.value })}
+								onChange={(e) => updateField("name", e.target.value)}
 								className="w-1/2 bg-transparent text-right text-base font-semibold text-gray-900 outline-none"
 							/>
 						</div>
@@ -104,7 +109,7 @@ const ProfileEditPage = () => {
 								<input
 									type="text"
 									value={form.nickname}
-									onChange={(e) => setForm({ ...form, nickname: e.target.value })}
+									onChange={(e) => updateField("nickname", e.target.value)}
 									className="w-full bg-transparent text-right text-base font-semibold text-gray-900 outline-none"
 								/>
 								<Text as="span" variant="small" style={{ marginTop: 2, color: "#9ca3af", fontSize: 12 }}>
@@ -120,7 +125,7 @@ const ProfileEditPage = () => {
 								type="date"
 								value={form.birthday}
 								max={today}
-								onChange={(e) => setForm({ ...form, birthday: e.target.value })}
+								onChange={(e) => updateField("birthday", e.target.value)}
 								className="bg-transparent text-right text-base font-semibold text-gray-900 outline-none"
 							/>
 						</div>
@@ -130,7 +135,7 @@ const ProfileEditPage = () => {
 					<div className="bg-white px-5 py-4">
 						<textarea
 							value={form.bio}
-							onChange={(e) => setForm({ ...form, bio: e.target.value })}
+							onChange={(e) => updateField("bio", e.target.value)}
 							rows={3}
 							placeholder="자기소개를 입력해 주세요."
 							className="w-full resize-none bg-transparent text-base text-gray-900 outline-none placeholder:text-gray-300"

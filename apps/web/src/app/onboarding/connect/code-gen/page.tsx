@@ -49,13 +49,17 @@ const CodeGenPage = () => {
 		}
 	};
 
+	const handleClickBackButton = () => {
+		router.back();
+	};
+
 	return (
 		<div className="flex flex-col min-h-[100dvh] px-5 pt-3 pb-6 bg-white">
 			<button
 				type="button"
 				aria-label="뒤로 가기"
 				className="-ml-2 mb-2 flex h-10 w-10 items-center justify-center"
-				onClick={() => router.back()}
+				onClick={handleClickBackButton}
 			>
 				<ChevronLeft />
 			</button>
@@ -113,13 +117,21 @@ const CodeGenPage = () => {
 						<ul className="space-y-0.5">
 							<li className="flex gap-2">
 								<span style={{ color: "#6b7280" }}>•</span>
-								<Text as="span" variant="small" style={{ fontSize: 13, lineHeight: "20px", color: colors.textTertiary }}>
+								<Text
+									as="span"
+									variant="small"
+									style={{ fontSize: 13, lineHeight: "20px", color: colors.textTertiary }}
+								>
 									상대방이 코드를 입력하면 자동으로 연결됩니다.
 								</Text>
 							</li>
 							<li className="flex gap-2">
 								<span style={{ color: "#6b7280" }}>•</span>
-								<Text as="span" variant="small" style={{ fontSize: 13, lineHeight: "20px", color: colors.textTertiary }}>
+								<Text
+									as="span"
+									variant="small"
+									style={{ fontSize: 13, lineHeight: "20px", color: colors.textTertiary }}
+								>
 									코드는 다른 사람에게 노출되지 않게 주의해주세요.
 								</Text>
 							</li>

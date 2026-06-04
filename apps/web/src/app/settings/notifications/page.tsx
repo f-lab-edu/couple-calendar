@@ -80,6 +80,11 @@ const NotificationsPage = () => {
 				form.partnerActivityEnabled !== data.partnerActivityEnabled
 			: false;
 
+	// 폼의 단일 필드만 갱신한다. (setForm({ ...form, key }) 반복 제거)
+	const updateField = <K extends keyof Form>(key: K, value: Form[K]) => {
+		setForm((prev) => (prev ? { ...prev, [key]: value } : prev));
+	};
+
 	const handleSave = () => {
 		if (!form) return;
 		update.mutate(form, { onSuccess: () => router.back() });
@@ -103,13 +108,13 @@ const NotificationsPage = () => {
 						<ToggleRow
 							title="일정 알림 받기"
 							checked={form.eventEnabled}
-							onChange={(next) => setForm({ ...form, eventEnabled: next })}
+							onChange={(next) => updateField("eventEnabled", next)}
 						/>
 						{form.eventEnabled && (
 							<ReminderPicker
 								options={EVENT_REMINDERS}
 								value={form.eventReminder}
-								onSelect={(next) => setForm({ ...form, eventReminder: next })}
+								onSelect={(next) => updateField("eventReminder", next)}
 							/>
 						)}
 					</div>
@@ -119,13 +124,13 @@ const NotificationsPage = () => {
 						<ToggleRow
 							title="기념일 알림 받기"
 							checked={form.anniversaryEnabled}
-							onChange={(next) => setForm({ ...form, anniversaryEnabled: next })}
+							onChange={(next) => updateField("anniversaryEnabled", next)}
 						/>
 						{form.anniversaryEnabled && (
 							<ReminderPicker
 								options={ANNIVERSARY_REMINDERS}
 								value={form.anniversaryReminder}
-								onSelect={(next) => setForm({ ...form, anniversaryReminder: next })}
+								onSelect={(next) => updateField("anniversaryReminder", next)}
 							/>
 						)}
 					</div>
@@ -135,7 +140,7 @@ const NotificationsPage = () => {
 						<ToggleRow
 							title="상대방 활동 알림"
 							checked={form.partnerActivityEnabled}
-							onChange={(next) => setForm({ ...form, partnerActivityEnabled: next })}
+							onChange={(next) => updateField("partnerActivityEnabled", next)}
 						/>
 					</div>
 
