@@ -2,7 +2,10 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Button, Pill, Switch, Text } from "woosign-system";
+import { Pill, Switch, Text } from "woosign-system";
+import { SectionLabel } from "@/presentation/settings/components/SectionLabel";
+import { SettingsEditHeader } from "@/presentation/settings/components/SettingsEditHeader";
+import { SettingsLoadState } from "@/presentation/settings/components/SettingsLoadState";
 import useNotificationSettings from "@/presentation/settings/hooks/useNotificationSettings";
 import useUpdateNotificationSettings from "@/presentation/settings/hooks/useUpdateNotificationSettings";
 import { ANNIVERSARY_REMINDERS, EVENT_REMINDERS } from "@/shared/constants/notifications";
@@ -14,17 +17,6 @@ interface Form {
 	anniversaryReminder: string;
 	partnerActivityEnabled: boolean;
 }
-
-const SectionLabel = ({ children }: { children: string }) => (
-	<Text
-		as="p"
-		variant="small"
-		weight="semibold"
-		style={{ padding: "16px 20px 8px", fontSize: 13, color: "#9ca3af" }}
-	>
-		{children}
-	</Text>
-);
 
 const ToggleRow = ({
 	title,
@@ -95,54 +87,14 @@ const NotificationsPage = () => {
 
 	return (
 		<div className="flex flex-col min-h-[100dvh] bg-[#f7f4ef]">
-			<header className="flex items-center justify-between px-3 pt-4 pb-3 bg-white">
-				<div className="flex items-center gap-2">
-					<button
-						type="button"
-						aria-label="뒤로가기"
-						onClick={() => router.back()}
-						className="flex h-9 w-9 items-center justify-center rounded-full text-gray-700"
-					>
-						<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-							<path
-								d="M12.5 4.5L7 10L12.5 15.5"
-								stroke="currentColor"
-								strokeWidth="1.6"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							/>
-						</svg>
-					</button>
-					<Text as="h1" variant="p" weight="semibold" style={{ lineHeight: "24px", fontSize: 18 }}>
-						알림 설정
-					</Text>
-				</div>
-				<Button
-					variant="default"
-					size="sm"
-					disabled={!changed || update.isPending}
-					loading={update.isPending}
-					onPress={handleSave}
-					style={{ borderRadius: 999 }}
-				>
-					저장
-				</Button>
-			</header>
+			<SettingsEditHeader
+				title="알림 설정"
+				onSave={handleSave}
+				saveDisabled={!changed || update.isPending}
+				saving={update.isPending}
+			/>
 
-			{isLoading && (
-				<div className="flex flex-1 items-center justify-center">
-					<Text as="p" variant="small" style={{ color: "#9ca3af" }}>
-						불러오는 중…
-					</Text>
-				</div>
-			)}
-			{isError && (
-				<div className="flex flex-1 items-center justify-center px-6">
-					<Text as="p" variant="small" style={{ color: "#dc2626" }}>
-						알림 설정을 불러오지 못했어요.
-					</Text>
-				</div>
-			)}
+			<SettingsLoadState isLoading={isLoading} isError={isError} errorText="알림 설정을 불러오지 못했어요." />
 
 			{form && (
 				<>

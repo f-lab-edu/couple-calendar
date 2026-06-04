@@ -16,14 +16,7 @@ interface Props {
  * 커플 시작일 수정 다이얼로그.
  * woosign-system에 Modal이 없어 오버레이 + 패널을 직접 구성한다.
  */
-export const StartDateDialog = ({
-	open,
-	initialDate,
-	loading = false,
-	errorMessage,
-	onCancel,
-	onConfirm,
-}: Props) => {
+export const StartDateDialog = ({ open, initialDate, loading = false, errorMessage, onCancel, onConfirm }: Props) => {
 	const [date, setDate] = useState(initialDate);
 	const today = new Date().toISOString().slice(0, 10);
 
@@ -67,13 +60,7 @@ export const StartDateDialog = ({
 					<Button variant="secondary" fullWidth disabled={loading} onPress={onCancel}>
 						취소
 					</Button>
-					<Button
-						variant="default"
-						fullWidth
-						loading={loading}
-						disabled={!date}
-						onPress={() => onConfirm(date)}
-					>
+					<Button variant="default" fullWidth loading={loading} disabled={!date} onPress={() => onConfirm(date)}>
 						저장
 					</Button>
 				</div>

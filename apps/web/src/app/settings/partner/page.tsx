@@ -2,25 +2,17 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Button, Card, Text } from "woosign-system";
+import { Card, Text } from "woosign-system";
 import useMonthlyEvents from "@/presentation/home/hooks/useMonthlyEvents";
 import { InfoRow } from "@/presentation/settings/components/InfoRow";
+import { SectionLabel } from "@/presentation/settings/components/SectionLabel";
+import { SettingsEditHeader } from "@/presentation/settings/components/SettingsEditHeader";
+import { SettingsLoadState } from "@/presentation/settings/components/SettingsLoadState";
 import useAnniversaries from "@/presentation/settings/hooks/useAnniversaries";
 import useCoupleProfile from "@/presentation/settings/hooks/useCoupleProfile";
 import useUpdateMyProfile from "@/presentation/settings/hooks/useUpdateMyProfile";
 import { formatKoreanDate } from "@/shared/lib/date";
 import { zodiacSign } from "@/shared/lib/zodiac";
-
-const SectionLabel = ({ children }: { children: string }) => (
-	<Text
-		as="p"
-		variant="small"
-		weight="semibold"
-		style={{ padding: "16px 20px 8px", fontSize: 13, color: "#9ca3af" }}
-	>
-		{children}
-	</Text>
-);
 
 const PartnerProfilePage = () => {
 	const router = useRouter();
@@ -47,54 +39,14 @@ const PartnerProfilePage = () => {
 
 	return (
 		<div className="flex flex-col min-h-[100dvh] bg-[#f7f4ef]">
-			<header className="flex items-center justify-between px-3 pt-4 pb-3 bg-white">
-				<div className="flex items-center gap-2">
-					<button
-						type="button"
-						aria-label="뒤로가기"
-						onClick={() => router.back()}
-						className="flex h-9 w-9 items-center justify-center rounded-full text-gray-700"
-					>
-						<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-							<path
-								d="M12.5 4.5L7 10L12.5 15.5"
-								stroke="currentColor"
-								strokeWidth="1.6"
-								strokeLinecap="round"
-								strokeLinejoin="round"
-							/>
-						</svg>
-					</button>
-					<Text as="h1" variant="p" weight="semibold" style={{ lineHeight: "24px", fontSize: 18 }}>
-						상대방 프로필
-					</Text>
-				</div>
-				<Button
-					variant="default"
-					size="sm"
-					disabled={!changed || update.isPending}
-					loading={update.isPending}
-					onPress={handleSave}
-					style={{ borderRadius: 999 }}
-				>
-					저장
-				</Button>
-			</header>
+			<SettingsEditHeader
+				title="상대방 프로필"
+				onSave={handleSave}
+				saveDisabled={!changed || update.isPending}
+				saving={update.isPending}
+			/>
 
-			{isLoading && (
-				<div className="flex flex-1 items-center justify-center">
-					<Text as="p" variant="small" style={{ color: "#9ca3af" }}>
-						불러오는 중…
-					</Text>
-				</div>
-			)}
-			{isError && (
-				<div className="flex flex-1 items-center justify-center px-6">
-					<Text as="p" variant="small" style={{ color: "#dc2626" }}>
-						프로필을 불러오지 못했어요.
-					</Text>
-				</div>
-			)}
+			<SettingsLoadState isLoading={isLoading} isError={isError} errorText="프로필을 불러오지 못했어요." />
 			{data && !partner && (
 				<div className="flex flex-1 items-center justify-center px-6">
 					<Text as="p" variant="small" style={{ color: "#9ca3af" }}>
@@ -146,11 +98,7 @@ const PartnerProfilePage = () => {
 
 					<SectionLabel>{`${partner.name}에 대해`}</SectionLabel>
 					<div className="flex flex-col gap-px bg-white">
-						<InfoRow
-							label={`${partner.name}이 등록한 메모`}
-							value={partner.bio ?? "없음"}
-							valueMuted={!partner.bio}
-						/>
+						<InfoRow label={`${partner.name}이 등록한 메모`} value={partner.bio ?? "없음"} valueMuted={!partner.bio} />
 						<InfoRow label="기념일 보기" value={`${anniversaries?.length ?? 0}개`} chevron />
 						<InfoRow label="공유한 사진" value="42장" chevron />
 					</div>

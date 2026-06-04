@@ -16,6 +16,17 @@ interface UpdateCoupleRequestBody {
 
 const MS_PER_DAY = 86_400_000;
 
+const badRequest = (message: string) => HttpResponse.json({ code: "BAD_REQUEST", message }, { status: 400 });
+
+/** 요청 JSON 본문을 파싱한다. 파싱 실패 시 null. */
+const readJsonBody = async <T>(request: Request): Promise<T | null> => {
+	try {
+		return (await request.json()) as T;
+	} catch {
+		return null;
+	}
+};
+
 // 시작일 수정이 누적되도록 커플을 가변 스토어로 보관한다.
 let coupleStore: CoupleResponse = structuredClone(mockCouple);
 
@@ -29,31 +40,17 @@ const daysFromStart = (startDate: string): number => {
 
 export const couplesHandlers = [
 	http.post("/api/couples/invite", async ({ request }) => {
-		let body: InviteRequestBody | null = null;
-		try {
-			body = (await request.json()) as InviteRequestBody;
-		} catch {
-			return HttpResponse.json({ code: "BAD_REQUEST", message: "잘못된 요청 본문입니다" }, { status: 400 });
-		}
-
-		if (!body?.startDate) {
-			return HttpResponse.json({ code: "BAD_REQUEST", message: "startDate가 필요합니다" }, { status: 400 });
-		}
+		const body = await readJsonBody<InviteRequestBody>(request);
+		if (!body) return badRequest("잘못된 요청 본문입니다");
+		if (!body.startDate) return badRequest("startDate가 필요합니다");
 
 		return HttpResponse.json(mockInviteCode);
 	}),
 
 	http.post("/api/couples/connect", async ({ request }) => {
-		let body: ConnectRequestBody | null = null;
-		try {
-			body = (await request.json()) as ConnectRequestBody;
-		} catch {
-			return HttpResponse.json({ code: "BAD_REQUEST", message: "잘못된 요청 본문입니다" }, { status: 400 });
-		}
-
-		if (!body?.inviteCode) {
-			return HttpResponse.json({ code: "BAD_REQUEST", message: "inviteCode가 필요합니다" }, { status: 400 });
-		}
+		const body = await readJsonBody<ConnectRequestBody>(request);
+		if (!body) return badRequest("잘못된 요청 본문입니다");
+		if (!body.inviteCode) return badRequest("inviteCode가 필요합니다");
 
 		return HttpResponse.json(mockCouple);
 	}),
@@ -64,16 +61,9 @@ export const couplesHandlers = [
 
 	// NOTE(backend gap): PATCH /api/couples/me (시작일 수정) 백엔드 미구현 → mock.
 	http.patch("/api/couples/me", async ({ request }) => {
-		let body: UpdateCoupleRequestBody | null = null;
-		try {
-			body = (await request.json()) as UpdateCoupleRequestBody;
-		} catch {
-			return HttpResponse.json({ code: "BAD_REQUEST", message: "잘못된 요청 본문입니다" }, { status: 400 });
-		}
-
-		if (!body?.startDate) {
-			return HttpResponse.json({ code: "BAD_REQUEST", message: "startDate가 필요합니다" }, { status: 400 });
-		}
+		const body = await readJsonBody<UpdateCoupleRequestBody>(request);
+		if (!body) return badRequest("잘못된 요청 본문입니다");
+		if (!body.startDate) return badRequest("startDate가 필요합니다");
 
 		coupleStore = {
 			...coupleStore,
