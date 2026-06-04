@@ -10,7 +10,7 @@ import { SettingsHeader } from "@/presentation/settings/components/SettingsHeade
 import { StartDateDialog } from "@/presentation/settings/components/StartDateDialog";
 import useCoupleProfile from "@/presentation/settings/hooks/useCoupleProfile";
 import useDisconnectCouple from "@/presentation/settings/hooks/useDisconnectCouple";
-import useUpdateCoupleStartDate from "@/presentation/settings/hooks/useUpdateCoupleStartDate";
+import useStartDateDialog from "@/presentation/settings/hooks/useStartDateDialog";
 import { ROUTES } from "@/shared/constants/routes";
 import { formatBirthday, formatKoreanDate } from "@/shared/lib/date";
 
@@ -21,9 +21,12 @@ const SettingsPage = () => {
 	const router = useRouter();
 	const { data, isLoading, isError } = useCoupleProfile();
 	const disconnect = useDisconnectCouple();
-	const updateStartDate = useUpdateCoupleStartDate();
+	const startDate = useStartDateDialog();
 	const [dialogOpen, setDialogOpen] = useState(false);
-	const [startDateOpen, setStartDateOpen] = useState(false);
+
+	// 연결 끊기 다이얼로그 동작 (시작일 다이얼로그는 useStartDateDialog가 담당)
+	const closeDisconnectDialog = () => setDialogOpen(false);
+	const handleDisconnect = () => disconnect.mutate();
 
 	return (
 		<div className="flex flex-col min-h-[100dvh] bg-white">
@@ -60,7 +63,7 @@ const SettingsPage = () => {
 						<SettingRow
 							title="우리 시작일"
 							description={formatKoreanDate(data.couple.startDate)}
-							onClick={() => setStartDateOpen(true)}
+							onClick={startDate.show}
 						/>
 						<SettingRow
 							title="내 프로필 수정"
@@ -85,17 +88,17 @@ const SettingsPage = () => {
 			<DisconnectDialog
 				open={dialogOpen}
 				loading={disconnect.isPending}
-				onCancel={() => setDialogOpen(false)}
-				onConfirm={() => disconnect.mutate()}
+				onCancel={closeDisconnectDialog}
+				onConfirm={handleDisconnect}
 			/>
 
 			<StartDateDialog
-				open={startDateOpen}
+				open={startDate.open}
 				initialDate={data?.couple.startDate.slice(0, 10) ?? ""}
-				loading={updateStartDate.isPending}
-				errorMessage={updateStartDate.isError ? updateStartDate.error?.message : undefined}
-				onCancel={() => setStartDateOpen(false)}
-				onConfirm={(startDate) => updateStartDate.mutate(startDate, { onSuccess: () => setStartDateOpen(false) })}
+				loading={startDate.loading}
+				errorMessage={startDate.error}
+				onCancel={startDate.hide}
+				onConfirm={startDate.confirm}
 			/>
 		</div>
 	);
