@@ -1,67 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { Button, Text } from "woosign-system";
 import { SectionLabel } from "@/presentation/settings/components/SectionLabel";
 import { SettingsEditHeader } from "@/presentation/settings/components/SettingsEditHeader";
 import { SettingsLoadState } from "@/presentation/settings/components/SettingsLoadState";
-import useCoupleProfile from "@/presentation/settings/hooks/useCoupleProfile";
-import useUpdateMyProfile from "@/presentation/settings/hooks/useUpdateMyProfile";
-
-interface ProfileForm {
-	name: string;
-	nickname: string;
-	birthday: string;
-	bio: string;
-}
+import useProfileEditForm from "@/presentation/settings/hooks/useProfileEditForm";
 
 const ProfileEditPage = () => {
-	const router = useRouter();
-	const { data, isLoading, isError } = useCoupleProfile();
-	const update = useUpdateMyProfile();
-	const me = data?.me;
-
-	const [form, setForm] = useState<ProfileForm | null>(null);
-
-	useEffect(() => {
-		if (!me) return;
-		setForm({
-			name: me.name,
-			nickname: me.nickname,
-			birthday: me.birthday ?? "",
-			bio: me.bio ?? "",
-		});
-	}, [me]);
-
-	const today = new Date().toISOString().slice(0, 10);
-
-	// 폼의 단일 필드만 갱신한다. (setForm({ ...form, key }) 반복 제거)
-	const updateField = <K extends keyof ProfileForm>(key: K, value: ProfileForm[K]) => {
-		setForm((prev) => (prev ? { ...prev, [key]: value } : prev));
-	};
-
-	const handleSave = () => {
-		if (!form) return;
-		update.mutate(
-			{
-				name: form.name,
-				nickname: form.nickname,
-				birthday: form.birthday || null,
-				bio: form.bio || null,
-			},
-			{ onSuccess: () => router.back() },
-		);
-	};
+	const { isLoading, isError, form, updateField, today, save, saving, saveDisabled, saveError, cancel } =
+		useProfileEditForm();
 
 	return (
 		<div className="flex flex-col min-h-[100dvh] bg-[#f7f4ef]">
-			<SettingsEditHeader
-				title="내 프로필 수정"
-				onSave={handleSave}
-				saveDisabled={!form || update.isPending}
-				saving={update.isPending}
-			/>
+			<SettingsEditHeader title="내 프로필 수정" onSave={save} saveDisabled={saveDisabled} saving={saving} />
 
 			<SettingsLoadState isLoading={isLoading} isError={isError} errorText="프로필을 불러오지 못했어요." />
 
@@ -142,14 +93,14 @@ const ProfileEditPage = () => {
 						/>
 					</div>
 
-					{update.isError && (
+					{saveError && (
 						<Text as="p" variant="small" style={{ padding: "12px 20px 0", color: "#dc2626" }}>
-							{update.error?.message ?? "저장에 실패했어요. 다시 시도해 주세요."}
+							{saveError}
 						</Text>
 					)}
 
 					<div className="mt-auto px-5 py-6">
-						<Button variant="secondary" size="lg" fullWidth onPress={() => router.back()}>
+						<Button variant="secondary" size="lg" fullWidth onPress={cancel}>
 							취소
 						</Button>
 					</div>

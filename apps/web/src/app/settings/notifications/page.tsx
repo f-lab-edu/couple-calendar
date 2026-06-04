@@ -1,22 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 import { Pill, Switch, Text } from "woosign-system";
 import { SectionLabel } from "@/presentation/settings/components/SectionLabel";
 import { SettingsEditHeader } from "@/presentation/settings/components/SettingsEditHeader";
 import { SettingsLoadState } from "@/presentation/settings/components/SettingsLoadState";
-import useNotificationSettings from "@/presentation/settings/hooks/useNotificationSettings";
-import useUpdateNotificationSettings from "@/presentation/settings/hooks/useUpdateNotificationSettings";
+import useNotificationForm from "@/presentation/settings/hooks/useNotificationForm";
 import { ANNIVERSARY_REMINDERS, EVENT_REMINDERS } from "@/shared/constants/notifications";
-
-interface Form {
-	eventEnabled: boolean;
-	eventReminder: string;
-	anniversaryEnabled: boolean;
-	anniversaryReminder: string;
-	partnerActivityEnabled: boolean;
-}
 
 const ToggleRow = ({
 	title,
@@ -54,50 +43,11 @@ const ReminderPicker = ({
 );
 
 const NotificationsPage = () => {
-	const router = useRouter();
-	const { data, isLoading, isError } = useNotificationSettings();
-	const update = useUpdateNotificationSettings();
-
-	const [form, setForm] = useState<Form | null>(null);
-
-	useEffect(() => {
-		if (!data) return;
-		setForm({
-			eventEnabled: data.eventEnabled,
-			eventReminder: data.eventReminder,
-			anniversaryEnabled: data.anniversaryEnabled,
-			anniversaryReminder: data.anniversaryReminder,
-			partnerActivityEnabled: data.partnerActivityEnabled,
-		});
-	}, [data]);
-
-	const changed =
-		data && form
-			? form.eventEnabled !== data.eventEnabled ||
-				form.eventReminder !== data.eventReminder ||
-				form.anniversaryEnabled !== data.anniversaryEnabled ||
-				form.anniversaryReminder !== data.anniversaryReminder ||
-				form.partnerActivityEnabled !== data.partnerActivityEnabled
-			: false;
-
-	// 폼의 단일 필드만 갱신한다. (setForm({ ...form, key }) 반복 제거)
-	const updateField = <K extends keyof Form>(key: K, value: Form[K]) => {
-		setForm((prev) => (prev ? { ...prev, [key]: value } : prev));
-	};
-
-	const handleSave = () => {
-		if (!form) return;
-		update.mutate(form, { onSuccess: () => router.back() });
-	};
+	const { isLoading, isError, form, updateField, save, saving, saveDisabled, saveError } = useNotificationForm();
 
 	return (
 		<div className="flex flex-col min-h-[100dvh] bg-[#f7f4ef]">
-			<SettingsEditHeader
-				title="알림 설정"
-				onSave={handleSave}
-				saveDisabled={!changed || update.isPending}
-				saving={update.isPending}
-			/>
+			<SettingsEditHeader title="알림 설정" onSave={save} saveDisabled={saveDisabled} saving={saving} />
 
 			<SettingsLoadState isLoading={isLoading} isError={isError} errorText="알림 설정을 불러오지 못했어요." />
 
@@ -144,9 +94,9 @@ const NotificationsPage = () => {
 						/>
 					</div>
 
-					{update.isError && (
+					{saveError && (
 						<Text as="p" variant="small" style={{ padding: "12px 20px 0", color: "#dc2626" }}>
-							{update.error?.message ?? "저장에 실패했어요. 다시 시도해 주세요."}
+							{saveError}
 						</Text>
 					)}
 

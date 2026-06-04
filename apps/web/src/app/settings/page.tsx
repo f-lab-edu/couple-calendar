@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { Text } from "woosign-system";
 import { CoupleHero } from "@/presentation/settings/components/CoupleHero";
 import { DisconnectDialog } from "@/presentation/settings/components/DisconnectDialog";
@@ -9,7 +8,7 @@ import { SettingRow } from "@/presentation/settings/components/SettingRow";
 import { SettingsHeader } from "@/presentation/settings/components/SettingsHeader";
 import { StartDateDialog } from "@/presentation/settings/components/StartDateDialog";
 import useCoupleProfile from "@/presentation/settings/hooks/useCoupleProfile";
-import useDisconnectCouple from "@/presentation/settings/hooks/useDisconnectCouple";
+import useDisconnectDialog from "@/presentation/settings/hooks/useDisconnectDialog";
 import useStartDateDialog from "@/presentation/settings/hooks/useStartDateDialog";
 import { ROUTES } from "@/shared/constants/routes";
 import { formatBirthday, formatKoreanDate } from "@/shared/lib/date";
@@ -20,13 +19,8 @@ const describeProfile = (nickname: string, birthday: string | null): string =>
 const SettingsPage = () => {
 	const router = useRouter();
 	const { data, isLoading, isError } = useCoupleProfile();
-	const disconnect = useDisconnectCouple();
 	const startDate = useStartDateDialog();
-	const [dialogOpen, setDialogOpen] = useState(false);
-
-	// 연결 끊기 다이얼로그 동작 (시작일 다이얼로그는 useStartDateDialog가 담당)
-	const closeDisconnectDialog = () => setDialogOpen(false);
-	const handleDisconnect = () => disconnect.mutate();
+	const disconnect = useDisconnectDialog();
 
 	return (
 		<div className="flex flex-col min-h-[100dvh] bg-white">
@@ -80,16 +74,16 @@ const SettingsPage = () => {
 							description="일정 1일 전 / 기념일 당일"
 							onClick={() => router.push(ROUTES.SETTINGS_NOTIFICATIONS)}
 						/>
-						<SettingRow title="연결 끊기" destructive onClick={() => setDialogOpen(true)} />
+						<SettingRow title="연결 끊기" destructive onClick={disconnect.show} />
 					</div>
 				</>
 			)}
 
 			<DisconnectDialog
-				open={dialogOpen}
-				loading={disconnect.isPending}
-				onCancel={closeDisconnectDialog}
-				onConfirm={handleDisconnect}
+				open={disconnect.open}
+				loading={disconnect.loading}
+				onCancel={disconnect.hide}
+				onConfirm={disconnect.confirm}
 			/>
 
 			<StartDateDialog
