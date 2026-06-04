@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button, Card, Input, Pill, Switch, Text } from "woosign-system";
-import TimeBlock from "@/app/events/add/_components/TimeBlock";
+import TimeBlock from "@/presentation/events/components/TimeBlock";
 import CATEGORIES from "@/shared/constants/events/categories";
 import REMINDERS from "@/shared/constants/events/reminders";
 

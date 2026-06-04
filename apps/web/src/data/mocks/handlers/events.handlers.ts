@@ -2,6 +2,7 @@ import { HttpResponse, http } from "msw";
 import type { EventCategory, EventResponse } from "@/data/dto/event-response";
 import { mockEvents } from "../events.mock";
 import { MOCK_IDS } from "../ids.mock";
+import { generateUuid } from "./_shared/generateUuid";
 
 interface CreateEventRequest {
 	title: string;
@@ -16,18 +17,6 @@ type UpdateEventRequest = Partial<CreateEventRequest>;
 
 // In-memory store. Resets on HMR / server restart — acceptable for dev mocks.
 let eventStore: EventResponse[] = structuredClone(mockEvents);
-
-const generateUuid = (): string => {
-	if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-		return crypto.randomUUID();
-	}
-	// Fallback for older runtimes
-	return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
-		const r = (Math.random() * 16) | 0;
-		const v = c === "x" ? r : (r & 0x3) | 0x8;
-		return v.toString(16);
-	});
-};
 
 const parseDateBoundary = (value: string | null): number | null => {
 	if (!value) return null;

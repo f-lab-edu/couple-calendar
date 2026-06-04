@@ -1,4 +1,4 @@
-/* eslint-disable */
+/* eslint-disable no-undef, no-restricted-globals, no-bitwise, prefer-const, no-restricted-syntax */
 /* tslint:disable */
 
 /**

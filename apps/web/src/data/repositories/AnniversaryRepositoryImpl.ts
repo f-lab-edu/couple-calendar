@@ -1,5 +1,5 @@
 import type { AnniversaryRepository } from "@/domain/repositories/AnniversaryRepository";
-import { AnniversaryDataSource } from "../apis/anniversaryDataSource";
+import { AnniversaryDataSource } from "../apis/AnniversaryDataSource";
 import type Anniversary from "@/domain/entities/Anniversary";
 
 export class AnniversaryRepositoryImpl implements AnniversaryRepository { 

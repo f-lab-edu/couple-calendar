@@ -1,11 +1,14 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Button, Card, Eyebrow, Text } from "woosign-system";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { Button, Card, colors, Eyebrow, Text, Toast } from "woosign-system";
 import ChevronLeft from "@/shared/components/icon/ChevronLeft";
 import CopyIcon from "@/shared/components/icon/CopyIcon";
 
 const INVITE_CODE = "L9K27Q";
+const COPIED_FEEDBACK_MS = 1500;
 
 const formatCode = (code: string) => {
 	return code.match(/.{1,2}/g)?.join(" ") ?? code;
@@ -13,8 +16,30 @@ const formatCode = (code: string) => {
 
 const CodeGenPage = () => {
 	const router = useRouter();
+	const [copied, setCopied] = useState(false);
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	useEffect(() => {
+		if (!copied) return;
+		const timerId = window.setTimeout(() => setCopied(false), COPIED_FEEDBACK_MS);
+		return () => window.clearTimeout(timerId);
+	}, [copied]);
+
 	const handleClickBackButton = () => {
 		router.back();
+	};
+
+	const handleCopyCode = async () => {
+		try {
+			await navigator.clipboard.writeText(INVITE_CODE);
+			setCopied(true);
+		} catch {
+			window.alert("코드 복사에 실패했어요. 다시 시도해 주세요.");
+		}
 	};
 
 	return (
@@ -65,40 +90,50 @@ const CodeGenPage = () => {
 				</Text>
 
 				<Button
-					variant="outline"
+					variant="secondary"
 					size="sm"
 					leftIcon={<CopyIcon />}
-					onPress={() => {
-						/* TODO: copy */
-					}}
+					onPress={handleCopyCode}
 					style={{ marginTop: 20, borderRadius: 999 }}
 				>
-					코드 복사
+					{copied ? "복사 완료" : "코드 복사"}
 				</Button>
 			</Card>
 
 			<Card variant="warm" fullWidth style={{ marginTop: 20, borderRadius: 12, padding: "12px 16px" }}>
-				<ul className="space-y-1.5">
+				<ul className="space-y-0.5">
 					<li className="flex gap-2">
 						<span style={{ color: "#6b7280" }}>•</span>
-						<Text as="span" variant="small" style={{ fontSize: 13, lineHeight: "20px", color: "#4b5563" }}>
+						<Text as="span" variant="small" style={{ fontSize: 13, lineHeight: "20px", color: colors.textTertiary }}>
 							상대방이 코드를 입력하면 자동으로 연결됩니다.
 						</Text>
 					</li>
 					<li className="flex gap-2">
 						<span style={{ color: "#6b7280" }}>•</span>
-						<Text as="span" variant="small" style={{ fontSize: 13, lineHeight: "20px", color: "#4b5563" }}>
+						<Text as="span" variant="small" style={{ fontSize: 13, lineHeight: "20px", color: colors.textTertiary }}>
 							코드는 다른 사람에게 노출되지 않게 주의해주세요.
 						</Text>
 					</li>
 				</ul>
 			</Card>
 
-			<div className="mt-auto pt-6">
-				<Button className="w-full" size="lg" disabled>
-					연결 대기 중...
-				</Button>
-			</div>
+			{mounted && copied
+				? createPortal(
+						<div
+							style={{
+								position: "fixed",
+								left: "50%",
+								bottom: 32,
+								transform: "translateX(-50%)",
+								zIndex: 9999,
+								pointerEvents: "none",
+							}}
+						>
+							<Toast tone="success" title="초대 코드를 복사했어요." />
+						</div>,
+						document.body,
+					)
+				: null}
 		</div>
 	);
 };

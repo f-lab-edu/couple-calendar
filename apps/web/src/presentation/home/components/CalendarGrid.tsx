@@ -1,4 +1,4 @@
-import { type Cell, CATEGORY_STYLE, WEEK_LABELS } from "@/app/home/_lib/calendar";
+import { type Cell, CATEGORY_STYLE, WEEK_LABELS } from "@/presentation/home/lib/calendar";
 import type { EEventCategory } from "@/domain/entities/Event";
 
 interface Props {
