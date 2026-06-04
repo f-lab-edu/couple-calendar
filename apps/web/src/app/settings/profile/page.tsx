@@ -4,19 +4,21 @@ import { Button, Text } from "woosign-system";
 import { SectionLabel } from "@/presentation/settings/components/SectionLabel";
 import { SettingsEditHeader } from "@/presentation/settings/components/SettingsEditHeader";
 import { SettingsLoadState } from "@/presentation/settings/components/SettingsLoadState";
+import useCoupleProfile from "@/presentation/settings/hooks/useCoupleProfile";
 import useProfileEditForm from "@/presentation/settings/hooks/useProfileEditForm";
 
 const ProfileEditPage = () => {
-	const { isLoading, isError, form, updateField, today, save, saving, saveDisabled, saveError, cancel } =
-		useProfileEditForm();
+	const { data, isLoading, isError } = useCoupleProfile();
+	const me = data?.me;
+	const { register, submit, today, saving, saveDisabled, saveError, cancel } = useProfileEditForm(me);
 
 	return (
 		<div className="flex flex-col min-h-[100dvh] bg-[#f7f4ef]">
-			<SettingsEditHeader title="내 프로필 수정" onSave={save} saveDisabled={saveDisabled} saving={saving} />
+			<SettingsEditHeader title="내 프로필 수정" onSave={submit} saveDisabled={saveDisabled} saving={saving} />
 
 			<SettingsLoadState isLoading={isLoading} isError={isError} errorText="프로필을 불러오지 못했어요." />
 
-			{form && (
+			{me && (
 				<>
 					<div className="flex flex-col items-center gap-2 bg-white pb-7 pt-2">
 						<button
@@ -47,8 +49,7 @@ const ProfileEditPage = () => {
 							</Text>
 							<input
 								type="text"
-								value={form.name}
-								onChange={(e) => updateField("name", e.target.value)}
+								{...register("name")}
 								className="w-1/2 bg-transparent text-right text-base font-semibold text-gray-900 outline-none"
 							/>
 						</div>
@@ -59,8 +60,7 @@ const ProfileEditPage = () => {
 							<div className="flex w-1/2 flex-col items-end">
 								<input
 									type="text"
-									value={form.nickname}
-									onChange={(e) => updateField("nickname", e.target.value)}
+									{...register("nickname")}
 									className="w-full bg-transparent text-right text-base font-semibold text-gray-900 outline-none"
 								/>
 								<Text as="span" variant="small" style={{ marginTop: 2, color: "#9ca3af", fontSize: 12 }}>
@@ -74,9 +74,8 @@ const ProfileEditPage = () => {
 							</Text>
 							<input
 								type="date"
-								value={form.birthday}
 								max={today}
-								onChange={(e) => updateField("birthday", e.target.value)}
+								{...register("birthday")}
 								className="bg-transparent text-right text-base font-semibold text-gray-900 outline-none"
 							/>
 						</div>
@@ -85,8 +84,7 @@ const ProfileEditPage = () => {
 					<SectionLabel>소개</SectionLabel>
 					<div className="bg-white px-5 py-4">
 						<textarea
-							value={form.bio}
-							onChange={(e) => updateField("bio", e.target.value)}
+							{...register("bio")}
 							rows={3}
 							placeholder="자기소개를 입력해 주세요."
 							className="w-full resize-none bg-transparent text-base text-gray-900 outline-none placeholder:text-gray-300"
