@@ -10,7 +10,7 @@ const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 export class UpdateCoupleStartDateUseCase {
 	constructor(private readonly coupleRepository: CoupleRepository) {}
 
-	execute(startDate: string): Promise<Couple> {
+	async execute(startDate: string): Promise<Couple> {
 		const normalized = startDate.trim();
 
 		if (!DATE_PATTERN.test(normalized)) {
