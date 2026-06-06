@@ -1,39 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { Button, colors, Text } from "woosign-system";
 import { CodeInput } from "@/presentation/onboarding/components/CodeInput";
-import useConnectCouple from "@/presentation/onboarding/hooks/useConnectCouple";
-
-const CODE_LENGTH = 6;
+import useConnectByCode from "@/presentation/onboarding/hooks/useConnectByCode";
 
 const CodeInputPage = () => {
-	const router = useRouter();
-	const [code, setCode] = useState("");
-	const { mutate: connectCouple, isPending, error } = useConnectCouple();
-
-	const isComplete = code.length === CODE_LENGTH;
-
-	const handleClickBackButton = () => {
-		router.back();
-	};
-
-	const handleConnect = () => {
-		if (!isComplete || isPending) return;
-		connectCouple(code, {
-			onSuccess: () => {
-				router.replace("/home");
-			},
-		});
-	};
+	const { code, setCode, codeLength, isComplete, connect, goBack, isPending, error } = useConnectByCode();
 
 	return (
 		<div className="flex flex-col min-h-[100dvh] px-5 pt-4 pb-6">
 			<button
 				type="button"
 				aria-label="뒤로가기"
-				onClick={handleClickBackButton}
+				onClick={goBack}
 				className="-ml-2 mb-2 flex h-9 w-9 items-center justify-center rounded-full"
 			>
 				<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
@@ -56,7 +35,7 @@ const CodeInputPage = () => {
 				</Text>
 			</div>
 
-			<CodeInput length={CODE_LENGTH} value={code} onChange={setCode} />
+			<CodeInput length={codeLength} value={code} onChange={setCode} />
 
 			{error ? (
 				<Text as="p" variant="small" className="mt-3" color="#dc2626">
@@ -65,7 +44,7 @@ const CodeInputPage = () => {
 			) : null}
 
 			<div className="mt-auto pt-6">
-				<Button className="w-full" size="lg" disabled={!isComplete || isPending} onPress={handleConnect}>
+				<Button className="w-full" size="lg" disabled={!isComplete || isPending} onPress={connect}>
 					{isPending ? "연결 중..." : "연결하기"}
 				</Button>
 			</div>
