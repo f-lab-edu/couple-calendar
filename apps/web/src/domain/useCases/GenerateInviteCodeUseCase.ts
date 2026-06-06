@@ -12,7 +12,7 @@ const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 export class GenerateInviteCodeUseCase {
 	constructor(private readonly coupleRepository: CoupleRepository) {}
 
-	execute(startDate: string): Promise<InviteCode> {
+	async execute(startDate: string): Promise<InviteCode> {
 		const normalized = startDate.trim();
 
 		if (!DATE_PATTERN.test(normalized)) {

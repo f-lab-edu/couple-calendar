@@ -12,7 +12,7 @@ const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 export class UpdateMyProfileUseCase {
 	constructor(private readonly userRepository: UserRepository) {}
 
-	execute(input: UpdateProfileInput): Promise<User> {
+	async execute(input: UpdateProfileInput): Promise<User> {
 		const normalized: UpdateProfileInput = { ...input };
 
 		if (normalized.name !== undefined) {
