@@ -1,4 +1,14 @@
 import type Event from "../entities/Event";
+import type { EEventCategory } from "../entities/Event";
+
+export interface CreateEventInput {
+	title: string;
+	startTime: string;
+	endTime: string;
+	category: EEventCategory;
+	description: string | null;
+	location: string | null;
+}
 
 /**
  * Repository contract for the Event aggregate.
@@ -9,4 +19,5 @@ import type Event from "../entities/Event";
  */
 export interface EventRepository {
 	getMonthlyEvents(year: number, month: number): Promise<Event[]>;
+	createEvent(input: CreateEventInput): Promise<Event>;
 }

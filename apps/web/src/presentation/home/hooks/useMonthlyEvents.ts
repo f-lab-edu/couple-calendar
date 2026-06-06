@@ -1,15 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { EventDataSource } from "@/data/apis/EventDataSource";
-import { EventRepositoryImpl } from "@/data/repositories/EventRepositoryImpl";
+import { getMonthlyEventsUseCase } from "@/composition/event";
 import type Event from "@/domain/entities/Event";
-import { GetMonthlyEventsUseCase } from "@/domain/useCases/GetMonthlyEventsUseCase";
-
-// Module-level singletons: cheap, stateless, safe to share across hook calls.
-const eventDataSource = new EventDataSource();
-const eventRepository = new EventRepositoryImpl(eventDataSource);
-const getMonthlyEventsUseCase = new GetMonthlyEventsUseCase(eventRepository);
 
 /**
  * React Query hook for the monthly events screen.

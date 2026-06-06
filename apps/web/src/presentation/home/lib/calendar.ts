@@ -34,6 +34,15 @@ const CATEGORY_ORDER: Record<EEventCategory, number> = {
 export const compareCategories = (a: EEventCategory, b: EEventCategory): number =>
 	CATEGORY_ORDER[a] - CATEGORY_ORDER[b];
 
+/**
+ * Today's calendar parts in the host's local timezone.
+ * `month` is 0-based to match the home page's cursor convention.
+ */
+export function todayParts(): { year: number; month: number; day: number } {
+	const now = new Date();
+	return { year: now.getFullYear(), month: now.getMonth(), day: now.getDate() };
+}
+
 export type Cell = { date: number; inMonth: boolean; key: string };
 
 export const WEEK_LABELS = ["일", "월", "화", "수", "목", "금", "토"] as const;
