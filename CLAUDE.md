@@ -10,12 +10,12 @@ Couple Calendar is a shared calendar app for couples to manage schedules, track 
 
 ### Root-level (Turborepo)
 ```bash
-yarn install          # Install all dependencies
-yarn dev              # Run all apps in development mode
-yarn build            # Build all apps
-yarn lint             # Lint all code
-yarn test             # Run tests across all apps
-yarn clean            # Clean all build artifacts
+pnpm install          # Install all dependencies
+pnpm dev              # Run all apps in development mode
+pnpm build            # Build all apps
+pnpm lint             # Lint all code
+pnpm test             # Run tests across all apps
+pnpm clean            # Clean all build artifacts
 ```
 
 ### API (apps/api-kotlin)
@@ -29,11 +29,11 @@ cd apps/api-kotlin
 
 ### Mobile (apps/mobile)
 ```bash
-yarn workspace @couple-calendar/mobile start      # Start Metro bundler
-yarn workspace @couple-calendar/mobile ios        # Run on iOS simulator
-yarn workspace @couple-calendar/mobile android    # Run on Android emulator
-yarn workspace @couple-calendar/mobile test       # Run tests
-yarn workspace @couple-calendar/mobile pod-install # Install CocoaPods (iOS)
+pnpm --filter @couple-calendar/mobile start      # Start Metro bundler
+pnpm --filter @couple-calendar/mobile ios        # Run on iOS simulator
+pnpm --filter @couple-calendar/mobile android    # Run on Android emulator
+pnpm --filter @couple-calendar/mobile test       # Run tests
+pnpm --filter @couple-calendar/mobile pod-install # Install CocoaPods (iOS)
 ```
 
 ## Architecture

@@ -3,6 +3,11 @@ node_modules/
 .pnp/
 .pnp.js
 
+# Yarn Berry (removed — project uses pnpm)
+.yarn/
+.yarnrc.yml
+yarn.lock
+
 # Build outputs
 dist/
 build/
