@@ -1,5 +1,5 @@
 import type { EEventCategory } from "@/domain/entities/Event";
-import CATEGORIES from "@/shared/constants/events/categories";
+import type CATEGORIES from "@/shared/constants/events/categories";
 
 export type CategoryId = (typeof CATEGORIES)[number]["id"];
 

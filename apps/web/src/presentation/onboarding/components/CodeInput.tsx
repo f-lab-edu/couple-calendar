@@ -31,11 +31,13 @@ export const CodeInput = ({ length = 6, value, onChange }: Props) => {
 		}
 	};
 
+	const slotKeys = Array.from({ length }, (_, idx) => `code-slot-${idx}`);
+
 	return (
 		<div className="flex gap-2">
-			{Array.from({ length }).map((_, idx) => (
+			{slotKeys.map((slotKey, idx) => (
 				<Input
-					key={idx}
+					key={slotKey}
 					value={value[idx] ?? ""}
 					onChangeText={handleChangeText(idx)}
 					className="h-12 w-12 rounded-lg bg-white text-center text-lg font-semibold text-gray-900 outline-none transition-colors"

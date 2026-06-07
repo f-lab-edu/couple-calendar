@@ -1,0 +1,33 @@
+name: Web CI
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [main]
+
+jobs:
+  web-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable corepack (pnpm)
+        run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck (web)
+        run: pnpm --filter @couple-calendar/web-next typecheck
+
+      - name: Lint (web)
+        run: pnpm --filter @couple-calendar/web-next lint
+
+      - name: Test (web)
+        run: pnpm --filter @couple-calendar/web-next test
