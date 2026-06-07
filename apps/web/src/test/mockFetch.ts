@@ -13,7 +13,7 @@ interface FetchMockInit {
  * Returns the mock so callers can assert on the request (url, method, body).
  */
 export const stubFetchJson = (data: unknown, init: FetchMockInit = {}) => {
-	const fetchMock = vi.fn(
+	const fetchMock = vi.fn<typeof fetch>(
 		async () =>
 			({
 				ok: init.ok ?? true,
