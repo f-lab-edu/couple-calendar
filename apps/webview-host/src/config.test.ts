@@ -1,5 +1,3 @@
-import { Platform } from 'react-native';
-
 import { resolveWebAppUrl, WEB_APP_URL } from './config';
 
 describe('resolveWebAppUrl', () => {
@@ -13,9 +11,8 @@ describe('resolveWebAppUrl', () => {
 });
 
 describe('WEB_APP_URL', () => {
-  it('matches resolveWebAppUrl for the current platform', () => {
-    expect(WEB_APP_URL).toBe(
-      resolveWebAppUrl(Platform.OS as 'ios' | 'android'),
-    );
+  // The jest react-native preset reports Platform.OS as 'ios'.
+  it('resolves to the ios url under the test runtime', () => {
+    expect(WEB_APP_URL).toBe('http://localhost:3000');
   });
 });
