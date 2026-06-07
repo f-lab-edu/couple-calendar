@@ -8,6 +8,7 @@
 		"start": "next start -p 3000",
 		"lint": "biome lint .",
 		"format": "biome format --write .",
+		"typecheck": "tsc --noEmit",
 		"test": "vitest run",
 		"test:watch": "vitest",
 		"test:coverage": "vitest run --coverage"
