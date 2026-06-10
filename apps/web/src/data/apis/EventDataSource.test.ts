@@ -64,3 +64,45 @@ describe("EventDataSource.createEvent", () => {
 		).rejects.toThrow("Failed to create event: 400 Bad Request");
 	});
 });
+
+describe("EventDataSource.updateEvent", () => {
+	it("PATCH로 부분 업데이트 body를 보내고 갱신 결과를 반환한다", async () => {
+		const updated = { id: "evt-1", title: "수정됨" };
+		const fetchMock = stubFetchJson(updated);
+		const request = { title: "수정됨" };
+
+		const result = await new EventDataSource().updateEvent("evt-1", request);
+
+		const [url, init] = fetchMock.mock.calls[0];
+		expect(url).toBe("/api/events/evt-1");
+		expect(init?.method).toBe("PATCH");
+		expect(JSON.parse(init?.body as string)).toEqual(request);
+		expect(result).toEqual(updated);
+	});
+
+	it("응답이 ok가 아니면 에러를 던진다", async () => {
+		stubFetchError(404, "Not Found");
+		await expect(new EventDataSource().updateEvent("missing", { title: "x" })).rejects.toThrow(
+			"Failed to update event: 404 Not Found",
+		);
+	});
+});
+
+describe("EventDataSource.deleteEvent", () => {
+	it("DELETE 요청을 보내고 204 빈 본문이어도 json()을 호출하지 않는다", async () => {
+		const fetchMock = stubFetchJson(null, { status: 204 });
+
+		await expect(new EventDataSource().deleteEvent("evt-1")).resolves.toBeUndefined();
+
+		const [url, init] = fetchMock.mock.calls[0];
+		expect(url).toBe("/api/events/evt-1");
+		expect(init?.method).toBe("DELETE");
+	});
+
+	it("응답이 ok가 아니면 에러를 던진다", async () => {
+		stubFetchError(404, "Not Found");
+		await expect(new EventDataSource().deleteEvent("missing")).rejects.toThrow(
+			"Failed to delete event: 404 Not Found",
+		);
+	});
+});

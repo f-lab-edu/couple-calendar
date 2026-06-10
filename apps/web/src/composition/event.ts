@@ -1,7 +1,9 @@
 import { EventDataSource } from "@/data/apis/EventDataSource";
 import { EventRepositoryImpl } from "@/data/repositories/EventRepositoryImpl";
 import { CreateEventUseCase } from "@/domain/useCases/CreateEventUseCase";
+import { DeleteEventUseCase } from "@/domain/useCases/DeleteEventUseCase";
 import { GetMonthlyEventsUseCase } from "@/domain/useCases/GetMonthlyEventsUseCase";
+import { UpdateEventUseCase } from "@/domain/useCases/UpdateEventUseCase";
 
 /**
  * Event 도메인 조립 루트(composition root).
@@ -16,3 +18,5 @@ const repository = new EventRepositoryImpl(dataSource);
 
 export const getMonthlyEventsUseCase = new GetMonthlyEventsUseCase(repository);
 export const createEventUseCase = new CreateEventUseCase(repository);
+export const updateEventUseCase = new UpdateEventUseCase(repository);
+export const deleteEventUseCase = new DeleteEventUseCase(repository);

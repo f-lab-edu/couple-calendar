@@ -1,4 +1,8 @@
+import { useState } from "react";
 import { Badge, Card, Text } from "woosign-system";
+import CalendarIcon from "@/shared/components/icon/CalendarIcon";
+import EventDetailSheet from "@/presentation/events/components/EventDetailSheet";
+import { formatRange } from "@/presentation/events/lib/eventDisplay";
 import { CATEGORY_STYLE, WEEK_LABELS } from "@/presentation/home/lib/calendar";
 import type Event from "@/domain/entities/Event";
 
@@ -8,85 +12,57 @@ interface Props {
 	events: Event[];
 }
 
-const pad2 = (n: number): string => (n < 10 ? `0${n}` : `${n}`);
-
-/**
- * Format an ISO 8601 instant as a Korean local "HH:mm" string.
- * The browser converts to its local timezone automatically; for our KST users
- * the displayed time will read in KST.
- */
-const formatTime = (iso: string): string => {
-	const d = new Date(iso);
-	if (Number.isNaN(d.getTime())) return "--:--";
-	return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
-};
-
-/**
- * Heuristic for "all day" events: starts at 00:00 local and the duration
- * covers at least the better part of a day (>= 23 hours). Works for both
- * `[00:00, 23:59:59]` and `[00:00, +1day 00:00)` conventions.
- */
-const isAllDay = (event: Event): boolean => {
-	const start = new Date(event.startTime);
-	const end = new Date(event.endTime);
-	if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return false;
-	if (start.getHours() !== 0 || start.getMinutes() !== 0) return false;
-	const durationMs = end.getTime() - start.getTime();
-	return durationMs >= 23 * 60 * 60 * 1000;
-};
-
-const formatRange = (event: Event): string => {
-	if (isAllDay(event)) return "종일";
-	return `${formatTime(event.startTime)} - ${formatTime(event.endTime)}`;
-};
-
 const EmptyState = () => (
-	<Card
-		variant="default"
-		fullWidth
+	<div
+		className="flex flex-col items-center justify-center text-center"
 		style={{
-			position: "relative",
-			overflow: "hidden",
 			borderRadius: 16,
-			padding: "12px 16px",
+			border: "1px dashed #D1D5DB",
+			backgroundColor: "transparent",
+			padding: "28px 16px",
+			gap: 6,
 		}}
 	>
-		<div className="min-w-0 flex-1">
-			<Text
-				as="p"
-				variant="p"
-				weight="semibold"
-				style={{
-					color: "#111827",
-				}}
-			>
-				이벤트가 없습니다
-			</Text>
-			<Text
-				as="p"
-				variant="muted"
-				style={{
-					marginTop: 4,
-					fontSize: 12,
-				}}
-			>
-				이 날의 일정을 추가해 보세요
-			</Text>
-		</div>
-	</Card>
+		<span style={{ opacity: 0.5 }}>
+			<CalendarIcon />
+		</span>
+		<Text
+			as="p"
+			variant="muted"
+			weight="medium"
+			style={{
+				fontSize: 13,
+				color: "#6B7280",
+			}}
+		>
+			이 날의 일정이 없어요
+		</Text>
+		<Text
+			as="p"
+			variant="muted"
+			style={{
+				fontSize: 12,
+				color: "#9CA3AF",
+			}}
+		>
+			새로운 일정을 추가해 보세요
+		</Text>
+	</div>
 );
 
-const EventCard = ({ event }: { event: Event }) => {
+const EventCard = ({ event, onSelect }: { event: Event; onSelect: (event: Event) => void }) => {
 	const style = CATEGORY_STYLE[event.category];
 	return (
 		<Card
 			variant="default"
 			fullWidth
+			onPress={() => onSelect(event)}
 			style={{
 				position: "relative",
 				overflow: "hidden",
 				borderRadius: 16,
 				padding: "12px 16px",
+				textAlign: "left",
 			}}
 		>
 			<span className="absolute top-0 bottom-0 left-0 w-1" style={{ backgroundColor: style.color }} />
@@ -126,6 +102,7 @@ const EventCard = ({ event }: { event: Event }) => {
 const DayEvents = ({ day, month, events }: Props) => {
 	const date = new Date(2026, month - 1, day);
 	const weekday = WEEK_LABELS[date.getDay()];
+	const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
 	return (
 		<section className="mt-2 flex min-h-0 flex-1 flex-col">
@@ -143,10 +120,12 @@ const DayEvents = ({ day, month, events }: Props) => {
 			) : (
 				<div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pb-4">
 					{events.map((event) => (
-						<EventCard key={event.id} event={event} />
+						<EventCard key={event.id} event={event} onSelect={setSelectedEvent} />
 					))}
 				</div>
 			)}
+
+			<EventDetailSheet event={selectedEvent} onClose={() => setSelectedEvent(null)} />
 		</section>
 	);
 };
