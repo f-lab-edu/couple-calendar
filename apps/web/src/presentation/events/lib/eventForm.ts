@@ -11,6 +11,14 @@ export const CATEGORY_TO_DTO: Record<CategoryId, EEventCategory> = {
 	etc: "OTHER",
 };
 
+/** Reverse of CATEGORY_TO_DTO: domain/DTO enum back to the form's lowercase id. */
+export const DTO_TO_CATEGORY: Record<EEventCategory, CategoryId> = {
+	DATE: "date",
+	INDIVIDUAL: "personal",
+	ANNIVERSARY: "anniversary",
+	OTHER: "etc",
+};
+
 const KST_OFFSET = "+09:00";
 
 /** Today as `yyyy-mm-dd` in the host's local calendar (for <input type="date">). */
@@ -24,3 +32,19 @@ export const todayString = (): string => {
 export const toKstIso = (date: string, time: string): string => `${date}T${time}:00${KST_OFFSET}`;
 export const allDayStartIso = (date: string): string => `${date}T00:00:00${KST_OFFSET}`;
 export const allDayEndIso = (date: string): string => `${date}T23:59:59${KST_OFFSET}`;
+
+const pad2 = (n: number): string => String(n).padStart(2, "0");
+
+/** Extract a `yyyy-mm-dd` date string (host-local) from an ISO 8601 instant. */
+export const isoToDateString = (iso: string): string => {
+	const d = new Date(iso);
+	if (Number.isNaN(d.getTime())) return todayString();
+	return `${d.getFullYear()}-${pad2(d.getMonth() + 1)}-${pad2(d.getDate())}`;
+};
+
+/** Extract an `HH:mm` time string (host-local) from an ISO 8601 instant. */
+export const isoToTimeString = (iso: string): string => {
+	const d = new Date(iso);
+	if (Number.isNaN(d.getTime())) return "00:00";
+	return `${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+};

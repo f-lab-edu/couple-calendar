@@ -7,6 +7,7 @@ export const ROUTES = {
 	SETTINGS_PROFILE_EDIT: "/settings/profile",
 	SETTINGS_PARTNER_PROFILE: "/settings/partner",
 	SETTINGS_NOTIFICATIONS: "/settings/notifications",
+	SETTINGS_ANNIVERSARIES: "/settings/anniversaries",
 	ONBOARDING: "/onboarding",
 	ONBOARDING_CONNECT_CODE_GEN: "/onboarding/connect/code-gen",
 	ONBOARDING_CONNECT_CODE_INPUT: "/onboarding/connect/code-input",

@@ -9,6 +9,8 @@ describe("GetMonthlyEventsUseCase", () => {
 		const repository: EventRepository = {
 			getMonthlyEvents: vi.fn(async () => events),
 			createEvent: vi.fn(),
+			updateEvent: vi.fn(),
+			deleteEvent: vi.fn(),
 		};
 		const useCase = new GetMonthlyEventsUseCase(repository);
 
