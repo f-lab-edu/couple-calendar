@@ -6,6 +6,5 @@ data class AppleAuthRequest(
     @field:NotBlank(message = "Identity token is required")
     val identityToken: String,
 
-    @field:NotBlank(message = "Authorization code is required")
-    val authorizationCode: String
+    val authorizationCode: String? = null
 )

@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component
 
 data class AuthAppleCommand(
     val identityToken: String,
-    val authorizationCode: String
+    val authorizationCode: String? = null
 ) : Command<AuthResponse>
 
 @Component

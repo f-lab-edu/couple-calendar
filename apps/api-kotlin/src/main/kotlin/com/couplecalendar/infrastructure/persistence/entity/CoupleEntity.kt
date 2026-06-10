@@ -18,7 +18,7 @@ class CoupleEntity(
     var user2Id: UUID? = null,
 
     @Column(name = "start_date", nullable = false)
-    val startDate: LocalDate,
+    var startDate: LocalDate,
 
     @Column(name = "invite_code")
     var inviteCode: String? = null,

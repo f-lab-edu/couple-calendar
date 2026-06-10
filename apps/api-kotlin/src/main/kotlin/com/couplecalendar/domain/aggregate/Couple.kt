@@ -10,15 +10,22 @@ class Couple private constructor(
     val id: UUID,
     val user1Id: UUID,
     private var _user2Id: UUID?,
-    val startDate: LocalDate,
+    private var _startDate: LocalDate,
     private var _inviteCode: InviteCode?,
     val createdAt: Instant,
     private var _updatedAt: Instant
 ) {
     val user2Id: UUID? get() = _user2Id
+    val startDate: LocalDate get() = _startDate
     val inviteCode: String? get() = _inviteCode?.value
     val inviteCodeExpiresAt: Instant? get() = _inviteCode?.expiresAt
     val updatedAt: Instant get() = _updatedAt
+
+    fun updateStartDate(startDate: LocalDate) {
+        require(!startDate.isAfter(LocalDate.now())) { "Start date cannot be in the future" }
+        _startDate = startDate
+        _updatedAt = Instant.now()
+    }
 
     fun isComplete(): Boolean = _user2Id != null
 
@@ -51,7 +58,7 @@ class Couple private constructor(
                 id = UUID.randomUUID(),
                 user1Id = user1Id,
                 _user2Id = null,
-                startDate = startDate,
+                _startDate = startDate,
                 _inviteCode = InviteCode.generate(),
                 createdAt = now,
                 _updatedAt = now
@@ -71,7 +78,7 @@ class Couple private constructor(
             id = id,
             user1Id = user1Id,
             _user2Id = user2Id,
-            startDate = startDate,
+            _startDate = startDate,
             _inviteCode = if (inviteCode != null && inviteCodeExpiresAt != null) {
                 InviteCode.fromExisting(inviteCode, inviteCodeExpiresAt)
             } else null,
