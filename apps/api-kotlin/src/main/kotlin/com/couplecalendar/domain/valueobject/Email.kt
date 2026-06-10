@@ -15,5 +15,5 @@ value class Email private constructor(val value: String) {
         fun fromExisting(email: String): Email = Email(email.lowercase())
     }
 
-    fun equals(other: Email): Boolean = this.value == other.value
+    fun hasSameValue(other: Email): Boolean = this.value == other.value
 }

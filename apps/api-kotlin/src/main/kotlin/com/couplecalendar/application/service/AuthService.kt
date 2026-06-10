@@ -10,7 +10,7 @@ class AuthService(
     private val authAppleCommandHandler: AuthAppleCommandHandler
 ) {
 
-    fun authenticateWithApple(identityToken: String, authorizationCode: String): AuthResponse {
+    fun authenticateWithApple(identityToken: String, authorizationCode: String? = null): AuthResponse {
         val command = AuthAppleCommand(identityToken, authorizationCode)
         return authAppleCommandHandler.handle(command)
     }

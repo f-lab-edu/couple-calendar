@@ -30,6 +30,7 @@ class CoupleRepositoryAdapter(
             IllegalStateException("Couple not found for update: ${couple.id}")
         }
         entity.user2Id = couple.user2Id
+        entity.startDate = couple.startDate
         entity.inviteCode = couple.inviteCode
         entity.inviteCodeExpiresAt = couple.inviteCodeExpiresAt
         entity.updatedAt = couple.updatedAt
