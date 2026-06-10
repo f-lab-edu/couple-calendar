@@ -13,3 +13,8 @@ data class ConnectCoupleRequest(
     @field:Size(min = 6, max = 6, message = "Invite code must be 6 characters")
     val inviteCode: String
 )
+
+data class UpdateCoupleRequest(
+    @field:NotBlank(message = "Start date is required")
+    val startDate: String
+)

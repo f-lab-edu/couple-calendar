@@ -15,9 +15,18 @@ class UserEntity(
     val email: String,
 
     @Column(nullable = false)
+    var name: String,
+
+    @Column(nullable = false)
     var nickname: String,
 
     var birthday: LocalDate? = null,
+
+    @Column(columnDefinition = "text")
+    var bio: String? = null,
+
+    @Column(name = "partner_nickname")
+    var partnerNickname: String? = null,
 
     @Column(name = "profile_image")
     var profileImage: String? = null,
