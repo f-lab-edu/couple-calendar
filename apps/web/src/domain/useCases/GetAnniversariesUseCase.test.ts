@@ -9,6 +9,8 @@ describe("GetAnniversariesUseCase", () => {
 		const repository: AnniversaryRepository = {
 			getAnniversaries: vi.fn(async () => anniversaries),
 			addAnniversary: vi.fn(),
+			updateAnniversary: vi.fn(),
+			deleteAnniversary: vi.fn(),
 		};
 		const useCase = new GetAnniversariesUseCase(repository);
 

@@ -1,16 +1,7 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
-import { getAnniversariesUseCase } from "@/composition/anniversary";
-import type Anniversary from "@/domain/entities/Anniversary";
-
 /**
- * 커플 기념일 목록(카운트 표시용).
+ * @deprecated 정식 위치는 `@/presentation/anniversaries/hooks/useAnniversaries`.
+ * 기존 import 경로 호환을 위해 재export만 유지한다.
  */
-const useAnniversaries = () =>
-	useQuery<Anniversary[]>({
-		queryKey: ["anniversaries"],
-		queryFn: () => getAnniversariesUseCase.execute(),
-	});
-
-export default useAnniversaries;
+export { default } from "@/presentation/anniversaries/hooks/useAnniversaries";

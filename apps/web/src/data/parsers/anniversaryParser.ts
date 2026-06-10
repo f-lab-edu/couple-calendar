@@ -14,19 +14,20 @@ const anniversaryTypeParser = (anniversaryDtoType: AnniversaryType): EAnniversar
   }
 }
 
-const AnniversaryParser = (anniversariesDto: AnniversariesDto): Anniversary[] => {
-  return anniversariesDto.map((anniversaryDto) => 
-    new Anniversary(
-      anniversaryDto.id,
-      anniversaryDto.coupleId,
-      anniversaryDto.title,
-      anniversaryDto.date,
-      anniversaryDto.isRecurring,
-      anniversaryDto.description,
-      anniversaryTypeParser(anniversaryDto.type),
-      anniversaryDto.daysUntil,
-    )
+/** Convert a single AnniversaryResponse DTO into a domain Anniversary entity. */
+export const parseAnniversary = (anniversaryDto: AnniversaryResponse): Anniversary =>
+  new Anniversary(
+    anniversaryDto.id,
+    anniversaryDto.coupleId,
+    anniversaryDto.title,
+    anniversaryDto.date,
+    anniversaryDto.isRecurring,
+    anniversaryDto.description,
+    anniversaryTypeParser(anniversaryDto.type),
+    anniversaryDto.daysUntil,
   )
-}
+
+const AnniversaryParser = (anniversariesDto: AnniversariesDto): Anniversary[] =>
+  anniversariesDto.map(parseAnniversary)
 
 export default AnniversaryParser
