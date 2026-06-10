@@ -13,6 +13,10 @@ dist/
 build/
 .next/
 out/
+.gradle/
+
+# Local secrets (backend)
+.env.properties
 
 # Turbo
 .turbo/
