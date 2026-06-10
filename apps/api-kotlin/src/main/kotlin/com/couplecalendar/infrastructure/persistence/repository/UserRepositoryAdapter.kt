@@ -26,8 +26,11 @@ class UserRepositoryAdapter(
         val entity = jpaRepository.findById(user.id).orElseThrow {
             IllegalStateException("User not found for update: ${user.id}")
         }
+        entity.name = user.name
         entity.nickname = user.nickname
         entity.birthday = user.birthday
+        entity.bio = user.bio
+        entity.partnerNickname = user.partnerNickname
         entity.coupleId = user.coupleId
         entity.updatedAt = user.updatedAt
         jpaRepository.save(entity)

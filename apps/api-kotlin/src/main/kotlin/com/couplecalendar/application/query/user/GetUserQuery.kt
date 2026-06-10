@@ -12,8 +12,11 @@ data class GetUserQuery(val userId: UUID) : Query<UserQueryResult>
 data class UserQueryResult(
     val id: String,
     val email: String,
+    val name: String,
     val nickname: String,
     val birthday: String?,
+    val bio: String?,
+    val partnerNickname: String?,
     val coupleId: String?,
     val createdAt: String,
     val updatedAt: String
@@ -32,8 +35,11 @@ class GetUserQueryHandler(
         return UserQueryResult(
             id = entity.id.toString(),
             email = entity.email,
+            name = entity.name,
             nickname = entity.nickname,
             birthday = entity.birthday?.toString(),
+            bio = entity.bio,
+            partnerNickname = entity.partnerNickname,
             coupleId = entity.coupleId?.toString(),
             createdAt = entity.createdAt.toString(),
             updatedAt = entity.updatedAt.toString()
