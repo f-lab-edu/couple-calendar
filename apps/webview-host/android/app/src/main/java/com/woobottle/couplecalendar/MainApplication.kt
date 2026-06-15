@@ -1,4 +1,4 @@
-package com.webviewhost
+package com.woobottle.couplecalendar
 
 import android.app.Application
 import com.facebook.react.PackageList
