@@ -1,1 +1,0 @@
-export {AddAnniversaryPage} from './AddAnniversaryPage';
