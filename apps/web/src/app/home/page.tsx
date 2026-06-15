@@ -14,7 +14,7 @@ export default function HomePage() {
 	const [sheetOpen, setSheetOpen] = useState(false);
 
 	return (
-		<main className="mx-auto flex h-dvh max-w-[420px] flex-col gap-4 overflow-hidden bg-[#f6f5f0] px-4 py-5 text-[15px] text-neutral-800">
+		<main className="mx-auto flex h-dvh max-w-[420px] flex-col gap-4 overflow-hidden bg-[#f6f5f0] px-4 pt-[calc(env(safe-area-inset-top)_+_1.25rem)] pb-[calc(env(safe-area-inset-bottom)_+_1.25rem)] text-[15px] text-neutral-800">
 			<DdayCard />
 
 			<section className="flex shrink-0 items-center justify-between">
@@ -30,7 +30,7 @@ export default function HomePage() {
 
 			<DayEvents day={calendar.selected} month={calendar.month + 1} events={calendar.selectedDayEvents} />
 
-			<div className="fixed bottom-6 right-[max(24px,calc(50%-186px))]">
+			<div className="fixed bottom-[calc(env(safe-area-inset-bottom)_+_1.5rem)] right-[max(24px,calc(50%-186px))]">
 				<Fab tone="ember" accessibilityLabel="새 이벤트 추가" onPress={() => setSheetOpen(true)}>
 					<span className="-mt-0.5 text-3xl leading-none">+</span>
 				</Fab>

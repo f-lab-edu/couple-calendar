@@ -41,14 +41,14 @@ const LoginPage = () => {
 	};
 
 	return (
-		<div className="flex flex-col min-h-[100dvh] px-4">
+		<div className="flex flex-col min-h-[100dvh] px-4 pt-[env(safe-area-inset-top)]">
 			<div className="m-auto text-center">
 				<Text as="p" variant="h1" weight="bold">
 					둘만의 캘린더, 오늘부터.
 				</Text>
 				<Text as="p">하루를 함께 그려가는 가장 조용한 방법.</Text>
 			</div>
-			<div className="sticky bottom-0 flex flex-col gap-4">
+			<div className="sticky bottom-0 flex flex-col gap-4 pb-[calc(env(safe-area-inset-bottom)_+_1rem)]">
 				{error && (
 					<Text as="span" className="text-center text-red-500">
 						{error}
