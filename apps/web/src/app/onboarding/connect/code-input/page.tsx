@@ -8,7 +8,7 @@ const CodeInputPage = () => {
 	const { code, setCode, codeLength, isComplete, connect, goBack, isPending, error } = useConnectByCode();
 
 	return (
-		<div className="flex flex-col min-h-[100dvh] px-5 pt-4 pb-6">
+		<div className="flex flex-col min-h-[100dvh] px-5 pt-[calc(env(safe-area-inset-top)_+_1rem)] pb-[calc(env(safe-area-inset-bottom)_+_1.5rem)]">
 			<button
 				type="button"
 				aria-label="뒤로가기"

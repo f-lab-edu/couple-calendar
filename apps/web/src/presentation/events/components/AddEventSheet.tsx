@@ -41,7 +41,7 @@ const AddEventSheet = ({ open, onClose }: Props) => {
 				<EventForm
 					onSuccess={onClose}
 					bodyClassName="flex min-h-0 flex-1 flex-col gap-7 overflow-y-auto px-5 pt-2 pb-4"
-					footerClassName="shrink-0 border-neutral-100 border-t bg-white px-5 py-4"
+					footerClassName="shrink-0 border-neutral-100 border-t bg-white px-5 pt-4 pb-[calc(env(safe-area-inset-bottom)_+_1rem)]"
 				/>
 			</div>
 		</>

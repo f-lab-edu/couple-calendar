@@ -104,7 +104,7 @@ const EventDetailSheet = ({ event, onClose }: Props) => {
 						event={event}
 						onSuccess={handleClose}
 						bodyClassName="flex min-h-0 flex-1 flex-col gap-7 overflow-y-auto px-5 pt-2 pb-4"
-						footerClassName="shrink-0 border-neutral-100 border-t bg-white px-5 py-4"
+						footerClassName="shrink-0 border-neutral-100 border-t bg-white px-5 pt-4 pb-[calc(env(safe-area-inset-bottom)_+_1rem)]"
 					/>
 				) : null}
 
@@ -133,7 +133,7 @@ const EventDetailSheet = ({ event, onClose }: Props) => {
 							{event.description ? <Row label="메모" value={event.description} /> : null}
 						</div>
 
-						<div className="shrink-0 border-neutral-100 border-t bg-white px-5 py-4">
+						<div className="shrink-0 border-neutral-100 border-t bg-white px-5 pt-4 pb-[calc(env(safe-area-inset-bottom)_+_1rem)]">
 							{deleteError ? (
 								<Text as="p" variant="small" className="mb-2" style={{ color: "#dc2626" }}>
 									{deleteError.message}

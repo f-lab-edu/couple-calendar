@@ -55,7 +55,7 @@ const AnniversariesPage = () => {
 				)
 			) : null}
 
-			<div className="fixed bottom-6 right-[max(24px,calc(50%-186px))]">
+			<div className="fixed bottom-[calc(env(safe-area-inset-bottom)_+_1.5rem)] right-[max(24px,calc(50%-186px))]">
 				<Fab tone="ember" accessibilityLabel="기념일 추가" onPress={() => setAddOpen(true)}>
 					<span className="-mt-0.5 text-3xl leading-none">+</span>
 				</Fab>

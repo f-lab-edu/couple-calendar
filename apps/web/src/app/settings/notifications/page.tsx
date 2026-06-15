@@ -100,7 +100,16 @@ const NotificationsPage = () => {
 						</Text>
 					)}
 
-					<Text as="p" variant="small" style={{ padding: "16px 20px", color: "#9ca3af", fontSize: 12 }}>
+					<Text
+						as="p"
+						variant="small"
+						style={{
+							padding: "16px 20px",
+							paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)",
+							color: "#9ca3af",
+							fontSize: 12,
+						}}
+					>
 						알림은 두 사람 각자의 기기 설정을 따릅니다.
 					</Text>
 				</>

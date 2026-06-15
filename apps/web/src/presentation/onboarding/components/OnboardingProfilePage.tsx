@@ -22,7 +22,7 @@ const OnboardingProfilePage = ({ onPressNextButton }: Props) => {
 	};
 
 	return (
-		<div className="flex flex-col min-h-[calc(100dvh-4px)] px-5 pt-6 pb-6">
+		<div className="flex flex-col min-h-[calc(100dvh-4px)] px-5 pt-[calc(env(safe-area-inset-top)_+_1.5rem)] pb-[calc(env(safe-area-inset-bottom)_+_1.5rem)]">
 			<div className="mb-6">
 				<Text as="h1" variant="h1" weight="bold" style={{ lineHeight: "40px" }}>
 					프로필을 알려주세요.

@@ -91,7 +91,7 @@ const PartnerProfilePage = () => {
 						<InfoRow label="등록한 일정" value={`이번 달 ${monthlyEventCount}개`} valueMuted />
 					</div>
 
-					<div className="mt-auto px-5 py-6">
+					<div className="mt-auto px-5 pt-6 pb-[calc(env(safe-area-inset-bottom)_+_1.5rem)]">
 						<Card variant="warm" fullWidth style={{ borderRadius: 12, padding: "14px 16px" }}>
 							<div className="flex gap-3">
 								<span aria-hidden style={{ fontSize: 18 }}>

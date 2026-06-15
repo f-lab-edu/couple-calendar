@@ -54,7 +54,7 @@ const SettingsPage = () => {
 						/>
 					</div>
 
-					<div className="mt-5 flex flex-col gap-3 px-5">
+					<div className="mt-5 flex flex-col gap-3 px-5 pb-[env(safe-area-inset-bottom)]">
 						<SettingRow
 							title="우리 시작일"
 							description={formatKoreanDate(data.couple.startDate)}

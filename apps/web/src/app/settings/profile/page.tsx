@@ -97,7 +97,7 @@ const ProfileEditPage = () => {
 						</Text>
 					)}
 
-					<div className="mt-auto px-5 py-6">
+					<div className="mt-auto px-5 pt-6 pb-[calc(env(safe-area-inset-bottom)_+_1.5rem)]">
 						<Button variant="secondary" size="lg" fullWidth onPress={cancel}>
 							취소
 						</Button>

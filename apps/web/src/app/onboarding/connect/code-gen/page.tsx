@@ -25,7 +25,7 @@ const CodeGenPage = () => {
 	} = useInviteCodeGen();
 
 	return (
-		<div className="flex flex-col min-h-[100dvh] px-5 pt-3 pb-6 bg-white">
+		<div className="flex flex-col min-h-[100dvh] px-5 pt-[calc(env(safe-area-inset-top)_+_0.75rem)] pb-[calc(env(safe-area-inset-bottom)_+_1.5rem)] bg-white">
 			<button
 				type="button"
 				aria-label="뒤로 가기"

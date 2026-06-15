@@ -108,13 +108,13 @@ const AnniversaryDetailSheet = ({ anniversary, onClose }: Props) => {
 						anniversary={anniversary}
 						onSuccess={handleClose}
 						bodyClassName="flex min-h-0 flex-1 flex-col gap-7 overflow-y-auto px-5 pt-2 pb-4"
-						footerClassName="shrink-0 border-neutral-100 border-t bg-white px-5 py-4"
+						footerClassName="shrink-0 border-neutral-100 border-t bg-white px-5 pt-4 pb-[calc(env(safe-area-inset-bottom)_+_1rem)]"
 					/>
 				) : null}
 
 				{anniversary && mode === "detail" ? (
 					<>
-						<div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-5 pt-1 pb-4">
+						<div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-5 pt-1 pb-[calc(env(safe-area-inset-bottom)_+_1rem)]">
 							<div className="flex flex-col gap-1">
 								<Text as="h2" variant="h2" weight="bold" style={{ fontSize: 22, color: "#111827" }}>
 									{anniversary.title}
@@ -138,7 +138,7 @@ const AnniversaryDetailSheet = ({ anniversary, onClose }: Props) => {
 						</div>
 
 						{isEditable ? (
-							<div className="shrink-0 border-neutral-100 border-t bg-white px-5 py-4">
+							<div className="shrink-0 border-neutral-100 border-t bg-white px-5 pt-4 pb-[calc(env(safe-area-inset-bottom)_+_1rem)]">
 								{deleteError ? (
 									<Text as="p" variant="small" className="mb-2" style={{ color: "#dc2626" }}>
 										{deleteError.message}

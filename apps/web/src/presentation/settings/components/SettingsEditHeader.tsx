@@ -15,7 +15,7 @@ interface Props {
  * 프로필/상대방/알림 편집 화면이 동일한 헤더를 공유한다.
  */
 export const SettingsEditHeader = ({ title, onSave, saveDisabled, saving }: Props) => (
-	<header className="flex items-center justify-between px-3 pt-4 pb-3 bg-white">
+	<header className="flex items-center justify-between px-3 pt-[calc(env(safe-area-inset-top)_+_1rem)] pb-3 bg-white">
 		<div className="flex items-center gap-2">
 			<BackButton />
 			<Text as="h1" variant="p" weight="semibold" style={{ lineHeight: "24px", fontSize: 18 }}>
