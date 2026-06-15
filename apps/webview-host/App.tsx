@@ -5,7 +5,10 @@
  */
 
 import { StatusBar, StyleSheet, useColorScheme } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  SafeAreaProvider,
+  SafeAreaView,
+} from 'react-native-safe-area-context';
 import { WebViewPoolProvider } from 'react-native-instant-webview';
 
 import { WebViewScreen } from './src/WebViewScreen';
@@ -13,19 +16,26 @@ import { WebViewScreen } from './src/WebViewScreen';
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
 
+  // SafeAreaProvider is required for SafeAreaView to compute insets; without it
+  // SafeAreaView renders full-bleed and the WebView overlaps the status bar /
+  // home indicator. The padded inset area uses the web app's background color
+  // so it blends with the rendered page.
   return (
-    <WebViewPoolProvider config={{ poolSize: 3 }}>
-      <SafeAreaView style={styles.container}>
-        <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-        <WebViewScreen />
-      </SafeAreaView>
-    </WebViewPoolProvider>
+    <SafeAreaProvider>
+      <WebViewPoolProvider config={{ poolSize: 3 }}>
+        <SafeAreaView style={styles.container}>
+          <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+          <WebViewScreen />
+        </SafeAreaView>
+      </WebViewPoolProvider>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f6f5f0',
   },
 });
 
