@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { Text } from "woosign-system";
+import { logoutAction } from "@/app/settings/actions";
 import { CoupleHero } from "@/presentation/settings/components/CoupleHero";
 import { DisconnectDialog } from "@/presentation/settings/components/DisconnectDialog";
 import { SettingRow } from "@/presentation/settings/components/SettingRow";
@@ -70,10 +71,16 @@ const SettingsPage = () => {
 							onClick={() => router.push(ROUTES.SETTINGS_PARTNER_PROFILE)}
 						/>
 						<SettingRow
+							title="기념일 관리"
+							description="우리만의 기념일 추가·수정"
+							onClick={() => router.push(ROUTES.SETTINGS_ANNIVERSARIES)}
+						/>
+						<SettingRow
 							title="알림 설정"
 							description="일정 1일 전 / 기념일 당일"
 							onClick={() => router.push(ROUTES.SETTINGS_NOTIFICATIONS)}
 						/>
+						<SettingRow title="로그아웃" onClick={() => logoutAction()} />
 						<SettingRow title="연결 끊기" destructive onClick={disconnect.show} />
 					</div>
 				</>

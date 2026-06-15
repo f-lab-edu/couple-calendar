@@ -2,12 +2,18 @@
 
 import { useState } from "react";
 import { Button, Input, Pill, Switch, Text } from "woosign-system";
+import type Event from "@/domain/entities/Event";
 import useCreateEvent from "@/presentation/events/hooks/useCreateEvent";
+import useUpdateEvent from "@/presentation/events/hooks/useUpdateEvent";
+import { isAllDay } from "@/presentation/events/lib/eventDisplay";
 import {
 	allDayEndIso,
 	allDayStartIso,
 	CATEGORY_TO_DTO,
 	type CategoryId,
+	DTO_TO_CATEGORY,
+	isoToDateString,
+	isoToTimeString,
 	todayString,
 	toKstIso,
 } from "@/presentation/events/lib/eventForm";
@@ -21,40 +27,56 @@ interface Props {
 	bodyClassName: string;
 	/** 하단 저장 버튼 영역 className. */
 	footerClassName: string;
+	/** 주어지면 수정 모드: 초기값을 채우고 저장 시 PATCH 경로를 탄다. */
+	event?: Event | null;
 }
 
 /**
- * 일정 생성 폼의 상태·검증·저장 로직과 입력 필드를 모두 담는 공통 컴포넌트.
- * 풀페이지(`/events/add`)와 바텀시트(`AddEventSheet`)가 레이아웃 래퍼만 달리하여 재사용한다.
+ * 일정 생성/수정 폼의 상태·검증·저장 로직과 입력 필드를 모두 담는 공통 컴포넌트.
+ * 풀페이지(`/events/add`)와 바텀시트(`AddEventSheet`/`EventDetailSheet`)가
+ * 레이아웃 래퍼만 달리하여 재사용한다. `event` prop이 주어지면 수정 모드로 동작한다.
  */
-const EventForm = ({ onSuccess, bodyClassName, footerClassName }: Props) => {
-	const { mutate: createEvent, isPending, error } = useCreateEvent();
+const EventForm = ({ onSuccess, bodyClassName, footerClassName, event }: Props) => {
+	const isEditMode = event != null;
+	const editAllDay = isEditMode ? isAllDay(event) : false;
 
-	const [title, setTitle] = useState("");
-	const [category, setCategory] = useState<CategoryId>("date");
-	const [date, setDate] = useState(todayString);
-	const [startTime, setStartTime] = useState("19:00");
-	const [endTime, setEndTime] = useState("21:00");
-	const [allDay, setAllDay] = useState(false);
+	const { mutate: createEvent, isPending: isCreating, error: createError } = useCreateEvent();
+	const { mutate: updateEvent, isPending: isUpdating, error: updateError } = useUpdateEvent();
+	const isPending = isCreating || isUpdating;
+	const error = createError ?? updateError;
+
+	const [title, setTitle] = useState(event?.title ?? "");
+	const [category, setCategory] = useState<CategoryId>(
+		isEditMode ? DTO_TO_CATEGORY[event.category] : "date",
+	);
+	const [date, setDate] = useState(isEditMode ? isoToDateString(event.startTime) : todayString());
+	const [startTime, setStartTime] = useState(
+		isEditMode ? isoToTimeString(event.startTime) : "19:00",
+	);
+	const [endTime, setEndTime] = useState(isEditMode ? isoToTimeString(event.endTime) : "21:00");
+	const [allDay, setAllDay] = useState(editAllDay);
 	const [reminder, setReminder] = useState<(typeof REMINDERS)[number]>("1시간 전");
-	const [location, setLocation] = useState("");
-	const [memo, setMemo] = useState("");
+	const [location, setLocation] = useState(event?.location ?? "");
+	const [memo, setMemo] = useState(event?.description ?? "");
 
 	const isSavable = title.trim().length > 0 && date.length > 0 && !isPending;
 
 	const handleSave = () => {
 		if (!isSavable) return;
-		createEvent(
-			{
-				title: title.trim(),
-				startTime: allDay ? allDayStartIso(date) : toKstIso(date, startTime),
-				endTime: allDay ? allDayEndIso(date) : toKstIso(date, endTime),
-				category: CATEGORY_TO_DTO[category],
-				description: memo.trim() || null,
-				location: location.trim() || null,
-			},
-			{ onSuccess },
-		);
+		const payload = {
+			title: title.trim(),
+			startTime: allDay ? allDayStartIso(date) : toKstIso(date, startTime),
+			endTime: allDay ? allDayEndIso(date) : toKstIso(date, endTime),
+			category: CATEGORY_TO_DTO[category],
+			description: memo.trim() || null,
+			location: location.trim() || null,
+		};
+
+		if (isEditMode) {
+			updateEvent({ id: event.id, input: payload }, { onSuccess });
+		} else {
+			createEvent(payload, { onSuccess });
+		}
 	};
 
 	return (
@@ -188,7 +210,7 @@ const EventForm = ({ onSuccess, bodyClassName, footerClassName }: Props) => {
 					</Text>
 				) : null}
 				<Button variant="default" size="lg" fullWidth disabled={!isSavable} onPress={handleSave}>
-					{isPending ? "저장 중..." : "일정 저장"}
+					{isPending ? "저장 중..." : isEditMode ? "수정 완료" : "일정 저장"}
 				</Button>
 			</div>
 		</>

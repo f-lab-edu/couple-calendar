@@ -16,6 +16,8 @@ const validInput = (overrides: Partial<CreateEventInput> = {}): CreateEventInput
 const makeRepository = (): EventRepository => ({
 	getMonthlyEvents: vi.fn(),
 	createEvent: vi.fn(async (input: CreateEventInput) => ({ id: "evt-1", coupleId: "c-1", ...input }) as Event),
+	updateEvent: vi.fn(),
+	deleteEvent: vi.fn(),
 });
 
 describe("CreateEventUseCase", () => {

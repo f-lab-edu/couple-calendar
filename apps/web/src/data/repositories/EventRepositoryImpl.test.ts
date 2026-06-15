@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import type { EventDataSource } from "@/data/apis/EventDataSource";
 import type { EventResponse } from "@/data/dto/event-response";
-import type { CreateEventInput } from "@/domain/repositories/EventRepository";
+import type { CreateEventInput, UpdateEventInput } from "@/domain/repositories/EventRepository";
 import { EventRepositoryImpl } from "./EventRepositoryImpl";
 
 const eventDto = (overrides: Partial<EventResponse> = {}): EventResponse => ({
@@ -23,6 +23,8 @@ const makeDataSource = (): EventDataSource =>
 	({
 		getEvents: vi.fn(async () => [eventDto()]),
 		createEvent: vi.fn(async () => eventDto({ id: "created" })),
+		updateEvent: vi.fn(async () => eventDto({ id: "updated", title: "수정됨" })),
+		deleteEvent: vi.fn(async () => undefined),
 	}) as unknown as EventDataSource;
 
 describe("EventRepositoryImpl.getMonthlyEvents", () => {
@@ -100,5 +102,37 @@ describe("EventRepositoryImpl.createEvent", () => {
 
 		expect(dataSource.createEvent).toHaveBeenCalledWith(input);
 		expect(created.id).toBe("created");
+	});
+});
+
+describe("EventRepositoryImpl.updateEvent", () => {
+	it("부분 입력을 datasource에 전달하고 파싱된 결과를 반환한다", async () => {
+		const dataSource = makeDataSource();
+		const repo = new EventRepositoryImpl(dataSource);
+		const input: UpdateEventInput = { title: "수정됨" };
+
+		const updated = await repo.updateEvent("evt-1", input);
+
+		expect(dataSource.updateEvent).toHaveBeenCalledWith("evt-1", {
+			title: "수정됨",
+			startTime: undefined,
+			endTime: undefined,
+			category: undefined,
+			description: undefined,
+			location: undefined,
+		});
+		expect(updated.id).toBe("updated");
+		expect(updated.title).toBe("수정됨");
+	});
+});
+
+describe("EventRepositoryImpl.deleteEvent", () => {
+	it("id로 datasource.deleteEvent를 호출한다", async () => {
+		const dataSource = makeDataSource();
+		const repo = new EventRepositoryImpl(dataSource);
+
+		await expect(repo.deleteEvent("evt-1")).resolves.toBeUndefined();
+
+		expect(dataSource.deleteEvent).toHaveBeenCalledWith("evt-1");
 	});
 });

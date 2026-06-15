@@ -11,6 +11,12 @@ export interface CreateEventInput {
 }
 
 /**
+ * Partial update payload for an existing event. Every field is optional;
+ * only the provided fields are sent to the backend (PATCH semantics).
+ */
+export type UpdateEventInput = Partial<CreateEventInput>;
+
+/**
  * Repository contract for the Event aggregate.
  *
  * Domain layer interface — implementations live under `data/repositories/`
@@ -20,4 +26,6 @@ export interface CreateEventInput {
 export interface EventRepository {
 	getMonthlyEvents(year: number, month: number): Promise<Event[]>;
 	createEvent(input: CreateEventInput): Promise<Event>;
+	updateEvent(id: string, input: UpdateEventInput): Promise<Event>;
+	deleteEvent(id: string): Promise<void>;
 }

@@ -1,7 +1,11 @@
 import { EventDataSource } from "@/data/apis/EventDataSource";
 import { parseEvent, parseEvents } from "@/data/parsers/eventParser";
 import type Event from "@/domain/entities/Event";
-import type { CreateEventInput, EventRepository } from "@/domain/repositories/EventRepository";
+import type {
+	CreateEventInput,
+	EventRepository,
+	UpdateEventInput,
+} from "@/domain/repositories/EventRepository";
 
 const KST_OFFSET = "+09:00";
 
@@ -61,5 +65,21 @@ export class EventRepositoryImpl implements EventRepository {
 			location: input.location,
 		});
 		return parseEvent(created);
+	}
+
+	async updateEvent(id: string, input: UpdateEventInput): Promise<Event> {
+		const updated = await this.dataSource.updateEvent(id, {
+			title: input.title,
+			startTime: input.startTime,
+			endTime: input.endTime,
+			category: input.category,
+			description: input.description,
+			location: input.location,
+		});
+		return parseEvent(updated);
+	}
+
+	async deleteEvent(id: string): Promise<void> {
+		await this.dataSource.deleteEvent(id);
 	}
 }
