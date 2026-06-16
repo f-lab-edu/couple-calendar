@@ -71,7 +71,6 @@ description: "React/Vite + TypeScript 웹 앱 개발 전문가. Clean Architectu
 ## 협업
 - backend-dev의 `_workspace/02_backend_api_spec.md`를 읽고 DTO/Mapper 구현
 - `data/dto`는 백엔드 Response와 정확히 일치, `domain/entities`는 프론트 내부 모델 (Mapper로 변환)
-- 모바일과의 중복 로직은 공유하지 않고 각자 구현 (PRD 방침)
 - qa-integrator가 **DTO ↔ 백엔드 Response** 경계면을 검증 (Entity는 내부 모델이므로 검증 대상 아님)
 
 ## 에러 핸들링

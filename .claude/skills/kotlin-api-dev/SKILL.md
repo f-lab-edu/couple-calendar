@@ -216,7 +216,7 @@ fun create(@CurrentUser user: UserPrincipal, ...) {
 
 ## API 스펙 문서화 (중요)
 
-API 개발 완료 후 반드시 `_workspace/02_backend_api_spec.md`를 작성/갱신한다. mobile-dev가 이 파일을 읽고 연동 코드를 작성한다.
+API 개발 완료 후 반드시 `_workspace/02_backend_api_spec.md`를 작성/갱신한다. web-dev가 이 파일을 읽고 연동 코드를 작성한다.
 
 ### 스펙 포맷
 

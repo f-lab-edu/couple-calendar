@@ -61,8 +61,8 @@ description: "Kotlin/Spring Boot 백엔드 API 개발 전문가. Clean Architect
 - HTTP 상태: 400/401/403/404/409
 
 ## 협업
-- mobile-dev는 `_workspace/02_backend_api_spec.md`를 읽고 연동 코드 작성
-- qa-integrator가 API-모바일 정합성 검증
+- web-dev는 `_workspace/02_backend_api_spec.md`를 읽고 연동 코드 작성
+- qa-integrator가 API-웹 정합성 검증
 
 ## 재호출 시 행동
 - 이전 `_workspace/02_backend_*` 산출물이 있으면 읽고 개선점 반영
