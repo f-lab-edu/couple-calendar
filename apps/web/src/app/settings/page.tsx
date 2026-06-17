@@ -11,11 +11,15 @@ import { StartDateDialog } from "@/presentation/settings/components/StartDateDia
 import useCoupleProfile from "@/presentation/settings/hooks/useCoupleProfile";
 import useDisconnectDialog from "@/presentation/settings/hooks/useDisconnectDialog";
 import useStartDateDialog from "@/presentation/settings/hooks/useStartDateDialog";
-import { ROUTES } from "@/shared/constants/routes";
+import { LEGAL_LINKS, ROUTES } from "@/shared/constants/routes";
 import { formatBirthday, formatKoreanDate } from "@/shared/lib/date";
 
 const describeProfile = (nickname: string, birthday: string | null): string =>
 	birthday ? `${nickname}, ${formatBirthday(birthday)}` : nickname;
+
+const openExternal = (url: string): void => {
+	window.open(url, "_blank", "noopener,noreferrer");
+};
 
 const SettingsPage = () => {
 	const router = useRouter();
@@ -80,6 +84,11 @@ const SettingsPage = () => {
 							description="일정 1일 전 / 기념일 당일"
 							onClick={() => router.push(ROUTES.SETTINGS_NOTIFICATIONS)}
 						/>
+						<SettingRow
+							title="개인정보 처리방침"
+							onClick={() => openExternal(LEGAL_LINKS.PRIVACY)}
+						/>
+						<SettingRow title="이용약관" onClick={() => openExternal(LEGAL_LINKS.TERMS)} />
 						<SettingRow title="로그아웃" onClick={() => logoutAction()} />
 						<SettingRow title="연결 끊기" destructive onClick={disconnect.show} />
 					</div>
