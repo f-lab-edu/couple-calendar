@@ -275,6 +275,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.woobottle.couplecalendar";
 				PRODUCT_NAME = webviewhost;
+				DEVELOPMENT_TEAM = A52B4JPCH2;
+				CODE_SIGN_STYLE = Automatic;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -302,6 +304,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.woobottle.couplecalendar";
 				PRODUCT_NAME = webviewhost;
+				DEVELOPMENT_TEAM = A52B4JPCH2;
+				CODE_SIGN_STYLE = Automatic;
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
