@@ -12,6 +12,14 @@ const makeRepository = (): AuthRepository => ({
 				nickname: "지수",
 			}),
 	),
+	signInWithEmail: vi.fn(
+		async (email: string) =>
+			new AuthSession(`access-for-${email}`, {
+				id: "user-1",
+				email,
+				nickname: "지수",
+			}),
+	),
 });
 
 describe("SignInWithAppleUseCase", () => {

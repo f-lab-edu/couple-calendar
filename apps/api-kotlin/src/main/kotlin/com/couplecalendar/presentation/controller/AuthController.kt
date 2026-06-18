@@ -1,6 +1,7 @@
 package com.couplecalendar.presentation.controller
 
 import com.couplecalendar.application.dto.request.AppleAuthRequest
+import com.couplecalendar.application.dto.request.EmailAuthRequest
 import com.couplecalendar.application.dto.response.AuthResponse
 import com.couplecalendar.application.service.AuthService
 import jakarta.validation.Valid
@@ -18,4 +19,8 @@ class AuthController(
     @PostMapping("/apple")
     fun appleAuth(@Valid @RequestBody request: AppleAuthRequest): AuthResponse =
         authService.authenticateWithApple(request.identityToken, request.authorizationCode)
+
+    @PostMapping("/email")
+    fun emailAuth(@Valid @RequestBody request: EmailAuthRequest): AuthResponse =
+        authService.authenticateWithEmail(request.email, request.password)
 }

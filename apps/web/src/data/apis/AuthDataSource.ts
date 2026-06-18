@@ -1,4 +1,4 @@
-import type { AppleAuthRequest } from "@/data/dto/auth-request";
+import type { AppleAuthRequest, EmailAuthRequest } from "@/data/dto/auth-request";
 import type { AuthResponse } from "@/data/dto/auth-response";
 
 /**
@@ -18,6 +18,20 @@ export class AuthDataSource {
 
 		if (!response.ok) {
 			throw new Error(`Failed to sign in with Apple: ${response.status} ${response.statusText}`);
+		}
+
+		return (await response.json()) as AuthResponse;
+	}
+
+	async signInWithEmail(request: EmailAuthRequest): Promise<AuthResponse> {
+		const response = await fetch("/api/auth/email", {
+			method: "POST",
+			headers: { "Content-Type": "application/json", Accept: "application/json" },
+			body: JSON.stringify(request),
+		});
+
+		if (!response.ok) {
+			throw new Error(`Failed to sign in with email: ${response.status} ${response.statusText}`);
 		}
 
 		return (await response.json()) as AuthResponse;

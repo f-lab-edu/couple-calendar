@@ -33,9 +33,52 @@ class SupabaseAuthClient(
             .block() ?: throw UnauthorizedException("Apple authentication failed")
 
         return AuthResult(
-            accessToken = response.access_token,
+            accessToken = response.access_token ?: throw UnauthorizedException("Apple authentication failed"),
             email = response.user?.email
         )
+    }
+
+    /**
+     * 이메일/비밀번호 로그인. 자격 증명이 틀리면 UnauthorizedException.
+     */
+    fun signInWithPassword(email: String, password: String): AuthResult {
+        val response = webClient.post()
+            .uri("/auth/v1/token?grant_type=password")
+            .bodyValue(mapOf("email" to email, "password" to password))
+            .retrieve()
+            .onStatus(HttpStatusCode::isError) {
+                Mono.error(UnauthorizedException("Email login failed"))
+            }
+            .bodyToMono(SupabaseAuthResponse::class.java)
+            .block() ?: throw UnauthorizedException("Email login failed")
+
+        return AuthResult(
+            accessToken = response.access_token ?: throw UnauthorizedException("Email login failed"),
+            email = response.user?.email
+        )
+    }
+
+    /**
+     * 이메일/비밀번호 회원가입.
+     * ⚠️ Supabase Auth 의 "Confirm email" 이 꺼져 있어야 가입 즉시 access_token 이 반환된다.
+     * 켜져 있으면 access_token 이 없어 역직렬화 실패(가입은 되나 세션 미발급).
+     */
+    fun signUpWithEmail(email: String, password: String): AuthResult {
+        val response = webClient.post()
+            .uri("/auth/v1/signup")
+            .bodyValue(mapOf("email" to email, "password" to password))
+            .retrieve()
+            .onStatus(HttpStatusCode::isError) {
+                Mono.error(UnauthorizedException("Email signup failed"))
+            }
+            .bodyToMono(SupabaseAuthResponse::class.java)
+            .block() ?: throw UnauthorizedException("Email signup failed")
+
+        val accessToken = response.access_token
+            ?: throw UnauthorizedException(
+                "회원가입은 됐지만 세션이 발급되지 않았습니다. Supabase Auth에서 'Confirm email'을 꺼주세요."
+            )
+        return AuthResult(accessToken = accessToken, email = response.user?.email)
     }
 
     fun verifyToken(token: String): TokenVerification {
@@ -67,7 +110,7 @@ class SupabaseAuthClient(
 }
 
 data class SupabaseAuthResponse(
-    val access_token: String,
+    val access_token: String? = null,
     val token_type: String? = null,
     val expires_in: Int? = null,
     val refresh_token: String? = null,

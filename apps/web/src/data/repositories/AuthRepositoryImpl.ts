@@ -10,4 +10,9 @@ export class AuthRepositoryImpl implements AuthRepository {
 		const response = await this.dataSource.signInWithApple({ identityToken, authorizationCode });
 		return parseAuthSession(response);
 	}
+
+	async signInWithEmail(email: string, password: string): Promise<AuthSession> {
+		const response = await this.dataSource.signInWithEmail({ email, password });
+		return parseAuthSession(response);
+	}
 }
