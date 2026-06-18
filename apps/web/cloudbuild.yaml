@@ -1,0 +1,28 @@
+# Cloud Build: build the web app image from the REPO ROOT context using
+# apps/web/Dockerfile, passing NEXT_PUBLIC_* (build-time inlined) as build args.
+# Invoke from repo root:
+#   gcloud builds submit --config apps/web/cloudbuild.yaml \
+#     --substitutions=_IMAGE=...,_NEXT_PUBLIC_API_MOCKING=disabled,... .
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-f'
+      - 'apps/web/Dockerfile'
+      - '-t'
+      - '${_IMAGE}'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_API_MOCKING=${_NEXT_PUBLIC_API_MOCKING}'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_APPLE_CLIENT_ID=${_NEXT_PUBLIC_APPLE_CLIENT_ID}'
+      - '--build-arg'
+      - 'NEXT_PUBLIC_APPLE_REDIRECT_URI=${_NEXT_PUBLIC_APPLE_REDIRECT_URI}'
+      - '.'
+images:
+  - '${_IMAGE}'
+substitutions:
+  _NEXT_PUBLIC_API_MOCKING: 'disabled'
+  _NEXT_PUBLIC_APPLE_CLIENT_ID: ''
+  _NEXT_PUBLIC_APPLE_REDIRECT_URI: ''
+options:
+  logging: CLOUD_LOGGING_ONLY

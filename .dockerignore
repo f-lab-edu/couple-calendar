@@ -1,0 +1,20 @@
+# Build context = repo root (used by apps/web/Dockerfile via Cloud Build).
+# Keep the context small and never ship secrets or local env into the image.
+**/node_modules
+**/.next
+**/dist
+**/build
+.git
+.gitignore
+# Secrets / local env (NEXT_PUBLIC_* are passed as build args instead)
+**/.env
+**/.env.*
+# Native build artifacts
+apps/webview-host/ios/build
+apps/webview-host/ios/Pods
+apps/webview-host/android/build
+apps/webview-host/android/app/build
+# Misc
+**/*.log
+**/.DS_Store
+docs
