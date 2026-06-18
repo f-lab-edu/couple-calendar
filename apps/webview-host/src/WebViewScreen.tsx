@@ -33,6 +33,14 @@ function WebViewScreen(): React.JSX.Element {
         key={reloadNonce}
         source={{ uri: WEB_APP_URL }}
         containerStyle={StyleSheet.absoluteFill}
+        // Persist the session cookie across app restarts (iOS uses the shared
+        // NSHTTPCookieStorage; Android keeps third-party cookies) so login survives.
+        sharedCookiesEnabled
+        thirdPartyCookiesEnabled
+        // The native WebView must not rubber-band/overscroll; only the inner web
+        // content scrolls. Keeps fixed headers/FABs from jiggling.
+        bounces={false}
+        overScrollMode="never"
         onLoadEnd={() => setLoading(false)}
         onError={fail}
         onHttpError={fail}
