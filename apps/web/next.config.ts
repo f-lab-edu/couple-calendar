@@ -16,6 +16,12 @@ const nextConfig: NextConfig = {
 	},
 	experimental: {
 		viewTransition: true,
+		// CloudFront가 Cloud Run 라우팅 위해 Host를 run.app으로 바꿔 보내므로
+		// Server Action의 origin(커스텀 도메인) ↔ x-forwarded-host(run.app) 불일치로 거부됨.
+		// 프로덕션 도메인을 신뢰 origin으로 등록해 CSRF 검사를 통과시킨다.
+		serverActions: {
+			allowedOrigins: ["couple-calendar.woo-bottle.com"],
+		},
 	},
 };
 
