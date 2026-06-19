@@ -15,6 +15,7 @@ const CodeGenPage = () => {
 		startDate,
 		setStartDate,
 		invite,
+		loading,
 		mounted,
 		copied,
 		generateCode,
@@ -35,7 +36,13 @@ const CodeGenPage = () => {
 				<ChevronLeft />
 			</button>
 
-			{invite ? (
+			{loading ? (
+				<div className="flex flex-1 items-center justify-center">
+					<Text as="p" variant="small" style={{ color: "#9ca3af" }}>
+						불러오는 중…
+					</Text>
+				</div>
+			) : invite ? (
 				<>
 					<div className="mb-6">
 						<Text as="h1" variant="h1" weight="bold" style={{ fontSize: 24, lineHeight: "32px", color: "#111827" }}>

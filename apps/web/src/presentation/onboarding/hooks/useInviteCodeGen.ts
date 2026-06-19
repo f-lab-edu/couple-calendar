@@ -1,7 +1,10 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+import { coupleRepository } from "@/composition/couple";
+import InviteCode from "@/domain/entities/InviteCode";
 import useGenerateInviteCode from "@/presentation/onboarding/hooks/useGenerateInviteCode";
 
 const COPIED_FEEDBACK_MS = 1500;
@@ -9,6 +12,9 @@ const COPIED_FEEDBACK_MS = 1500;
 /**
  * 초대 코드 생성 화면(온보딩)의 뷰모델.
  * 시작일 선택 → 코드 생성 → 코드 복사(피드백 토스트 1.5초)까지의 상태/동작을 담당한다.
+ *
+ * 이미 초대만 만든(파트너 대기) 계정은 백엔드가 재생성을 400("already in a couple")으로
+ * 막으므로, 진입 시 내 커플을 조회해 유효한 기존 코드가 있으면 그대로 보여준다.
  */
 const useInviteCodeGen = () => {
 	const router = useRouter();
@@ -29,7 +35,27 @@ const useInviteCodeGen = () => {
 		return () => window.clearTimeout(timerId);
 	}, [copied]);
 
-	const invite = generate.data ?? null;
+	// 진입 시 기존 커플 조회. 커플이 없으면 404 등으로 에러 → 신규 생성 흐름으로 진행.
+	const existing = useQuery({
+		queryKey: ["myCouple", "codeGen"],
+		queryFn: () => coupleRepository.getMyCouple(),
+		retry: false,
+		staleTime: 0,
+	});
+
+	// 파트너 대기(미완성) + 아직 만료되지 않은 코드만 "기존 코드"로 인정한다.
+	const existingInvite = useMemo(() => {
+		const couple = existing.data;
+		if (!couple || couple.isComplete) return null;
+		if (!couple.inviteCode || !couple.inviteCodeExpiresAt) return null;
+		if (Date.parse(couple.inviteCodeExpiresAt) <= Date.now()) return null;
+		return new InviteCode(couple.inviteCode, couple.inviteCodeExpiresAt);
+	}, [existing.data]);
+
+	// 표시할 코드: 방금 생성한 것 우선, 없으면 기존 유효 코드.
+	const invite = generate.data ?? existingInvite;
+	// 시작일 라벨: 입력값 우선, 없으면 기존 커플의 시작일(생성 폼을 건너뛴 경우).
+	const effectiveStartDate = startDate || existing.data?.startDate?.slice(0, 10) || "";
 
 	const generateCode = () => {
 		if (!startDate) return;
@@ -48,9 +74,11 @@ const useInviteCodeGen = () => {
 
 	return {
 		today,
-		startDate,
+		startDate: effectiveStartDate,
 		setStartDate,
 		invite,
+		// 기존 커플 조회 중에는 폼/코드 판단을 미루기 위해 로딩으로 본다.
+		loading: existing.isLoading,
 		mounted,
 		copied,
 		generateCode,
