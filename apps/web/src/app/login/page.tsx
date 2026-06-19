@@ -28,15 +28,21 @@ const LoginPage = () => {
 	const completeLogin = async (session: AuthSession) => {
 		await loginAction(session.user.id, session.accessToken);
 		const me = await userRepository.getMe();
-		let connected = false;
+		// coupleId 존재만으로는 부족하다 — 초대만 만든 "파트너 대기" 상태(isComplete=false)도
+		// coupleId가 있으므로 커플 상태에 따라 분기한다.
+		//   완성   → 홈
+		//   미완성 → 코드 화면(내가 만든 초대 코드 표시)
+		//   없음   → 온보딩 처음
+		let dest: string = ROUTES.ONBOARDING;
 		if (me.coupleId) {
 			try {
-				connected = (await coupleRepository.getMyCouple()).isComplete;
+				const couple = await coupleRepository.getMyCouple();
+				dest = couple.isComplete ? ROUTES.HOME : ROUTES.ONBOARDING_CONNECT_CODE_GEN;
 			} catch {
-				connected = false;
+				dest = ROUTES.ONBOARDING;
 			}
 		}
-		router.push(connected ? ROUTES.HOME : ROUTES.ONBOARDING);
+		router.push(dest);
 	};
 
 	const handleAppleLogin = async () => {
