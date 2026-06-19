@@ -33,6 +33,8 @@ function WebViewScreen(): React.JSX.Element {
         key={reloadNonce}
         source={{ uri: WEB_APP_URL }}
         containerStyle={StyleSheet.absoluteFill}
+        // 웹이 로드되기 전 깜빡임/빈 화면을 흰색으로 보이게 한다.
+        style={styles.webview}
         // Persist the session cookie across app restarts (iOS uses the shared
         // NSHTTPCookieStorage; Android keeps third-party cookies) so login survives.
         sharedCookiesEnabled
@@ -78,6 +80,10 @@ function WebViewScreen(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#fff',
+  },
+  webview: {
+    backgroundColor: '#fff',
   },
   overlay: {
     ...StyleSheet.absoluteFillObject,
