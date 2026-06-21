@@ -46,6 +46,7 @@ class EmailAuthCommandHandler(
 
         return AuthResponse(
             accessToken = authResult.accessToken,
+            refreshToken = authResult.refreshToken,
             user = AuthResponse.UserInfo(
                 id = user.id.toString(),
                 email = user.email.value,

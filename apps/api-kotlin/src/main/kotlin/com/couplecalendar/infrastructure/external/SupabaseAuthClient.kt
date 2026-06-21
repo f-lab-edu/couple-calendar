@@ -34,7 +34,8 @@ class SupabaseAuthClient(
 
         return AuthResult(
             accessToken = response.access_token ?: throw UnauthorizedException("Apple authentication failed"),
-            email = response.user?.email
+            email = response.user?.email,
+            refreshToken = response.refresh_token
         )
     }
 
@@ -54,7 +55,8 @@ class SupabaseAuthClient(
 
         return AuthResult(
             accessToken = response.access_token ?: throw UnauthorizedException("Email login failed"),
-            email = response.user?.email
+            email = response.user?.email,
+            refreshToken = response.refresh_token
         )
     }
 
@@ -78,7 +80,29 @@ class SupabaseAuthClient(
             ?: throw UnauthorizedException(
                 "회원가입은 됐지만 세션이 발급되지 않았습니다. Supabase Auth에서 'Confirm email'을 꺼주세요."
             )
-        return AuthResult(accessToken = accessToken, email = response.user?.email)
+        return AuthResult(accessToken = accessToken, email = response.user?.email, refreshToken = response.refresh_token)
+    }
+
+    /**
+     * refresh token으로 새 access/refresh token 쌍을 발급받는다(accessToken 만료 시 자동 갱신용).
+     * Supabase는 refresh token을 회전시키므로 응답의 새 refresh_token을 반드시 저장해야 한다.
+     */
+    fun refreshSession(refreshToken: String): AuthResult {
+        val response = webClient.post()
+            .uri("/auth/v1/token?grant_type=refresh_token")
+            .bodyValue(mapOf("refresh_token" to refreshToken))
+            .retrieve()
+            .onStatus(HttpStatusCode::isError) {
+                Mono.error(UnauthorizedException("Token refresh failed"))
+            }
+            .bodyToMono(SupabaseAuthResponse::class.java)
+            .block() ?: throw UnauthorizedException("Token refresh failed")
+
+        return AuthResult(
+            accessToken = response.access_token ?: throw UnauthorizedException("Token refresh failed"),
+            email = response.user?.email,
+            refreshToken = response.refresh_token
+        )
     }
 
     fun verifyToken(token: String): TokenVerification {
@@ -100,7 +124,8 @@ class SupabaseAuthClient(
 
     data class AuthResult(
         val accessToken: String,
-        val email: String?
+        val email: String?,
+        val refreshToken: String? = null
     )
 
     data class TokenVerification(

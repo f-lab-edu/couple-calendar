@@ -12,11 +12,14 @@ export interface AuthSessionUser {
 
 class AuthSession {
 	readonly accessToken: string;
+	/** accessToken 만료 시 갱신에 쓰는 refresh token(있을 때). */
+	readonly refreshToken?: string;
 	readonly user: AuthSessionUser;
 
-	constructor(accessToken: string, user: AuthSessionUser) {
+	constructor(accessToken: string, user: AuthSessionUser, refreshToken?: string) {
 		this.accessToken = accessToken;
 		this.user = user;
+		this.refreshToken = refreshToken;
 	}
 }
 

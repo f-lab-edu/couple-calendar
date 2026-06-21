@@ -24,3 +24,11 @@ data class EmailAuthRequest(
     @field:Size(min = 6, message = "Password must be at least 6 characters")
     val password: String
 )
+
+/**
+ * accessToken 만료 시 refresh token으로 새 토큰을 발급받기 위한 요청.
+ */
+data class RefreshTokenRequest(
+    @field:NotBlank(message = "Refresh token is required")
+    val refreshToken: String
+)

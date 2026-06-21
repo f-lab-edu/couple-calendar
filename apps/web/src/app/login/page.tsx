@@ -26,7 +26,7 @@ const LoginPage = () => {
 	// coupleId 존재만으로는 부족하다 — 초대만 만든 "파트너 대기" 상태(isComplete=false)도
 	// coupleId가 있으므로, 실제로 파트너가 연결된(isComplete) 경우에만 홈으로 보낸다.
 	const completeLogin = async (session: AuthSession) => {
-		await loginAction(session.user.id, session.accessToken);
+		await loginAction(session.user.id, session.accessToken, session.refreshToken);
 		const me = await userRepository.getMe();
 		// coupleId 존재만으로는 부족하다 — 초대만 만든 "파트너 대기" 상태(isComplete=false)도
 		// coupleId가 있으므로 커플 상태에 따라 분기한다.
