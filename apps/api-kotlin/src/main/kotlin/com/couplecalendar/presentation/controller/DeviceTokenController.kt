@@ -35,6 +35,6 @@ class DeviceTokenController(
         @CurrentUser user: UserPrincipal,
         @Valid @RequestBody request: UnregisterDeviceTokenRequest
     ) {
-        deviceTokenService.unregister(request.token)
+        deviceTokenService.unregister(user.id, request.token)
     }
 }

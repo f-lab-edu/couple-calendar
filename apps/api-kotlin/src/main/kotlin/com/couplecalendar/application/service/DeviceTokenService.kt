@@ -20,7 +20,8 @@ class DeviceTokenService(
         deviceTokenRepository.save(deviceToken)
     }
 
-    fun unregister(token: String) {
-        deviceTokenRepository.deleteByToken(token)
+    /** 본인 소유 토큰만 해제(IDOR 방지). */
+    fun unregister(userId: UUID, token: String) {
+        deviceTokenRepository.deleteByUserIdAndToken(userId, token)
     }
 }
