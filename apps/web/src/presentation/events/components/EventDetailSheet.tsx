@@ -73,7 +73,7 @@ const EventDetailSheet = ({ event, onClose }: Props) => {
 				role="dialog"
 				aria-modal="true"
 				aria-hidden={!open}
-				className={`fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[90dvh] w-full max-w-[420px] flex-col rounded-t-2xl bg-white shadow-2xl transition-transform duration-300 ease-out ${
+				className={`fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[90dvh] w-full max-w-[420px] flex-col overflow-x-hidden rounded-t-2xl bg-white shadow-2xl transition-transform duration-300 ease-out ${
 					open ? "translate-y-0" : "pointer-events-none translate-y-full"
 				}`}
 			>
@@ -103,14 +103,14 @@ const EventDetailSheet = ({ event, onClose }: Props) => {
 					<EventForm
 						event={event}
 						onSuccess={handleClose}
-						bodyClassName="flex min-h-0 flex-1 flex-col gap-7 overflow-y-auto px-5 pt-2 pb-4"
+						bodyClassName="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-7 overflow-x-hidden overflow-y-auto px-5 pt-2 pb-4 touch-pan-y"
 						footerClassName="shrink-0 border-neutral-100 border-t bg-white px-5 pt-4 pb-[calc(env(safe-area-inset-bottom)_+_1rem)]"
 					/>
 				) : null}
 
 				{event && mode === "detail" ? (
 					<>
-						<div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-5 pt-1 pb-4">
+						<div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-6 overflow-x-hidden overflow-y-auto px-5 pt-1 pb-4 touch-pan-y">
 							<Text as="h2" variant="h2" weight="bold" style={{ fontSize: 22, color: "#111827" }}>
 								{event.title}
 							</Text>
