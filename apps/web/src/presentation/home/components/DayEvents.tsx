@@ -105,7 +105,7 @@ const DayEvents = ({ day, month, events }: Props) => {
 	const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
 	return (
-		<section className="mt-2 flex min-h-0 flex-1 flex-col">
+		<section className="mt-2 flex flex-col">
 			<div className="flex shrink-0 items-center justify-between px-1 pb-2">
 				<Text as="p" variant="small" weight="medium" style={{ color: "#111827" }}>
 					{month}월 {day}일 {weekday}요일
@@ -118,7 +118,7 @@ const DayEvents = ({ day, month, events }: Props) => {
 			{events.length === 0 ? (
 				<EmptyState />
 			) : (
-				<div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto pb-4">
+				<div className="flex flex-col gap-2 pb-4">
 					{events.map((event) => (
 						<EventCard key={event.id} event={event} onSelect={setSelectedEvent} />
 					))}
