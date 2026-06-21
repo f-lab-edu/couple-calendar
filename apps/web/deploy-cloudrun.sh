@@ -71,7 +71,7 @@ gcloud run deploy "$SERVICE" \
   --port 3000 \
   --memory 512Mi \
   --cpu 1 \
-  --min-instances 0 \
+  --min-instances "${MIN_INSTANCES:-1}" \
   --max-instances 3 \
   --set-env-vars "API_BASE_URL=${API_URL},AUTH_COOKIE_NAME=cc-auth,NEXT_PUBLIC_API_MOCKING=${NP_MOCKING},NODE_ENV=production" \
   --set-secrets "SESSION_SECRET=${SECRET_NAME}:latest"
