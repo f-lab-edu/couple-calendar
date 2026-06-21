@@ -57,9 +57,11 @@ const useInviteCodeGen = () => {
 	// 시작일 라벨: 입력값 우선, 없으면 기존 커플의 시작일(생성 폼을 건너뛴 경우).
 	const effectiveStartDate = startDate || existing.data?.startDate?.slice(0, 10) || "";
 
+	// 입력값이 비어 있으면 기존 커플의 시작일을 그대로 쓴다.
+	// (버튼의 활성/표시는 effectiveStartDate 기준이므로 생성도 같은 값을 써야 no-op이 안 생긴다.)
 	const generateCode = () => {
-		if (!startDate) return;
-		generate.mutate(startDate);
+		if (!effectiveStartDate) return;
+		generate.mutate(effectiveStartDate);
 	};
 
 	const copyCode = async () => {
