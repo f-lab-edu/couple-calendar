@@ -144,7 +144,7 @@ const EventForm = ({ onSuccess, bodyClassName, footerClassName, event }: Props) 
 							value={startTime}
 							onChange={(e) => setStartTime(e.target.value)}
 							disabled={allDay}
-							className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 outline-none focus:border-gray-400 disabled:opacity-40"
+							className="w-full min-w-0 appearance-none rounded-xl border border-gray-200 bg-white px-3 py-3 text-center text-base text-gray-900 outline-none focus:border-gray-400 disabled:opacity-40"
 						/>
 						<span className="text-neutral-400">—</span>
 						<input
@@ -152,7 +152,7 @@ const EventForm = ({ onSuccess, bodyClassName, footerClassName, event }: Props) 
 							value={endTime}
 							onChange={(e) => setEndTime(e.target.value)}
 							disabled={allDay}
-							className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 outline-none focus:border-gray-400 disabled:opacity-40"
+							className="w-full min-w-0 appearance-none rounded-xl border border-gray-200 bg-white px-3 py-3 text-center text-base text-gray-900 outline-none focus:border-gray-400 disabled:opacity-40"
 						/>
 					</div>
 				</section>
