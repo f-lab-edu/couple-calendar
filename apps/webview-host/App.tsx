@@ -35,7 +35,9 @@ function App(): React.JSX.Element {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f6f5f0',
+    // Safe-area inset padding (notch / home indicator) color. White to match
+    // the WebView's default background so the edges aren't tinted.
+    backgroundColor: '#fff',
   },
 });
 
