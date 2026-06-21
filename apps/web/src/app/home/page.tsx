@@ -19,7 +19,7 @@ export default function HomePage() {
 	if (!ready) return null;
 
 	return (
-		<main className="mx-auto flex min-h-dvh max-w-[420px] flex-col gap-4 bg-[#f6f5f0] px-4 pt-[calc(env(safe-area-inset-top)_+_1.25rem)] pb-[calc(env(safe-area-inset-bottom)_+_1.25rem)] text-[15px] text-neutral-800">
+		<main className="mx-auto flex min-h-dvh max-w-[420px] flex-col gap-4 bg-white px-4 pt-[calc(env(safe-area-inset-top)_+_1.25rem)] pb-[calc(env(safe-area-inset-bottom)_+_1.25rem)] text-[15px] text-neutral-800">
 			<DdayCard />
 
 			<section className="flex shrink-0 items-center justify-between">

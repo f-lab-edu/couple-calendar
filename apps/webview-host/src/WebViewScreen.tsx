@@ -43,6 +43,11 @@ function WebViewScreen(): React.JSX.Element {
         // content scrolls. Keeps fixed headers/FABs from jiggling.
         bounces={false}
         overScrollMode="never"
+        // Full-bleed: don't let the WebView add its own safe-area insets. The web
+        // app handles them via env(safe-area-inset-*), so the native side must
+        // stay edge-to-edge or the inset gets applied twice.
+        automaticallyAdjustContentInsets={false}
+        contentInsetAdjustmentBehavior="never"
         onLoadEnd={() => setLoading(false)}
         onError={fail}
         onHttpError={fail}
