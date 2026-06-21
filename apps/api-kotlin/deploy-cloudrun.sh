@@ -57,6 +57,22 @@ for s in cc-supabase-db-password cc-supabase-anon-key cc-supabase-service-key; d
 done
 echo "  ✓ ${RUNTIME_SA} → secretAccessor"
 
+# --- FCM 서비스 계정(선택): apps/api-kotlin/fcm-service-account.json 이 있으면 푸시 활성화 ---
+# (파일은 커밋하지 않는다. .gitignore 참고)
+SET_SECRETS="SUPABASE_DB_PASSWORD=cc-supabase-db-password:latest,SUPABASE_ANON_KEY=cc-supabase-anon-key:latest,SUPABASE_SERVICE_KEY=cc-supabase-service-key:latest"
+FCM_FILE="fcm-service-account.json"
+if [ -f "$FCM_FILE" ]; then
+  gcloud secrets describe cc-fcm-service-account >/dev/null 2>&1 \
+    || gcloud secrets create cc-fcm-service-account --replication-policy=automatic >/dev/null
+  gcloud secrets versions add cc-fcm-service-account --data-file="$FCM_FILE" >/dev/null
+  gcloud secrets add-iam-policy-binding cc-fcm-service-account \
+    --member="serviceAccount:${RUNTIME_SA}" --role="roles/secretmanager.secretAccessor" >/dev/null
+  SET_SECRETS="${SET_SECRETS},FCM_SERVICE_ACCOUNT_JSON=cc-fcm-service-account:latest"
+  echo "  ✓ FCM service account → secret (푸시 활성)"
+else
+  echo "  ⚠ ${FCM_FILE} 없음 → 푸시 비활성으로 배포(스케줄러 no-op)"
+fi
+
 # --- 배포 (--source 가 Dockerfile 로 Cloud Build → Artifact Registry → 배포) ---
 echo "▶ gcloud run deploy (Cloud Build 빌드 포함, 수 분 소요)"
 gcloud run deploy "$SERVICE" \
@@ -70,7 +86,7 @@ gcloud run deploy "$SERVICE" \
   --min-instances "${MIN_INSTANCES:-1}" \
   --max-instances 3 \
   --set-env-vars "SUPABASE_DB_HOST=${DB_HOST},SUPABASE_DB_PORT=${DB_PORT},SUPABASE_DB_NAME=${DB_NAME},SUPABASE_DB_USER=${DB_USER},SUPABASE_URL=${SB_URL}" \
-  --set-secrets "SUPABASE_DB_PASSWORD=cc-supabase-db-password:latest,SUPABASE_ANON_KEY=cc-supabase-anon-key:latest,SUPABASE_SERVICE_KEY=cc-supabase-service-key:latest"
+  --set-secrets "$SET_SECRETS"
 
 URL="$(gcloud run services describe "$SERVICE" --region "$REGION" --format='value(status.url)')"
 echo ""
