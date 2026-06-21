@@ -66,7 +66,8 @@ gcloud run deploy "$SERVICE" \
   --port 8080 \
   --memory 1Gi \
   --cpu 1 \
-  --min-instances 0 \
+  --cpu-boost \
+  --min-instances "${MIN_INSTANCES:-1}" \
   --max-instances 3 \
   --set-env-vars "SUPABASE_DB_HOST=${DB_HOST},SUPABASE_DB_PORT=${DB_PORT},SUPABASE_DB_NAME=${DB_NAME},SUPABASE_DB_USER=${DB_USER},SUPABASE_URL=${SB_URL}" \
   --set-secrets "SUPABASE_DB_PASSWORD=cc-supabase-db-password:latest,SUPABASE_ANON_KEY=cc-supabase-anon-key:latest,SUPABASE_SERVICE_KEY=cc-supabase-service-key:latest"
