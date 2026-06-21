@@ -37,7 +37,17 @@ async function handler(req: NextRequest, ctx: { params: Promise<{ path: string[]
 	const resHeaders = new Headers();
 	const resContentType = res.headers.get("content-type");
 	if (resContentType) resHeaders.set("content-type", resContentType);
-	return new NextResponse(body, { status: res.status, headers: resHeaders });
+	const response = new NextResponse(body, { status: res.status, headers: resHeaders });
+
+	// 토큰을 보냈는데 백엔드가 401이면 = 세션 안의 accessToken이 만료/무효.
+	// 죽은 세션 쿠키를 비워 클라이언트가 깨끗이 재로그인하게 한다. 쿠키를 그대로 두면
+	// session JWT(7일)는 유효해 proxy.ts가 /login→/home으로 되튕기고, /home은 다시
+	// 401로 빈 화면이 되는 흰 화면 루프에 빠진다.
+	if (res.status === 401 && accessToken) {
+		response.cookies.set("session", "", { path: "/", maxAge: 0, httpOnly: true });
+	}
+
+	return response;
 }
 
 export const GET = handler;

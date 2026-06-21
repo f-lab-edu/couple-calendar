@@ -18,20 +18,33 @@ import { ROUTES } from "@/shared/constants/routes";
  */
 const useRequireCoupleConnected = (): { ready: boolean } => {
 	const router = useRouter();
-	const { data, isError, isLoading } = useCoupleProfile();
+	const { data, isError, isLoading, error } = useCoupleProfile();
 	const connected = data?.couple.isComplete === true;
 
 	useEffect(() => {
 		if (isLoading) return;
 		if (connected) return;
+		if (isError) {
+			// 401 = 세션 안의 accessToken 만료/무효 → 깨끗이 재로그인.
+			// BFF가 죽은 세션 쿠키를 이미 비웠으므로 /login 으로 하드 내비게이션해도
+			// proxy.ts가 /home 으로 되튕기지 않는다(루프 없음). 그 외 에러(예: 커플 없음
+			// 404)는 온보딩으로 보낸다.
+			const message = error instanceof Error ? error.message : "";
+			if (/\b401\b/.test(message)) {
+				window.location.replace(ROUTES.LOGIN);
+				return;
+			}
+			router.replace(ROUTES.ONBOARDING);
+			return;
+		}
 		// 커플은 있으나 미완성 → 내가 만든 초대 코드를 다시 보여준다.
-		if (!isError && data?.couple && !data.couple.isComplete) {
+		if (data?.couple && !data.couple.isComplete) {
 			router.replace(ROUTES.ONBOARDING_CONNECT_CODE_GEN);
 			return;
 		}
-		// 커플 없음(조회 실패 등) → 온보딩 처음.
+		// 커플 없음 → 온보딩 처음.
 		router.replace(ROUTES.ONBOARDING);
-	}, [isLoading, isError, connected, data, router]);
+	}, [isLoading, isError, error, connected, data, router]);
 
 	return { ready: connected };
 };
