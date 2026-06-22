@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import LogoutLink from "@/presentation/onboarding/components/LogoutLink";
 import OnboardingConnectPage from "@/presentation/onboarding/components/OnboardingConnectPage";
 import OnboardingProfilePage from "@/presentation/onboarding/components/OnboardingProfilePage";
 import { ProgressBar } from "@/presentation/onboarding/components/ProgressBar";
@@ -19,6 +20,7 @@ const OnboardingContent = () => {
 
 	return (
 		<div>
+			<LogoutLink />
 			<ProgressBar step={step} />
 			{step === STEP.PROFILE && <OnboardingProfilePage onPressNextButton={moveToConnectStep} />}
 			{step === STEP.CONNECT && <OnboardingConnectPage />}

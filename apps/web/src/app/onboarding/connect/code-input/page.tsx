@@ -2,6 +2,7 @@
 
 import { Button, colors, Text } from "woosign-system";
 import { CodeInput } from "@/presentation/onboarding/components/CodeInput";
+import LogoutLink from "@/presentation/onboarding/components/LogoutLink";
 import useConnectByCode from "@/presentation/onboarding/hooks/useConnectByCode";
 
 const CodeInputPage = () => {
@@ -9,6 +10,7 @@ const CodeInputPage = () => {
 
 	return (
 		<div className="flex flex-col min-h-[100dvh] px-5 pt-[calc(env(safe-area-inset-top)_+_1rem)] pb-[calc(env(safe-area-inset-bottom)_+_1.5rem)]">
+			<LogoutLink />
 			<button
 				type="button"
 				aria-label="뒤로가기"

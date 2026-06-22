@@ -2,6 +2,7 @@
 
 import { createPortal } from "react-dom";
 import { Button, Card, colors, Eyebrow, Text, Toast } from "woosign-system";
+import LogoutLink from "@/presentation/onboarding/components/LogoutLink";
 import useInviteCodeGen from "@/presentation/onboarding/hooks/useInviteCodeGen";
 import ChevronLeft from "@/shared/components/icon/ChevronLeft";
 import CopyIcon from "@/shared/components/icon/CopyIcon";
@@ -27,6 +28,7 @@ const CodeGenPage = () => {
 
 	return (
 		<div className="flex flex-col min-h-[100dvh] px-5 pt-[calc(env(safe-area-inset-top)_+_0.75rem)] pb-[calc(env(safe-area-inset-bottom)_+_1.5rem)] bg-white">
+			<LogoutLink />
 			<button
 				type="button"
 				aria-label="뒤로 가기"
