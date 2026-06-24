@@ -1,0 +1,67 @@
+/* ============================================================
+   WooBottle Design System — Foundations
+   Colors, Typography, Spacing, Radius, Shadows
+   (Reference copy from claude.ai/design project "couple-calenar",
+    file: colors_and_type.css — base LIGHT tokens. Bold B remaps
+    these to dark via .bappdark, see IMPLEMENTATION.md)
+   ============================================================ */
+
+:root {
+  /* ---------- PRIMITIVES ---------- */
+  /* Inks */
+  --ink-900: #171513;
+  --ink-800: #2A2622;
+  --ink-700: #3F3A34;
+
+  /* Action — warm orange */
+  --ember-600: #B84C17;
+  --ember-500: #D35B1F;
+  --ember-300: #F0C79E;
+
+  /* Warm papers */
+  --cream-100: #F4EFE6;
+  --cream-200: #EAE4D8;
+  --cream-300: #F9F3E6;
+  --white:     #FFFFFF;
+
+  /* Accent & semantic */
+  --gold-accent:   #C98A3C;
+  --error-red:     #B02818;
+  --success-tint:  hsl(30 28% 82% / 40%);
+  --error-tint:    hsl(8 66% 40% / 6%);
+
+  /* ---------- SEMANTIC TOKENS ---------- */
+  --bg-page:      var(--cream-100);
+  --bg-section:   var(--cream-200);
+  --bg-card:      var(--white);
+  --bg-reward:    var(--cream-300);
+
+  --text-primary:   rgba(0,0,0,0.87);
+  --text-secondary: rgba(0,0,0,0.58);
+  --text-tertiary:  rgba(0,0,0,0.38);
+  --text-brand:     var(--ink-800);
+
+  --action-primary:       var(--ember-500);
+  --action-primary-hover: var(--ember-600);
+  --action-danger:        var(--error-red);
+
+  --border-default: rgba(0,0,0,0.12);
+  --border-focus:   var(--ember-500);
+
+  /* ---------- TYPOGRAPHY ---------- */
+  --font-sans:    "Pretendard Variable", Pretendard, "Inter", system-ui, sans-serif;
+  --ls-display:  -0.16px;
+
+  /* ---------- SPACING / RADII / SHADOW ---------- */
+  --radius-sm: 8px;  --radius-md: 12px;  --radius-lg: 16px;  --radius-pill: 999px;
+  --shadow-card:     0 0 0.5px rgba(0,0,0,0.14), 0 1px 1px rgba(0,0,0,0.24);
+  --shadow-floating: 0 0 6px rgba(0,0,0,0.24), 0 8px 12px rgba(0,0,0,0.14);
+  --shadow-modal:    0 0 1px rgba(0,0,0,0.14), 0 10px 24px rgba(0,0,0,0.18);
+
+  --dur-base: 200ms;
+  --ease-standard: cubic-bezier(.2,.6,.2,1);
+}
+
+/* NOTE: Full original includes .wb-btn/.wb-card/.wb-input/.wb-pill/.wb-toast
+   component classes. The Bold B dark theme re-skins those under .bappdark.
+   See IMPLEMENTATION.md "Component classes" for the exact dark values. */

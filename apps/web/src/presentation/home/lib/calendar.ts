@@ -13,11 +13,13 @@ export interface CategoryStyle {
 	label: string;
 }
 
+// Bold B dark-tuned category palette. `softBg` is a translucent tint that reads
+// well on the dark surfaces (#1a1a1c). See docs/design/bold-b/IMPLEMENTATION.md.
 export const CATEGORY_STYLE: Record<EEventCategory, CategoryStyle> = {
-	ANNIVERSARY: { color: "#f59e0b", softBg: "#fef3c7", label: "기념일" },
-	DATE: { color: "#e74c3c", softBg: "#fde2e2", label: "데이트" },
-	INDIVIDUAL: { color: "#3b82f6", softBg: "#dbeafe", label: "개인" },
-	OTHER: { color: "#94a3b8", softBg: "#e2e8f0", label: "기타" },
+	ANNIVERSARY: { color: "#e8675a", softBg: "rgba(232,103,90,0.16)", label: "기념일" },
+	DATE: { color: "#f2719a", softBg: "rgba(242,113,154,0.16)", label: "데이트" },
+	INDIVIDUAL: { color: "#5fb87c", softBg: "rgba(95,184,124,0.16)", label: "개인" },
+	OTHER: { color: "#a6a199", softBg: "rgba(166,161,153,0.16)", label: "기타" },
 };
 
 /**

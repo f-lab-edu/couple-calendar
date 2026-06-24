@@ -1,87 +1,318 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Couple Calendar · Bold B — dark theme, app-wide
+   Fonts: Baloo 2 (Latin) + Jua (Hangul) rounded face, Archivo for
+   numerals/labels (.bold-grotesk), Pretendard fallback.
+   Source: claude.ai/design "couple-calenar" / docs/design/bold-b
+   ============================================================ */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css");
+@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Jua&family=Archivo:wght@400;500;600;700;800;900&display=swap");
+
 :root {
-	--text: #6b6375;
-	--text-h: #08060d;
-	--bg: #fff;
-	--border: #e5e4e7;
-	--code-bg: #f4f3ec;
-	--accent: #aa3bff;
-	--accent-bg: rgba(170, 59, 255, 0.1);
-	--accent-border: rgba(170, 59, 255, 0.5);
-	--social-bg: rgba(244, 243, 236, 0.5);
-	--shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+	/* ---------- Bold B dark tokens (final applied values) ---------- */
+	--cream-100: #0d0d0e;
+	--cream-200: #161618;
+	--cream-300: #202023;
+	--bg-page: #0d0d0e;
+	--bg-section: #161618;
+	--bg-card: #1a1a1c;
+	--bg-reward: #202023;
 
-	--sans: system-ui, "Segoe UI", Roboto, sans-serif;
-	--heading: system-ui, "Segoe UI", Roboto, sans-serif;
-	--mono: ui-monospace, Consolas, monospace;
+	--ink-900: #202023;
+	--ink-800: #f4f4f3;
+	--ink-700: #2a2a2d;
 
-	font: 18px / 145% var(--sans);
-	letter-spacing: 0.18px;
-	color-scheme: light dark;
-	color: var(--text);
-	background: var(--bg);
-	font-synthesis: none;
-	text-rendering: optimizeLegibility;
+	--text-primary: #f4f4f3;
+	--text-secondary: #9a9a98;
+	--text-tertiary: #6f6f6c;
+	--text-brand: #f4f4f3;
+
+	--action-primary: #f26419;
+	--action-primary-hover: #d8530f;
+	--error-red: #b02818;
+	--gold-accent: #c98a3c;
+	--success-tint: rgba(242, 100, 25, 0.16);
+
+	--white: #ffffff;
+	--black-06: rgba(255, 255, 255, 0.06);
+	--black-08: rgba(255, 255, 255, 0.08);
+	--black-12: rgba(255, 255, 255, 0.12);
+	--black-24: rgba(255, 255, 255, 0.2);
+
+	--border-default: rgba(255, 255, 255, 0.12);
+	--border-focus: #f26419;
+
+	--shadow-card: 0 0 0 0.5px rgba(255, 255, 255, 0.06), 0 6px 16px rgba(0, 0, 0, 0.45);
+	--shadow-floating: 0 10px 28px rgba(0, 0, 0, 0.55), 0 2px 8px rgba(0, 0, 0, 0.4);
+	--shadow-modal: 0 -8px 40px rgba(0, 0, 0, 0.6);
+
+	--radius-sm: 8px;
+	--radius-md: 12px;
+	--radius-lg: 16px;
+	--radius-pill: 999px;
+
+	--ls-display: -0.16px;
+	--dur-fast: 120ms;
+	--dur-base: 200ms;
+	--dur-slow: 300ms;
+	--ease-standard: cubic-bezier(0.2, 0.6, 0.2, 1);
+
+	--font-sans: "Baloo 2", "Jua", "Pretendard Variable", Pretendard, system-ui, sans-serif;
+	--font-grotesk: "Archivo", system-ui, sans-serif;
+
+	color-scheme: dark;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
 }
 
-@media (max-width: 1024px) {
-	:root {
-		font-size: 16px;
-	}
-}
-
+html,
 body {
 	margin: 0;
 }
 
-h1,
-h2 {
-	font-family: var(--heading);
-	font-weight: 500;
-	color: var(--text-h);
+body {
+	background: var(--bg-page);
+	color: var(--text-primary);
+	font-family: var(--font-sans);
+	font-size: 16px;
+	line-height: 1.5;
+	letter-spacing: -0.01em;
+	min-height: 100dvh;
 }
 
-h1 {
-	font-size: 56px;
-	letter-spacing: -1.68px;
-	margin: 32px 0;
+/* Dark-tuned native pickers */
+input[type="date"],
+input[type="time"] {
+	color-scheme: dark;
 }
 
-h2 {
-	font-size: 24px;
-	line-height: 118%;
-	letter-spacing: -0.24px;
-	margin: 0 0 8px;
+/* ============================================================
+   Typography roles
+   ============================================================ */
+.bold-grotesk {
+	font-family: var(--font-grotesk);
+}
+.bold-round {
+	font-family: "Baloo 2", "Jua", system-ui, sans-serif;
+}
+.wb-body-md {
+	font-size: 16px;
+}
+.wb-body-sm {
+	font-size: 14px;
+}
+.wb-caption {
+	font-size: 13px;
+	color: var(--text-secondary);
 }
 
-@media (max-width: 1024px) {
-	h1 {
-		font-size: 36px;
-		margin: 20px 0;
-	}
-	h2 {
-		font-size: 20px;
-	}
-}
-
-p {
-	margin: 0;
-}
-
-code,
-.counter {
-	font-family: var(--mono);
+/* ============================================================
+   Components (Bold B dark skin)
+   ============================================================ */
+.wb-btn {
 	display: inline-flex;
-	border-radius: 4px;
-	color: var(--text-h);
+	align-items: center;
+	justify-content: center;
+	gap: 8px;
+	font-family: var(--font-sans);
+	font-size: 14px;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	border-radius: var(--radius-pill);
+	border: 1px solid transparent;
+	padding: 10px 18px;
+	cursor: pointer;
+	transition: all var(--dur-base) var(--ease-standard);
+	user-select: none;
+	white-space: nowrap;
+}
+.wb-btn:active {
+	transform: scale(0.95);
+}
+.wb-btn:disabled {
+	cursor: not-allowed;
+}
+.wb-btn--sm {
+	padding: 8px 16px;
+	font-size: 13px;
+}
+.wb-btn--lg {
+	padding: 12px 20px;
+	font-size: 16px;
+}
+.wb-btn--primary {
+	background: var(--action-primary);
+	color: #fff;
+	border-color: var(--action-primary);
+}
+.wb-btn--primary:hover {
+	background: var(--action-primary-hover);
+	border-color: var(--action-primary-hover);
+}
+.wb-btn--secondary {
+	background: #1a1a1c;
+	color: var(--text-primary);
+	border-color: rgba(255, 255, 255, 0.14);
+}
+.wb-btn--secondary:hover {
+	background: #232326;
+}
+.wb-btn--danger {
+	background: var(--error-red);
+	color: #fff;
+	border-color: var(--error-red);
 }
 
-code {
-	font-size: 15px;
-	line-height: 135%;
-	padding: 4px 8px;
-	background: var(--code-bg);
+.wb-fab {
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	background: var(--action-primary);
+	color: #fff;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border: none;
+	cursor: pointer;
+	box-shadow: var(--shadow-floating);
+	transition: transform var(--dur-base) var(--ease-standard);
+}
+.wb-fab:active {
+	transform: scale(0.95);
+}
+
+.wb-card {
+	background: #1a1a1c;
+	border: 1px solid rgba(255, 255, 255, 0.08);
+	border-radius: var(--radius-md);
+	box-shadow: none;
+	padding: 24px;
+}
+
+.wb-input {
+	display: block;
+	width: 100%;
+	background: #1a1a1c;
+	color: #f4f4f3;
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: var(--radius-md);
+	padding: 12px 14px;
+	font-family: var(--font-sans);
+	font-size: 16px;
+	box-sizing: border-box;
+	transition: border-color var(--dur-base) var(--ease-standard),
+		box-shadow var(--dur-base) var(--ease-standard);
+}
+.wb-input::placeholder {
+	color: var(--text-tertiary);
+}
+.wb-input:focus {
+	outline: none;
+	border-color: var(--border-focus);
+	box-shadow: 0 0 0 3px rgba(242, 100, 25, 0.25);
+}
+
+.wb-pill {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 14px;
+	border-radius: var(--radius-pill);
+	font-size: 13px;
+	font-weight: 500;
+	background: #1a1a1c;
+	color: var(--text-primary);
+	border: 1px solid rgba(255, 255, 255, 0.12);
+	cursor: pointer;
+}
+.wb-pill--active {
+	background: var(--action-primary);
+	color: #fff;
+	border-color: var(--action-primary);
+	font-weight: 600;
+}
+
+.wb-toast {
+	background: #1a1a1c;
+	color: #f4f4f3;
+	border-radius: var(--radius-md);
+	box-shadow: 0 10px 28px rgba(0, 0, 0, 0.55);
+	padding: 14px 16px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.wb-divider {
+	height: 1px;
+	background: var(--border-default);
+}
+
+/* ============================================================
+   Calendar cells / scroll helpers
+   ============================================================ */
+.dark-cell {
+	transition: background 0.12s ease, transform 0.12s ease;
+}
+.dark-cell:active {
+	transform: scale(0.97);
+}
+@media (hover: hover) {
+	.dark-cell:hover {
+		background: #202023 !important;
+	}
+}
+.dark-scroll::-webkit-scrollbar {
+	width: 0;
+	height: 0;
+}
+.dark-scroll {
+	scrollbar-width: none;
+}
+
+/* ============================================================
+   Layout helpers
+   ============================================================ */
+.wb-page {
+	background: var(--bg-page);
+	min-height: 100dvh;
+}
+.wb-row {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+}
+
+/* ============================================================
+   Motion
+   ============================================================ */
+@keyframes slideIn {
+	from {
+		transform: translateY(-12px);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+@keyframes slideUp {
+	from {
+		transform: translateY(40px);
+		opacity: 0;
+	}
+	to {
+		transform: translateY(0);
+		opacity: 1;
+	}
+}
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
 }
