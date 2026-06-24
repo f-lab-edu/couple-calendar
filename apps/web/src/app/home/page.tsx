@@ -126,7 +126,7 @@ export default function HomePage() {
 					className="fixed flex items-center justify-center"
 					style={{
 						right: 20,
-						bottom: "calc(env(safe-area-inset-bottom) + 88px)",
+						bottom: "calc(env(safe-area-inset-bottom) + 44px)",
 						zIndex: 30,
 						width: 54,
 						height: 54,
@@ -135,7 +135,6 @@ export default function HomePage() {
 						color: "#fff",
 						border: "none",
 						cursor: "pointer",
-						boxShadow: "0 8px 22px rgba(242,100,25,0.4)",
 					}}
 				>
 					<PlusIcon s={24} />
