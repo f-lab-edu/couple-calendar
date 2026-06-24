@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, colors, Text } from "woosign-system";
+import { ChevronIcon } from "@/presentation/components/icons";
 import { CodeInput } from "@/presentation/onboarding/components/CodeInput";
 import LogoutLink from "@/presentation/onboarding/components/LogoutLink";
 import useConnectByCode from "@/presentation/onboarding/hooks/useConnectByCode";
@@ -9,47 +9,69 @@ const CodeInputPage = () => {
 	const { code, setCode, codeLength, isComplete, connect, goBack, isPending, error } = useConnectByCode();
 
 	return (
-		<div className="flex flex-col min-h-[100dvh] px-5 pt-[calc(env(safe-area-inset-top)_+_1rem)] pb-[calc(env(safe-area-inset-bottom)_+_1.5rem)]">
+		<div
+			className="wb-page flex flex-col"
+			style={{
+				minHeight: "100dvh",
+				padding:
+					"calc(env(safe-area-inset-top) + 12px) 24px calc(env(safe-area-inset-bottom) + 28px)",
+			}}
+		>
 			<LogoutLink />
 			<button
 				type="button"
 				aria-label="뒤로가기"
 				onClick={goBack}
-				className="-ml-2 mb-2 flex h-9 w-9 items-center justify-center rounded-full"
+				style={{
+					alignSelf: "flex-start",
+					background: "none",
+					border: "none",
+					color: "var(--text-secondary)",
+					cursor: "pointer",
+					padding: 8,
+					marginLeft: -8,
+				}}
 			>
-				<svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
-					<path
-						d="M12.5 4.5L7 10L12.5 15.5"
-						stroke={colors.foreground}
-						strokeWidth="1.6"
-						strokeLinecap="round"
-						strokeLinejoin="round"
-					/>
-				</svg>
+				<ChevronIcon s={20} dir="left" />
 			</button>
 
-			<div className="mb-6">
-				<Text as="p" variant="large" weight="bold" className="mb-2" color={colors.foreground}>
+			<div style={{ marginTop: 8 }}>
+				<div
+					style={{
+						fontSize: 22,
+						fontWeight: 600,
+						letterSpacing: "var(--ls-display)",
+						color: "var(--text-brand)",
+					}}
+				>
 					상대방의 코드를 입력하세요.
-				</Text>
-				<Text as="p" variant="small" className="mt-2" color={colors.foreground}>
+				</div>
+				<div className="wb-body-sm" style={{ color: "var(--text-secondary)", marginTop: 6 }}>
 					6자리 영문 + 숫자 코드입니다.
-				</Text>
+				</div>
 			</div>
 
-			<CodeInput length={codeLength} value={code} onChange={setCode} />
+			<div style={{ marginTop: 36 }}>
+				<CodeInput length={codeLength} value={code} onChange={setCode} />
+			</div>
 
 			{error ? (
-				<Text as="p" variant="small" className="mt-3" color="#dc2626">
+				<div className="wb-body-sm" style={{ marginTop: 12, color: "var(--error-red)", textAlign: "center" }}>
 					{error.message}
-				</Text>
+				</div>
 			) : null}
 
-			<div className="mt-auto pt-6">
-				<Button className="w-full" size="lg" disabled={!isComplete || isPending} onPress={connect}>
-					{isPending ? "연결 중..." : "연결하기"}
-				</Button>
-			</div>
+			<div style={{ flex: 1 }} />
+
+			<button
+				type="button"
+				disabled={!isComplete || isPending}
+				onClick={connect}
+				className="wb-btn wb-btn--primary wb-btn--lg"
+				style={{ width: "100%", justifyContent: "center", opacity: !isComplete || isPending ? 0.5 : 1 }}
+			>
+				{isPending ? "연결 중..." : "연결하기"}
+			</button>
 		</div>
 	);
 };

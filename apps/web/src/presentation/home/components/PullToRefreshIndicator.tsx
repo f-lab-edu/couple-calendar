@@ -26,12 +26,17 @@ const PullToRefreshIndicator = ({ pull, refreshing, armed }: Props) => {
 				transition: pull === 0 ? "opacity 200ms ease, transform 200ms ease" : "none",
 			}}
 		>
-			<div className="mt-2 grid size-9 place-items-center rounded-full bg-white shadow-md" style={{ opacity }}>
+			<div
+				className="mt-2 grid size-9 place-items-center rounded-full"
+				style={{ opacity, background: "#1a1a1c", boxShadow: "var(--shadow-floating)" }}
+			>
 				<span
-					className={`block size-5 rounded-full border-2 border-neutral-300 ${
-						refreshing ? "animate-spin border-t-neutral-700" : armed ? "border-t-neutral-700" : "border-t-neutral-400"
-					}`}
-					style={{ transform: refreshing ? undefined : `rotate(${rotation}deg)` }}
+					className={`block size-5 rounded-full ${refreshing ? "animate-spin" : ""}`}
+					style={{
+						border: "2px solid rgba(255,255,255,0.18)",
+						borderTopColor: refreshing || armed ? "#F26419" : "rgba(255,255,255,0.45)",
+						transform: refreshing ? undefined : `rotate(${rotation}deg)`,
+					}}
 				/>
 			</div>
 		</div>

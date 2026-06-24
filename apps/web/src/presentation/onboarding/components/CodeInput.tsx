@@ -1,7 +1,6 @@
 "use client";
 
 import { type ClipboardEvent, type KeyboardEvent, useRef } from "react";
-import { colors } from "woosign-system";
 
 interface Props {
 	length?: number;
@@ -68,32 +67,45 @@ export const CodeInput = ({ length = 6, value, onChange }: Props) => {
 	const slotKeys = Array.from({ length }, (_, idx) => `code-slot-${idx}`);
 
 	return (
-		<div className="flex gap-2">
-			{slotKeys.map((slotKey, idx) => (
-				<input
-					key={slotKey}
-					ref={(el) => {
-						inputs.current[idx] = el;
-					}}
-					type="text"
-					inputMode="text"
-					autoCapitalize="characters"
-					autoComplete="off"
-					maxLength={1}
-					value={value[idx] ?? ""}
-					onChange={(e) => handleChange(idx)(e.target.value)}
-					onKeyDown={handleKeyDown(idx)}
-					onPaste={handlePaste}
-					onFocus={(e) => e.target.select()}
-					className="h-12 w-12 rounded-lg bg-white text-center font-semibold text-gray-900 text-lg uppercase outline-none transition-colors focus:border-gray-400"
-					style={{
-						borderWidth: 1,
-						borderStyle: "solid",
-						borderColor: colors.border,
-						color: colors.foreground,
-					}}
-				/>
-			))}
+		<div style={{ display: "flex", gap: 8, justifyContent: "center" }}>
+			{slotKeys.map((slotKey, idx) => {
+				const filled = Boolean(value[idx]);
+				return (
+					<input
+						key={slotKey}
+						ref={(el) => {
+							inputs.current[idx] = el;
+						}}
+						type="text"
+						inputMode="text"
+						autoCapitalize="characters"
+						autoComplete="off"
+						maxLength={1}
+						value={value[idx] ?? ""}
+						onChange={(e) => handleChange(idx)(e.target.value)}
+						onKeyDown={handleKeyDown(idx)}
+						onPaste={handlePaste}
+						onFocus={(e) => e.target.select()}
+						style={{
+							width: 44,
+							height: 58,
+							textAlign: "center",
+							fontSize: 24,
+							fontWeight: 700,
+							textTransform: "uppercase",
+							color: "var(--text-brand)",
+							background: "#1a1a1c",
+							borderRadius: "var(--radius-md)",
+							border: filled
+								? "2px solid var(--action-primary)"
+								: "2px solid rgba(255,255,255,0.18)",
+							boxShadow: filled ? "0 0 0 4px rgba(242,100,25,0.13)" : "0 1px 2px rgba(0,0,0,0.06)",
+							outline: "none",
+							transition: "all var(--dur-base) var(--ease-standard)",
+						}}
+					/>
+				);
+			})}
 		</div>
 	);
 };

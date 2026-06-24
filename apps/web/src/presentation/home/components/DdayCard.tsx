@@ -1,14 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { Card, Text } from "woosign-system";
+import { SettingsIcon } from "@/presentation/components/icons";
 import useAnniversaries from "@/presentation/anniversaries/hooks/useAnniversaries";
 import { formatDday, pickNearestUpcoming } from "@/presentation/anniversaries/lib/anniversaryDisplay";
 import useCoupleProfile from "@/presentation/settings/hooks/useCoupleProfile";
-import GearIcon from "@/shared/components/GearIcon";
 import { ROUTES } from "@/shared/constants/routes";
 import { formatKoreanDate } from "@/shared/lib/date";
 
+/**
+ * 홈 상단 커플 히어로 + D-day 카드. 데이터(프로필/기념일/시작일)는 그대로 사용하고
+ * Bold B 다크 토큰으로 재스킨한다. 목 데이터(지수/민준, D+412)는 쓰지 않고 실제 값만 표시.
+ */
 const DdayCard = () => {
 	const { data: profile } = useCoupleProfile();
 	const { data: anniversaries, isLoading: anniversariesLoading } = useAnniversaries();
@@ -37,62 +40,54 @@ const DdayCard = () => {
 				: "기념일을 추가해 보세요";
 
 	return (
-		<Card
-			variant="forest"
-			fullWidth
+		<div
+			className="relative overflow-hidden"
 			style={{
-				position: "relative",
-				overflow: "hidden",
-				borderRadius: 24,
-				padding: "20px",
+				background: "#1a1a1c",
+				border: "1px solid rgba(255,255,255,0.08)",
+				borderRadius: 20,
+				padding: 20,
 			}}
 		>
-			<div className="-right-8 -top-10 pointer-events-none absolute h-40 w-40 rounded-full border border-white/10" />
-			<div className="-right-16 -bottom-16 pointer-events-none absolute h-44 w-44 rounded-full border border-white/10" />
-
 			<Link
 				href={ROUTES.SETTINGS}
-				className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white/90 hover:bg-white/15"
+				aria-label="설정"
+				className="absolute top-4 right-4 z-10 flex h-9 w-9 items-center justify-center rounded-full"
+				style={{ background: "rgba(255,255,255,0.06)", color: "var(--text-secondary)" }}
 			>
-				<GearIcon />
+				<SettingsIcon s={18} />
 			</Link>
 
-			<div className="relative flex items-center gap-3">
+			<div className="flex items-center gap-3">
 				<div className="flex -space-x-2">
-					<div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#f7e7d6] text-xl ring-2 ring-[#1f3a2e]">
+					<span
+						className="flex h-11 w-11 items-center justify-center rounded-full text-xl"
+						style={{ background: "#FBE4EB", boxShadow: "0 0 0 0.5px rgba(0,0,0,0.08)" }}
+					>
 						🌷
-					</div>
-					<div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#e8e1cf] text-xl ring-2 ring-[#1f3a2e]">
+					</span>
+					<span
+						className="flex h-11 w-11 items-center justify-center rounded-full text-xl"
+						style={{ background: "#DFEEE3", border: "2px solid var(--bg-page)" }}
+					>
 						🌿
-					</div>
+					</span>
 				</div>
-				<Text as="p" variant="small" style={{ color: "rgba(255,255,255,0.8)" }}>
-					{myName} <span style={{ color: "#ff7b8a" }}>♥</span> {partnerName}
-				</Text>
+				<div style={{ fontSize: 14, color: "var(--text-secondary)" }}>
+					{myName} <span style={{ color: "#F2719A" }}>♥</span> {partnerName}
+				</div>
 			</div>
 
-			<div className="relative mt-3">
-				<Text
-					as="p"
-					weight="semibold"
-					style={{
-						color: "#fff",
-						fontSize: 36,
-						lineHeight: "40px",
-						letterSpacing: "-0.5px",
-					}}
+			<div className="mt-3">
+				<div
+					className="bold-round"
+					style={{ fontSize: 36, lineHeight: "40px", fontWeight: 700, letterSpacing: "-0.5px", color: "var(--text-primary)" }}
 				>
 					{headline}
-				</Text>
-				<Text
-					as="p"
-					variant="small"
-					style={{ color: "rgba(255,255,255,0.7)", marginTop: 4, fontSize: 12 }}
-				>
-					{subline}
-				</Text>
+				</div>
+				<div style={{ marginTop: 4, fontSize: 12, color: "var(--text-tertiary)" }}>{subline}</div>
 			</div>
-		</Card>
+		</div>
 	);
 };
 

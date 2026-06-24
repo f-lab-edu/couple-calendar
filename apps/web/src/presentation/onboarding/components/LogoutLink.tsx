@@ -11,7 +11,8 @@ export const LogoutLink = () => (
 	<button
 		type="button"
 		onClick={() => logoutAction()}
-		className="fixed top-[calc(env(safe-area-inset-top)_+_0.75rem)] right-4 z-20 px-2 py-1 text-neutral-400 text-sm"
+		className="fixed top-[calc(env(safe-area-inset-top)_+_0.75rem)] right-4 z-20 px-2 py-1 text-sm"
+		style={{ background: "none", border: "none", color: "var(--text-tertiary)", cursor: "pointer" }}
 	>
 		로그아웃
 	</button>

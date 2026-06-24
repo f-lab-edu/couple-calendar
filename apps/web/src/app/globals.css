@@ -261,7 +261,7 @@ input[type="time"] {
 }
 @media (hover: hover) {
 	.dark-cell:hover {
-		background: #202023 !important;
+		background: #202023;
 	}
 }
 .dark-scroll::-webkit-scrollbar {

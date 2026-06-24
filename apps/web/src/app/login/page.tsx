@@ -2,13 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
-import { Button, Text } from "woosign-system";
 import { coupleRepository } from "@/composition/couple";
 import { userRepository } from "@/composition/user";
 import type AuthSession from "@/domain/entities/AuthSession";
 import useAppleSignIn from "@/presentation/auth/hooks/useAppleSignIn";
 import useEmailSignIn from "@/presentation/auth/hooks/useEmailSignIn";
 import { acquireAppleCredential } from "@/presentation/auth/lib/appleIdentityToken";
+import { AppleIcon } from "@/presentation/components/icons";
 import { ROUTES } from "@/shared/constants/routes";
 import { loginAction } from "./actions";
 
@@ -78,22 +78,66 @@ const LoginPage = () => {
 	};
 
 	return (
-		<div className="flex flex-col min-h-[100dvh] px-4 pt-[env(safe-area-inset-top)]">
-			<div className="m-auto text-center">
-				<Text as="p" variant="h1" weight="bold">
-					둘만의 캘린더, 오늘부터.
-				</Text>
-				<Text as="p">하루를 함께 그려가는 가장 조용한 방법.</Text>
+		<div
+			className="wb-page flex flex-col"
+			style={{
+				padding: "calc(env(safe-area-inset-top) + 60px) 28px calc(env(safe-area-inset-bottom) + 36px)",
+				minHeight: "100dvh",
+			}}
+		>
+			<div className="flex flex-1 flex-col items-center justify-center text-center">
+				{/* Brand mark — two interlocking rings */}
+				<div style={{ position: "relative", width: 96, height: 64, marginBottom: 28 }}>
+					<div
+						style={{
+							position: "absolute",
+							left: 0,
+							top: 8,
+							width: 56,
+							height: 56,
+							borderRadius: "50%",
+							border: "3px solid var(--ink-800)",
+						}}
+					/>
+					<div
+						style={{
+							position: "absolute",
+							right: 0,
+							top: 0,
+							width: 56,
+							height: 56,
+							borderRadius: "50%",
+							border: "3px solid var(--action-primary)",
+						}}
+					/>
+				</div>
+				<div
+					style={{
+						fontSize: 32,
+						fontWeight: 600,
+						letterSpacing: "var(--ls-display)",
+						color: "var(--text-brand)",
+						lineHeight: 1.15,
+					}}
+				>
+					둘만의 캘린더,
+					<br />
+					오늘부터.
+				</div>
+				<div className="wb-body-md" style={{ color: "var(--text-secondary)", marginTop: 14, maxWidth: 260 }}>
+					하루를 함께 그려가는 가장 조용한 방법.
+				</div>
 			</div>
-			<div className="sticky bottom-0 flex flex-col gap-4 pb-[calc(env(safe-area-inset-bottom)_+_1rem)]">
+
+			<div className="flex flex-col" style={{ gap: 14 }}>
 				{error && (
-					<Text as="span" className="text-center text-red-500">
+					<div className="wb-caption" style={{ textAlign: "center", color: "var(--error-red)" }}>
 						{error}
-					</Text>
+					</div>
 				)}
 
 				{showEmail && (
-					<form className="flex flex-col gap-2" onSubmit={handleEmailLogin}>
+					<form className="flex flex-col" style={{ gap: 8 }} onSubmit={handleEmailLogin}>
 						<input
 							type="email"
 							inputMode="email"
@@ -102,7 +146,7 @@ const LoginPage = () => {
 							placeholder="이메일"
 							value={email}
 							onChange={(e) => setEmail(e.target.value)}
-							className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base"
+							className="wb-input"
 						/>
 						<input
 							type="password"
@@ -110,43 +154,57 @@ const LoginPage = () => {
 							placeholder="비밀번호 (6자 이상)"
 							value={password}
 							onChange={(e) => setPassword(e.target.value)}
-							className="w-full rounded-lg border border-gray-300 px-4 py-3 text-base"
+							className="wb-input"
 						/>
-						<Button
-							className="w-full"
-							variant="dark"
-							size="lg"
+						<button
 							type="submit"
 							disabled={isPending}
-							loading={isPending}
+							className="wb-btn wb-btn--secondary wb-btn--lg"
+							style={{ width: "100%", justifyContent: "center", opacity: isPending ? 0.6 : 1 }}
 						>
 							이메일로 로그인 / 가입
-						</Button>
+						</button>
 					</form>
 				)}
 
-				<Button
-					className="w-full"
-					variant="dark"
-					size="lg"
+				<button
+					type="button"
 					disabled={isPending}
-					loading={isPending}
-					onPress={handleAppleLogin}
+					onClick={handleAppleLogin}
+					className="wb-btn wb-btn--lg"
+					style={{
+						width: "100%",
+						justifyContent: "center",
+						gap: 10,
+						padding: 16,
+						background: "#f4f4f3",
+						color: "#0d0d0e",
+						border: "1px solid #f4f4f3",
+						opacity: isPending ? 0.6 : 1,
+					}}
 				>
-					Apple로 계속하기
-				</Button>
+					<AppleIcon s={18} /> Apple로 계속하기
+				</button>
 
 				<button
 					type="button"
-					className="text-center text-sm text-gray-500 underline"
+					className="wb-caption"
+					style={{
+						textAlign: "center",
+						background: "none",
+						border: "none",
+						color: "var(--text-secondary)",
+						textDecoration: "underline",
+						cursor: "pointer",
+					}}
 					onClick={() => setShowEmail((v) => !v)}
 				>
 					{showEmail ? "이메일 입력 닫기" : "이메일로 계속하기"}
 				</button>
 
-				<Text as="span" className="text-center">
+				<div className="wb-caption" style={{ textAlign: "center", color: "var(--text-tertiary)" }}>
 					계속하면 약관 및 개인정보 처리방침에 동의합니다.
-				</Text>
+				</div>
 			</div>
 		</div>
 	);

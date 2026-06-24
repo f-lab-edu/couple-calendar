@@ -1,4 +1,4 @@
-import { Card, Text } from "woosign-system";
+import { ClockIcon } from "@/presentation/components/icons";
 
 interface TimeBlockProps {
 	label: string;
@@ -6,34 +6,30 @@ interface TimeBlockProps {
 	disabled?: boolean;
 }
 
+/**
+ * Bold B 시작/종료 시간 표시 블록(다크). 라벨 + 시간 + 시계 아이콘.
+ * presentational 컴포넌트로, 표시 계약(label/time/disabled)은 그대로 유지한다.
+ */
 const TimeBlock = ({ label, time, disabled }: TimeBlockProps) => (
-	<Card
-		variant="outline"
-		disabled={disabled}
-		onPress={disabled ? undefined : () => {}}
+	<div
+		className="flex flex-col items-start gap-1"
 		style={{
-			display: "flex",
-			flexDirection: "column",
-			alignItems: "flex-start",
-			gap: 4,
 			borderRadius: 12,
 			padding: "10px 16px",
 			textAlign: "left",
+			background: "#1a1a1c",
+			border: "1px solid rgba(255,255,255,0.14)",
 			opacity: disabled ? 0.4 : 1,
 		}}
 	>
-		<Text as="span" variant="muted" style={{ fontSize: 11 }}>
-			{label}
-		</Text>
-		<span className="flex items-center gap-1.5 font-mono">
-			<Text as="span" weight="semibold" style={{ fontSize: 16, color: "#059669" }}>
-				{time}
-			</Text>
-			<Text as="span" variant="muted" style={{ fontSize: 14 }} aria-hidden>
-				⏱
-			</Text>
+		<span style={{ fontSize: 11, color: "var(--text-secondary)" }}>{label}</span>
+		<span className="bold-grotesk flex items-center gap-1.5">
+			<span style={{ fontSize: 16, fontWeight: 600, color: "#F26419" }}>{time}</span>
+			<span aria-hidden style={{ color: "var(--text-tertiary)" }}>
+				<ClockIcon s={14} />
+			</span>
 		</span>
-	</Card>
+	</div>
 );
 
 export default TimeBlock;

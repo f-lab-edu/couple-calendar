@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Input, Switch, Text } from "woosign-system";
 import Anniversary from "@/domain/entities/Anniversary";
 import useAddAnniversary from "@/presentation/anniversaries/hooks/useAddAnniversary";
 import useUpdateAnniversary from "@/presentation/anniversaries/hooks/useUpdateAnniversary";
 import { todayDateString } from "@/presentation/anniversaries/lib/anniversaryDisplay";
+import { Toggle } from "@/presentation/settings/components/SettingsRows";
 
 interface Props {
 	/** 저장 성공 시 호출 (시트 닫기 등). */
@@ -36,9 +36,7 @@ const AnniversaryForm = ({ onSuccess, bodyClassName, footerClassName, anniversar
 	const error = createError ?? updateError;
 
 	const [title, setTitle] = useState(anniversary?.title ?? "");
-	const [date, setDate] = useState(
-		isEditMode ? anniversary.date.slice(0, 10) : todayDateString(),
-	);
+	const [date, setDate] = useState(isEditMode ? anniversary.date.slice(0, 10) : todayDateString());
 	const [isRecurring, setIsRecurring] = useState(anniversary?.isRecurring ?? false);
 	const [description, setDescription] = useState(anniversary?.description ?? "");
 
@@ -60,16 +58,7 @@ const AnniversaryForm = ({ onSuccess, bodyClassName, footerClassName, anniversar
 		} else {
 			// 생성 시 id/coupleId/daysUntil은 서버가 채운다. 폼은 도메인 엔티티로
 			// 입력을 표현하되 transport 값은 placeholder로 둔다(레포지토리가 요청으로 변환).
-			const draft = new Anniversary(
-				"",
-				"",
-				trimmedTitle,
-				date,
-				isRecurring,
-				memo,
-				"CUSTOM",
-				0,
-			);
+			const draft = new Anniversary("", "", trimmedTitle, date, isRecurring, memo, "CUSTOM", 0);
 			addAnniversary(draft, { onSuccess });
 		}
 	};
@@ -77,75 +66,64 @@ const AnniversaryForm = ({ onSuccess, bodyClassName, footerClassName, anniversar
 	return (
 		<>
 			<div className={bodyClassName}>
-				<section>
-					<div style={{ borderBottom: "1px solid #e5e7eb" }}>
-						<Input
-							value={title}
-							onChangeText={setTitle}
-							placeholder="기념일 제목"
-							fullWidth
-							style={{
-								borderWidth: 0,
-								borderRadius: 0,
-								padding: "0 0 12px",
-								fontSize: 24,
-								fontWeight: 600,
-								color: "#111827",
-								backgroundColor: "transparent",
-							}}
-						/>
-					</div>
+				<section style={{ borderBottom: "1px solid rgba(255,255,255,0.12)" }}>
+					<input
+						value={title}
+						onChange={(e) => setTitle(e.target.value)}
+						placeholder="기념일 제목"
+						className="w-full"
+						style={{
+							border: "none",
+							background: "transparent",
+							padding: "0 0 12px",
+							fontSize: 24,
+							fontWeight: 600,
+							color: "var(--text-brand)",
+							outline: "none",
+						}}
+					/>
 				</section>
 
 				<section className="flex flex-col gap-2.5">
-					<Text as="p" variant="muted" style={{ fontSize: 12 }}>
-						날짜
-					</Text>
-					<input
-						type="date"
-						value={date}
-						onChange={(e) => setDate(e.target.value)}
-						className="w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-base text-gray-900 outline-none focus:border-gray-400"
-					/>
+					<p style={{ fontSize: 12, color: "var(--text-tertiary)" }}>날짜</p>
+					<input type="date" value={date} onChange={(e) => setDate(e.target.value)} className="wb-input" />
 				</section>
 
 				<section className="flex items-center justify-between">
 					<div className="flex flex-col gap-0.5">
-						<Text as="p" variant="p" style={{ fontSize: 15, color: "#111827" }}>
-							매년 반복
-						</Text>
-						<Text as="p" variant="muted" style={{ fontSize: 12 }}>
-							생일·기념일처럼 매년 돌아오는 날
-						</Text>
+						<p style={{ fontSize: 15, color: "var(--text-brand)" }}>매년 반복</p>
+						<p style={{ fontSize: 12, color: "var(--text-tertiary)" }}>생일·기념일처럼 매년 돌아오는 날</p>
 					</div>
-					<Switch checked={isRecurring} onCheckedChange={setIsRecurring} size="sm" />
+					<Toggle on={isRecurring} onChange={setIsRecurring} />
 				</section>
 
 				<section className="flex flex-col gap-2.5">
-					<Text as="p" variant="muted" style={{ fontSize: 12 }}>
-						메모
-					</Text>
-					<Input
+					<p style={{ fontSize: 12, color: "var(--text-tertiary)" }}>메모</p>
+					<textarea
 						value={description}
-						onChangeText={setDescription}
+						onChange={(e) => setDescription(e.target.value)}
 						placeholder="기억하고 싶은 것을 적어두세요"
-						multiline
-						numberOfLines={3}
-						fullWidth
-						style={{ height: "auto", alignItems: "flex-start", paddingTop: 12, paddingBottom: 12 }}
+						rows={3}
+						className="wb-input resize-none"
 					/>
 				</section>
 			</div>
 
 			<div className={footerClassName}>
 				{error ? (
-					<Text as="p" variant="small" className="mb-2" style={{ color: "#dc2626" }}>
+					<p className="wb-body-sm mb-2" style={{ color: "var(--error-red)" }}>
 						{error.message}
-					</Text>
+					</p>
 				) : null}
-				<Button variant="default" size="lg" fullWidth disabled={!isSavable} onPress={handleSave}>
+				<button
+					type="button"
+					onClick={handleSave}
+					disabled={!isSavable}
+					className="wb-btn wb-btn--primary wb-btn--lg"
+					style={{ width: "100%", opacity: isSavable ? 1 : 0.5 }}
+				>
 					{isPending ? "저장 중..." : isEditMode ? "수정 완료" : "기념일 저장"}
-				</Button>
+				</button>
 			</div>
 		</>
 	);

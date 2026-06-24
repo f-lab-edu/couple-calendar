@@ -1,64 +1,122 @@
-import { type Cell, CATEGORY_STYLE, WEEK_LABELS } from "@/presentation/home/lib/calendar";
+import { type Cell, CATEGORY_STYLE, todayParts } from "@/presentation/home/lib/calendar";
 import type { EEventCategory } from "@/domain/entities/Event";
 
 interface Props {
+	/** 0-based 월(현재 그리드가 그리는 달). 오늘 강조를 정확히 판정하기 위해 사용. */
+	year: number;
+	month: number;
 	cells: Cell[];
 	selected: number;
 	onSelect: (d: number) => void;
 	categoriesByDate: Record<number, EEventCategory[]>;
 }
 
-const CalendarGrid = ({ cells, selected, onSelect, categoriesByDate }: Props) => (
-	<section className="shrink-0">
-		<div className="grid grid-cols-7 pb-2 text-center text-xs">
-			{WEEK_LABELS.map((w, i) => (
-				<span key={w} className={i === 0 ? "text-[#e74c3c]" : i === 6 ? "text-[#3b82f6]" : "text-neutral-500"}>
-					{w}
-				</span>
-			))}
-		</div>
+/** SUN~SAT 대문자 요일 라벨(Archivo). 일요일은 오렌지 강조. */
+const EN_WEEK = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"] as const;
 
-		<div className="grid grid-cols-7 gap-y-2">
-			{cells.map((cell, i) => {
-				const weekday = i % 7;
-				const categories = cell.inMonth ? categoriesByDate[cell.date] : undefined;
-				const isSelected = cell.inMonth && cell.date === selected;
-				const baseColor = !cell.inMonth
-					? "text-neutral-300"
-					: weekday === 0
-						? "text-[#e74c3c]"
-						: weekday === 6
-							? "text-[#3b82f6]"
-							: "text-neutral-800";
+/**
+ * Bold B 둥근 다크 셀 달력. 데이터 계약(cells / categoriesByDate / selected)은
+ * 그대로 유지하고 시각만 다크 셀로 교체한다. 각 셀은 날짜 숫자 + 카테고리 점·라벨을
+ * 최대 2개 보여주고, 그 이상은 +N으로 표시한다.
+ */
+const CalendarGrid = ({ year, month, cells, selected, onSelect, categoriesByDate }: Props) => {
+	const today = todayParts();
+	const isTodayMonth = today.year === year && today.month === month;
 
-				return (
-					<button
-						key={cell.key}
-						type="button"
-						onClick={() => cell.inMonth && onSelect(cell.date)}
-						className="flex h-12 flex-col items-center justify-start pt-1"
+	return (
+		<section className="shrink-0">
+			<div className="grid grid-cols-7 gap-1.5 px-0.5 pb-2">
+				{EN_WEEK.map((d, i) => (
+					<div
+						key={d}
+						className="bold-grotesk text-center"
+						style={{
+							fontSize: 9.5,
+							fontWeight: 700,
+							letterSpacing: "0.08em",
+							color: i === 0 ? "#F26419" : "var(--text-tertiary)",
+						}}
 					>
-						<span
-							className={`flex h-7 w-7 items-center justify-center rounded-full text-sm tabular-nums ${
-								isSelected ? "bg-[#1f3a2e] font-semibold text-white" : baseColor
-							}`}
+						{d}
+					</div>
+				))}
+			</div>
+
+			<div className="grid grid-cols-7 gap-1.5">
+				{cells.map((cell) => {
+					const categories = cell.inMonth ? categoriesByDate[cell.date] : undefined;
+					const isSelected = cell.inMonth && cell.date === selected;
+					const isToday = cell.inMonth && isTodayMonth && cell.date === today.day;
+					const shown = categories?.slice(0, 2) ?? [];
+					const extra = (categories?.length ?? 0) - shown.length;
+
+					return (
+						<button
+							key={cell.key}
+							type="button"
+							onClick={() => cell.inMonth && onSelect(cell.date)}
+							className="dark-cell flex flex-col items-stretch overflow-hidden text-left"
+							style={{
+								minHeight: 66,
+								borderRadius: 14,
+								gap: 3,
+								padding: "7px 7px 6px",
+								border: isSelected ? "2px solid #f4f4f3" : "2px solid transparent",
+								background: cell.inMonth ? "#1a1a1c" : "transparent",
+								cursor: cell.inMonth ? "pointer" : "default",
+							}}
 						>
-							{cell.date}
-						</span>
-						<span className="mt-1 flex h-1.5 items-center gap-0.5">
-							{categories?.map((category) => (
-								<span
-									key={`${cell.key}-${category}`}
-									className="h-1.5 w-1.5 rounded-full"
-									style={{ backgroundColor: CATEGORY_STYLE[category].color }}
-								/>
-							))}
-						</span>
-					</button>
-				);
-			})}
-		</div>
-	</section>
-);
+							<span
+								className="bold-grotesk"
+								style={{
+									fontSize: 14,
+									fontWeight: 700,
+									color: !cell.inMonth
+										? "var(--text-tertiary)"
+										: isToday
+											? "#F26419"
+											: "var(--text-primary)",
+								}}
+							>
+								{cell.date}
+							</span>
+							<span className="flex min-w-0 flex-col gap-0.5">
+								{shown.map((category) => {
+									const style = CATEGORY_STYLE[category];
+									return (
+										<span
+											key={`${cell.key}-${category}`}
+											className="flex min-w-0 items-center gap-1"
+											style={{ opacity: cell.inMonth ? 1 : 0.4 }}
+										>
+											<span
+												className="shrink-0"
+												style={{ width: 5, height: 5, borderRadius: 1.5, background: style.color }}
+											/>
+											<span
+												className="bold-grotesk truncate"
+												style={{ fontSize: 8.5, fontWeight: 600, color: "var(--text-secondary)" }}
+											>
+												{style.label}
+											</span>
+										</span>
+									);
+								})}
+								{extra > 0 ? (
+									<span
+										className="bold-grotesk"
+										style={{ fontSize: 8, fontWeight: 700, color: "var(--text-tertiary)" }}
+									>
+										+{extra}
+									</span>
+								) : null}
+							</span>
+						</button>
+					);
+				})}
+			</div>
+		</section>
+	);
+};
 
 export default CalendarGrid;
