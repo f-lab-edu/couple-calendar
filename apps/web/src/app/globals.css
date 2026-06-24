@@ -2,12 +2,12 @@
 
 /* ============================================================
    Couple Calendar · Bold B — dark theme, app-wide
-   Fonts: Baloo 2 (Latin) + Jua (Hangul) rounded face, Archivo for
-   numerals/labels (.bold-grotesk), Pretendard fallback.
+   Fonts (Baloo 2 + Jua rounded face, Archivo for numerals, Pretendard
+   fallback) are loaded via <link> in app/layout.tsx, NOT @import here:
+   Tailwind v4 hoists `@import "tailwindcss"` to the top, which would push
+   any font @import after generated rules and break the Turbopack CSS parser.
    Source: claude.ai/design "couple-calenar" / docs/design/bold-b
    ============================================================ */
-@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css");
-@import url("https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Jua&family=Archivo:wght@400;500;600;700;800;900&display=swap");
 
 :root {
 	/* ---------- Bold B dark tokens (final applied values) ---------- */

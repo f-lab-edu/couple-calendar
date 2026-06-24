@@ -20,6 +20,20 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: ReactNode }) {
 	return (
 		<html lang="ko">
+			<head>
+				{/* Bold B rounded face: Baloo 2 (Latin) + Jua (Hangul) + Archivo (numerals),
+				    Pretendard fallback. Loaded here (not via CSS @import) — see globals.css note. */}
+				<link rel="preconnect" href="https://fonts.googleapis.com" />
+				<link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+				<link
+					rel="stylesheet"
+					href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Jua&family=Archivo:wght@400;500;600;700;800;900&display=swap"
+				/>
+				<link
+					rel="stylesheet"
+					href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css"
+				/>
+			</head>
 			<body suppressHydrationWarning>
 				<Providers>{children}</Providers>
 			</body>
