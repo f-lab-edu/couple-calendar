@@ -13,6 +13,7 @@ import PullToRefreshIndicator from "@/presentation/home/components/PullToRefresh
 import useHomeCalendar from "@/presentation/home/hooks/useHomeCalendar";
 import usePullToRefresh from "@/presentation/home/hooks/usePullToRefresh";
 import useRequireCoupleConnected from "@/presentation/home/hooks/useRequireCoupleConnected";
+import useSwipe from "@/presentation/home/hooks/useSwipe";
 import { ROUTES } from "@/shared/constants/routes";
 
 /** 하단 커맨드바의 탐색(미구현) 버튼용 지구본 아이콘 — 디자인 원본과 동일. */
@@ -46,6 +47,10 @@ export default function HomePage() {
 		enabled: ready && !sheetOpen,
 	});
 
+	// 좌우 스와이프로 월 넘기기(왼쪽=다음 달, 오른쪽=이전 달). 가로 우세 제스처만
+	// 인정하므로 세로 스크롤·당겨서 새로고침과 충돌하지 않는다.
+	const swipe = useSwipe({ onSwipeLeft: calendar.goNext, onSwipeRight: calendar.goPrev });
+
 	// 커플 연결이 확인되기 전(또는 미연결로 온보딩 리다이렉트 중)에는 홈을 그리지 않는다.
 	if (!ready) return null;
 
@@ -68,8 +73,12 @@ export default function HomePage() {
 					<MonthNav year={calendar.year} month={calendar.month} onPrev={calendar.goPrev} onNext={calendar.goNext} />
 				</section>
 
-				{/* 스크롤 본문: D-day 카드 + 달력 + 선택일 상세 */}
-				<div className="dark-scroll flex-1 overflow-auto px-3 pt-1.5">
+				{/* 스크롤 본문: D-day 카드 + 달력 + 선택일 상세. 좌우 스와이프로 월 전환. */}
+				<div
+					className="dark-scroll flex-1 overflow-auto px-3 pt-1.5"
+					onTouchStart={swipe.onTouchStart}
+					onTouchEnd={swipe.onTouchEnd}
+				>
 					<div className="px-2 pb-4">
 						<DdayCard />
 					</div>
@@ -91,9 +100,9 @@ export default function HomePage() {
 					/>
 				</div>
 
-				{/* 하단 커맨드바: 홈/탐색/프로필 pill + 오렌지 FAB */}
+				{/* 하단 커맨드바: 홈/탐색/프로필 pill (FAB는 아래에서 absolute로 띄운다) */}
 				<div
-					className="flex shrink-0 items-center justify-between gap-2.5"
+					className="flex shrink-0 items-center"
 					style={{ padding: "8px 16px calc(env(safe-area-inset-bottom) + 18px)" }}
 				>
 					<div
@@ -135,26 +144,30 @@ export default function HomePage() {
 							<UserIcon s={19} />
 						</Link>
 					</div>
-
-					<button
-						type="button"
-						aria-label="새 이벤트 추가"
-						onClick={() => setSheetOpen(true)}
-						className="flex shrink-0 items-center justify-center"
-						style={{
-							width: 54,
-							height: 54,
-							borderRadius: "50%",
-							background: "#F26419",
-							color: "#fff",
-							border: "none",
-							cursor: "pointer",
-							boxShadow: "0 8px 22px rgba(242,100,25,0.4)",
-						}}
-					>
-						<PlusIcon s={24} />
-					</button>
 				</div>
+
+				{/* 플로팅 FAB: 커맨드바 위 우하단에 absolute로 떠 있다(스크롤 콘텐츠 위 오버레이). */}
+				<button
+					type="button"
+					aria-label="새 이벤트 추가"
+					onClick={() => setSheetOpen(true)}
+					className="absolute flex items-center justify-center"
+					style={{
+						right: 20,
+						bottom: "calc(env(safe-area-inset-bottom) + 88px)",
+						zIndex: 30,
+						width: 54,
+						height: 54,
+						borderRadius: "50%",
+						background: "#F26419",
+						color: "#fff",
+						border: "none",
+						cursor: "pointer",
+						boxShadow: "0 8px 22px rgba(242,100,25,0.4)",
+					}}
+				>
+					<PlusIcon s={24} />
+				</button>
 
 				<AddEventSheet open={sheetOpen} onClose={() => setSheetOpen(false)} />
 			</main>
