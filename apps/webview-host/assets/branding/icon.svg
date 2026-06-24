@@ -1,4 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 100 100">
-  <rect x="0" y="0" width="100" height="100" fill="#1f3a2e"/>
-  <path d="M50 82 C 26 63, 16 47, 16 33 C 16 22, 24 14, 33 14 C 41 14, 46 19, 50 26 C 54 19, 59 14, 67 14 C 76 14, 84 22, 84 33 C 84 47, 74 63, 50 82 Z" fill="#f6f5f0"/>
+  <!-- Bold B app icon: full-bleed dark + interlocking rings (white + orange), couple brand mark. -->
+  <rect width="100" height="100" fill="#161618"/>
+  <circle cx="40" cy="56" r="20" fill="none" stroke="#f4f4f3" stroke-width="7"/>
+  <circle cx="60" cy="44" r="20" fill="none" stroke="#f26419" stroke-width="7"/>
 </svg>
