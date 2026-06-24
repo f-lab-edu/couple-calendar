@@ -16,25 +16,6 @@ import useRequireCoupleConnected from "@/presentation/home/hooks/useRequireCoupl
 import useSwipe from "@/presentation/home/hooks/useSwipe";
 import { ROUTES } from "@/shared/constants/routes";
 
-/** 하단 커맨드바의 탐색(미구현) 버튼용 지구본 아이콘 — 디자인 원본과 동일. */
-const ExploreIcon = ({ s = 19 }: { s?: number }) => (
-	<svg
-		width={s}
-		height={s}
-		viewBox="0 0 24 24"
-		fill="none"
-		stroke="currentColor"
-		strokeWidth={1.8}
-		strokeLinecap="round"
-		strokeLinejoin="round"
-		role="img"
-		aria-label="탐색"
-	>
-		<circle cx="12" cy="12" r="9" />
-		<path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18" />
-	</svg>
-);
-
 export default function HomePage() {
 	const { ready } = useRequireCoupleConnected();
 	const calendar = useHomeCalendar();
@@ -126,15 +107,6 @@ export default function HomePage() {
 							<HomeIcon s={17} />
 							<span style={{ fontSize: 13.5, fontWeight: 700 }}>홈</span>
 						</button>
-						<button
-							type="button"
-							aria-label="탐색"
-							disabled
-							className="flex h-10 w-10 items-center justify-center"
-							style={{ borderRadius: "50%", border: "none", background: "transparent", color: "var(--text-tertiary)", cursor: "not-allowed" }}
-						>
-							<ExploreIcon />
-						</button>
 						<Link
 							href={ROUTES.SETTINGS}
 							aria-label="프로필"
@@ -146,12 +118,12 @@ export default function HomePage() {
 					</div>
 				</div>
 
-				{/* 플로팅 FAB: 커맨드바 위 우하단에 absolute로 떠 있다(스크롤 콘텐츠 위 오버레이). */}
+				{/* 플로팅 FAB: 뷰포트 우하단에 fixed로 떠 있어 스크롤해도 항상 보인다(콘텐츠 위 오버레이). */}
 				<button
 					type="button"
 					aria-label="새 이벤트 추가"
 					onClick={() => setSheetOpen(true)}
-					className="absolute flex items-center justify-center"
+					className="fixed flex items-center justify-center"
 					style={{
 						right: 20,
 						bottom: "calc(env(safe-area-inset-bottom) + 88px)",
