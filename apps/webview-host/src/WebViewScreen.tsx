@@ -88,6 +88,9 @@ function WebViewScreen(): React.JSX.Element {
         // stay edge-to-edge or the inset gets applied twice.
         automaticallyAdjustContentInsets={false}
         contentInsetAdjustmentBehavior="never"
+        // 가장자리 스와이프로 WebView 히스토리 뒤로/앞으로 가기(iOS).
+        allowsBackForwardNavigationGestures
+
         onLoadEnd={() => {
           setLoading(false);
           loadedRef.current = true;
