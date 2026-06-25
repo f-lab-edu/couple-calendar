@@ -22,10 +22,17 @@ end
 target 'webviewhost' do
   config = use_native_modules!
 
-  # @react-native-firebase as static frameworks needs modular (clang module)
-  # headers so Swift can import FirebaseCore/GoogleUtilities. Without this:
-  # "Swift pod FirebaseCoreInternal depends upon GoogleUtilities, which does not define modules".
-  use_modular_headers!
+  # @react-native-firebase as static frameworks: the Firebase Swift pods import
+  # these ObjC deps, which must define clang modules. Apply modular headers ONLY
+  # to them — a global use_modular_headers! breaks RN 0.83 pods
+  # ("Redefinition of module 'react_runtime'").
+  pod 'GoogleUtilities', :modular_headers => true
+  pod 'GoogleDataTransport', :modular_headers => true
+  pod 'nanopb', :modular_headers => true
+  pod 'PromisesObjC', :modular_headers => true
+  pod 'FirebaseCore', :modular_headers => true
+  pod 'FirebaseCoreInternal', :modular_headers => true
+  pod 'FirebaseInstallations', :modular_headers => true
 
   use_react_native!(
     :path => config[:reactNativePath],
