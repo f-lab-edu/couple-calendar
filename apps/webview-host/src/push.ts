@@ -8,40 +8,43 @@ export const pushPlatform = (): PushPlatform =>
 
 const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
 
+export interface FcmResult {
+  token?: string;
+  /** 진단용 — 실패/상태 사유(웹 디버그 배지에 표시). */
+  error?: string;
+}
+
 /**
- * 알림 권한을 요청하고 허용되면 FCM 등록 토큰을 반환한다(거부/실패 시 null).
- *
- * iOS 주의: getToken() 은 APNs 디바이스 토큰이 먼저 설정돼 있어야 한다. 권한 직후 바로
- * 호출하면 "No APNS token specified" 로 실패하므로, remote messages 등록 후 APNs 토큰이
- * 들어올 때까지(최대 ~5s) 폴링한 뒤 getToken 을 호출한다.
+ * 알림 권한 요청 → (iOS) APNs 토큰 대기 → FCM 토큰 획득.
+ * 실패해도 throw 하지 않고 error 사유를 담아 반환한다(진단 가시화).
  */
-export async function requestAndGetFcmToken(): Promise<string | null> {
+export async function requestAndGetFcmToken(): Promise<FcmResult> {
   try {
     const status = await messaging().requestPermission();
     const granted =
       status === messaging.AuthorizationStatus.AUTHORIZED ||
       status === messaging.AuthorizationStatus.PROVISIONAL;
-    if (!granted) {
-      console.warn('[push] permission not granted:', status);
-      return null;
-    }
+    if (!granted) return { error: `perm-denied:${status}` };
 
+    let apnsSeen = false;
     if (Platform.OS === 'ios') {
       if (!messaging().isDeviceRegisteredForRemoteMessages) {
         await messaging().registerDeviceForRemoteMessages();
       }
-      // APNs 토큰이 준비될 때까지 폴링(없으면 getToken 이 실패).
-      for (let i = 0; i < 10; i += 1) {
+      for (let i = 0; i < 16; i += 1) {
         const apns = await messaging().getAPNSToken();
-        if (apns) break;
+        if (apns) { apnsSeen = true; break; }
         await sleep(500);
       }
+      if (!apnsSeen) return { error: 'no-apns-token(8s)' };
     }
 
-    return await messaging().getToken();
+    const token = await messaging().getToken();
+    if (!token) return { error: 'empty-token' };
+    return { token };
   } catch (e) {
-    console.warn('[push] token fetch failed', e);
-    return null;
+    const msg = e instanceof Error ? e.message : String(e);
+    return { error: `exc:${msg}`.slice(0, 140) };
   }
 }
 
@@ -50,11 +53,14 @@ export function onFcmTokenRefresh(cb: (token: string) => void): () => void {
   return messaging().onTokenRefresh(cb);
 }
 
-/**
- * 토큰을 WebView 로 전달하는 주입 스크립트를 만든다.
- * 웹은 window.__couplePushToken 을 읽거나 'couple-push-token' 이벤트를 받는다(주입 순서 무관).
- */
+/** 토큰을 WebView 로 전달(window.__couplePushToken + 이벤트). */
 export function buildTokenInjection(token: string, platform: PushPlatform): string {
   const payload = JSON.stringify({ token, platform });
   return `(function(){try{window.__couplePushToken=${payload};window.dispatchEvent(new Event('couple-push-token'));}catch(e){}})();true;`;
+}
+
+/** 진단 상태를 WebView 로 전달(window.__couplePushDebug + 이벤트). */
+export function buildDebugInjection(status: string): string {
+  const payload = JSON.stringify(status);
+  return `(function(){try{window.__couplePushDebug=${payload};window.dispatchEvent(new Event('couple-push-token'));}catch(e){}})();true;`;
 }

@@ -11,7 +11,9 @@ import { PooledWebView } from 'react-native-instant-webview';
 
 import { WEB_APP_URL } from './config';
 import {
+  buildDebugInjection,
   buildTokenInjection,
+  type FcmResult,
   onFcmTokenRefresh,
   pushPlatform,
   requestAndGetFcmToken,
@@ -20,39 +22,43 @@ import {
 function WebViewScreen(): React.JSX.Element {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  // Bumping this remounts the PooledWebView to retry a failed load.
   const [reloadNonce, setReloadNonce] = useState(0);
 
   const webRef = useRef<WebView>(null);
-  const tokenRef = useRef<string | null>(null);
+  const resultRef = useRef<FcmResult | null>(null);
   const loadedRef = useRef(false);
 
-  // 토큰과 페이지 로드가 모두 준비됐을 때만 주입한다(순서 무관 대응).
-  const injectToken = useCallback(() => {
-    const token = tokenRef.current;
-    if (token && loadedRef.current) {
-      webRef.current?.injectJavaScript(buildTokenInjection(token, pushPlatform()));
-    }
+  const inject = useCallback((script: string) => {
+    if (loadedRef.current) webRef.current?.injectJavaScript(script);
   }, []);
 
-  // 알림 권한 요청 → FCM 토큰 확보 → (로드돼 있으면) 주입. 토큰 회전도 반영.
+  // 현재까지의 결과(토큰 또는 에러)를 웹으로 주입. 여러 번 호출돼도 안전.
+  const pushCurrent = useCallback(() => {
+    const r = resultRef.current;
+    if (!r) return;
+    if (r.token) inject(buildTokenInjection(r.token, pushPlatform()));
+    else if (r.error) inject(buildDebugInjection(r.error));
+  }, [inject]);
+
   useEffect(() => {
     let active = true;
-    requestAndGetFcmToken().then(token => {
-      if (active && token) {
-        tokenRef.current = token;
-        injectToken();
-      }
+    requestAndGetFcmToken().then(r => {
+      if (!active) return;
+      resultRef.current = r;
+      pushCurrent();
+      // 타이밍 보강: 페이지 전환/지연 대비 약간의 재시도.
+      setTimeout(pushCurrent, 1500);
+      setTimeout(pushCurrent, 4000);
     });
     const unsubscribe = onFcmTokenRefresh(token => {
-      tokenRef.current = token;
-      injectToken();
+      resultRef.current = { token };
+      pushCurrent();
     });
     return () => {
       active = false;
       unsubscribe();
     };
-  }, [injectToken]);
+  }, [pushCurrent]);
 
   const fail = () => {
     setLoading(false);
@@ -73,54 +79,37 @@ function WebViewScreen(): React.JSX.Element {
         ref={webRef}
         source={{ uri: WEB_APP_URL }}
         containerStyle={StyleSheet.absoluteFill}
-        // 웹이 로드되기 전 깜빡임/빈 화면을 흰색으로 보이게 한다.
         style={styles.webview}
-        // Persist the session cookie across app restarts (iOS uses the shared
-        // NSHTTPCookieStorage; Android keeps third-party cookies) so login survives.
         sharedCookiesEnabled
         thirdPartyCookiesEnabled
-        // The native WebView must not rubber-band/overscroll; only the inner web
-        // content scrolls. Keeps fixed headers/FABs from jiggling.
         bounces={false}
         overScrollMode="never"
-        // Full-bleed: don't let the WebView add its own safe-area insets. The web
-        // app handles them via env(safe-area-inset-*), so the native side must
-        // stay edge-to-edge or the inset gets applied twice.
         automaticallyAdjustContentInsets={false}
         contentInsetAdjustmentBehavior="never"
         // 가장자리 스와이프로 WebView 히스토리 뒤로/앞으로 가기(iOS).
         allowsBackForwardNavigationGestures
-
         onLoadEnd={() => {
           setLoading(false);
           loadedRef.current = true;
-          injectToken();
+          // 주입 가능 여부 확인 마커 → 웹 배지에 표시(injectJavaScript 동작 검증).
+          inject(buildDebugInjection('native-alive'));
+          pushCurrent();
         }}
         onError={fail}
         onHttpError={fail}
         onPoolExhausted={() =>
-          console.warn(
-            '[webview-host] pool exhausted, fell back to WebView',
-          )
+          console.warn('[webview-host] pool exhausted, fell back to WebView')
         }
       />
       {loading && !error && (
-        <View
-          style={styles.overlay}
-          pointerEvents="none"
-        >
+        <View style={styles.overlay} pointerEvents="none">
           <ActivityIndicator size="large" />
         </View>
       )}
       {error && (
         <View style={styles.overlay}>
-          <Text style={styles.errorText}>
-            Failed to load {WEB_APP_URL}
-          </Text>
-          <TouchableOpacity
-            style={styles.retryButton}
-            onPress={retry}
-          >
+          <Text style={styles.errorText}>Failed to load {WEB_APP_URL}</Text>
+          <TouchableOpacity style={styles.retryButton} onPress={retry}>
             <Text style={styles.retryText}>Retry</Text>
           </TouchableOpacity>
         </View>
@@ -130,23 +119,14 @@ function WebViewScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  webview: {
-    backgroundColor: '#fff',
-  },
+  container: { flex: 1, backgroundColor: '#fff' },
+  webview: { backgroundColor: '#fff' },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  errorText: {
-    color: '#d00',
-    textAlign: 'center',
-    paddingHorizontal: 24,
-  },
+  errorText: { color: '#d00', textAlign: 'center', paddingHorizontal: 24 },
   retryButton: {
     marginTop: 16,
     paddingVertical: 8,
@@ -154,10 +134,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#d00',
   },
-  retryText: {
-    color: '#fff',
-    fontWeight: '600',
-  },
+  retryText: { color: '#fff', fontWeight: '600' },
 });
 
 export { WebViewScreen };
