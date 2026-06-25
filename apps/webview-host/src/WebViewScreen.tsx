@@ -6,8 +6,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import type { WebView } from 'react-native-webview';
-import { PooledWebView } from 'react-native-instant-webview';
+import { PooledWebView, useWebViewPool } from 'react-native-instant-webview';
 
 import { WEB_APP_URL } from './config';
 import {
@@ -24,15 +23,22 @@ function WebViewScreen(): React.JSX.Element {
   const [error, setError] = useState(false);
   const [reloadNonce, setReloadNonce] = useState(0);
 
-  const webRef = useRef<WebView>(null);
+  const pool = useWebViewPool();
+  const instanceIdRef = useRef<string | null>(null);
   const resultRef = useRef<FcmResult | null>(null);
   const loadedRef = useRef(false);
 
-  const inject = useCallback((script: string) => {
-    if (loadedRef.current) webRef.current?.injectJavaScript(script);
-  }, []);
+  // PooledWebView 의 forwardRef 는 borrow 시점 스냅샷이라 늦게 null 로 고정된다.
+  // 대신 풀에서 instanceId 로 실시간 조회해 주입한다.
+  const inject = useCallback(
+    (script: string) => {
+      const id = instanceIdRef.current;
+      if (!id || !loadedRef.current) return;
+      pool.getWebViewRef(id)?.injectJavaScript(script);
+    },
+    [pool],
+  );
 
-  // 현재까지의 결과(토큰 또는 에러)를 웹으로 주입. 여러 번 호출돼도 안전.
   const pushCurrent = useCallback(() => {
     const r = resultRef.current;
     if (!r) return;
@@ -46,7 +52,6 @@ function WebViewScreen(): React.JSX.Element {
       if (!active) return;
       resultRef.current = r;
       pushCurrent();
-      // 타이밍 보강: 페이지 전환/지연 대비 약간의 재시도.
       setTimeout(pushCurrent, 1500);
       setTimeout(pushCurrent, 4000);
     });
@@ -76,22 +81,22 @@ function WebViewScreen(): React.JSX.Element {
     <View style={styles.container}>
       <PooledWebView
         key={reloadNonce}
-        ref={webRef}
         source={{ uri: WEB_APP_URL }}
         containerStyle={StyleSheet.absoluteFill}
         style={styles.webview}
+        onBorrowed={id => {
+          instanceIdRef.current = id;
+        }}
         sharedCookiesEnabled
         thirdPartyCookiesEnabled
         bounces={false}
         overScrollMode="never"
         automaticallyAdjustContentInsets={false}
         contentInsetAdjustmentBehavior="never"
-        // 가장자리 스와이프로 WebView 히스토리 뒤로/앞으로 가기(iOS).
         allowsBackForwardNavigationGestures
         onLoadEnd={() => {
           setLoading(false);
           loadedRef.current = true;
-          // 주입 가능 여부 확인 마커 → 웹 배지에 표시(injectJavaScript 동작 검증).
           inject(buildDebugInjection('native-alive'));
           pushCurrent();
         }}
