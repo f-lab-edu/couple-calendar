@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -6,15 +6,53 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import type { WebView } from 'react-native-webview';
 import { PooledWebView } from 'react-native-instant-webview';
 
 import { WEB_APP_URL } from './config';
+import {
+  buildTokenInjection,
+  onFcmTokenRefresh,
+  pushPlatform,
+  requestAndGetFcmToken,
+} from './push';
 
 function WebViewScreen(): React.JSX.Element {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   // Bumping this remounts the PooledWebView to retry a failed load.
   const [reloadNonce, setReloadNonce] = useState(0);
+
+  const webRef = useRef<WebView>(null);
+  const tokenRef = useRef<string | null>(null);
+  const loadedRef = useRef(false);
+
+  // 토큰과 페이지 로드가 모두 준비됐을 때만 주입한다(순서 무관 대응).
+  const injectToken = useCallback(() => {
+    const token = tokenRef.current;
+    if (token && loadedRef.current) {
+      webRef.current?.injectJavaScript(buildTokenInjection(token, pushPlatform()));
+    }
+  }, []);
+
+  // 알림 권한 요청 → FCM 토큰 확보 → (로드돼 있으면) 주입. 토큰 회전도 반영.
+  useEffect(() => {
+    let active = true;
+    requestAndGetFcmToken().then(token => {
+      if (active && token) {
+        tokenRef.current = token;
+        injectToken();
+      }
+    });
+    const unsubscribe = onFcmTokenRefresh(token => {
+      tokenRef.current = token;
+      injectToken();
+    });
+    return () => {
+      active = false;
+      unsubscribe();
+    };
+  }, [injectToken]);
 
   const fail = () => {
     setLoading(false);
@@ -24,6 +62,7 @@ function WebViewScreen(): React.JSX.Element {
   const retry = () => {
     setError(false);
     setLoading(true);
+    loadedRef.current = false;
     setReloadNonce(n => n + 1);
   };
 
@@ -31,6 +70,7 @@ function WebViewScreen(): React.JSX.Element {
     <View style={styles.container}>
       <PooledWebView
         key={reloadNonce}
+        ref={webRef}
         source={{ uri: WEB_APP_URL }}
         containerStyle={StyleSheet.absoluteFill}
         // 웹이 로드되기 전 깜빡임/빈 화면을 흰색으로 보이게 한다.
@@ -48,7 +88,11 @@ function WebViewScreen(): React.JSX.Element {
         // stay edge-to-edge or the inset gets applied twice.
         automaticallyAdjustContentInsets={false}
         contentInsetAdjustmentBehavior="never"
-        onLoadEnd={() => setLoading(false)}
+        onLoadEnd={() => {
+          setLoading(false);
+          loadedRef.current = true;
+          injectToken();
+        }}
         onError={fail}
         onHttpError={fail}
         onPoolExhausted={() =>

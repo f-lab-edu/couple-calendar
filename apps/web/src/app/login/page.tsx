@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { type FormEvent, useState } from "react";
 import { coupleRepository } from "@/composition/couple";
 import { userRepository } from "@/composition/user";
+import { registerDeviceToken } from "@/data/apis/DeviceTokenDataSource";
 import type AuthSession from "@/domain/entities/AuthSession";
 import useAppleSignIn from "@/presentation/auth/hooks/useAppleSignIn";
 import useEmailSignIn from "@/presentation/auth/hooks/useEmailSignIn";
@@ -27,6 +28,11 @@ const LoginPage = () => {
 	// coupleId가 있으므로, 실제로 파트너가 연결된(isComplete) 경우에만 홈으로 보낸다.
 	const completeLogin = async (session: AuthSession) => {
 		await loginAction(session.user.id, session.accessToken, session.refreshToken);
+		// 로그인 직후(세션 생성됨) 네이티브가 주입해 둔 푸시 토큰이 있으면 등록한다.
+		const pushToken = typeof window !== "undefined" ? window.__couplePushToken : undefined;
+		if (pushToken?.token) {
+			void registerDeviceToken(pushToken.token, pushToken.platform).catch(() => {});
+		}
 		const me = await userRepository.getMe();
 		// coupleId 존재만으로는 부족하다 — 초대만 만든 "파트너 대기" 상태(isComplete=false)도
 		// coupleId가 있으므로 커플 상태에 따라 분기한다.
