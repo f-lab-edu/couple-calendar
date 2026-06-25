@@ -22,6 +22,11 @@ end
 target 'webviewhost' do
   config = use_native_modules!
 
+  # @react-native-firebase as static frameworks needs modular (clang module)
+  # headers so Swift can import FirebaseCore/GoogleUtilities. Without this:
+  # "Swift pod FirebaseCoreInternal depends upon GoogleUtilities, which does not define modules".
+  use_modular_headers!
+
   use_react_native!(
     :path => config[:reactNativePath],
     # An absolute path to your application root.
