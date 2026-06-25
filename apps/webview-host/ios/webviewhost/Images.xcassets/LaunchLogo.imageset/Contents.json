@@ -1,8 +1,8 @@
 {
   "images" : [
-    { "idiom" : "universal", "scale" : "1x", "filename" : "heart-160.png" },
-    { "idiom" : "universal", "scale" : "2x", "filename" : "heart-320.png" },
-    { "idiom" : "universal", "scale" : "3x", "filename" : "heart-480.png" }
+    { "idiom" : "universal", "scale" : "1x", "filename" : "ring-160.png" },
+    { "idiom" : "universal", "scale" : "2x", "filename" : "ring-320.png" },
+    { "idiom" : "universal", "scale" : "3x", "filename" : "ring-480.png" }
   ],
   "info" : { "author" : "xcode", "version" : 1 }
 }
