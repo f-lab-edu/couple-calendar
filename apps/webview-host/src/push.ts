@@ -6,9 +6,14 @@ export type PushPlatform = 'ios' | 'android';
 export const pushPlatform = (): PushPlatform =>
   Platform.OS === 'android' ? 'android' : 'ios';
 
+const sleep = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
+
 /**
- * 알림 권한을 요청하고 허용되면 FCM 등록 토큰을 반환한다.
- * 거부/실패 시 null. (네이티브 모듈은 빌드에 Firebase 가 링크돼 있어야 동작)
+ * 알림 권한을 요청하고 허용되면 FCM 등록 토큰을 반환한다(거부/실패 시 null).
+ *
+ * iOS 주의: getToken() 은 APNs 디바이스 토큰이 먼저 설정돼 있어야 한다. 권한 직후 바로
+ * 호출하면 "No APNS token specified" 로 실패하므로, remote messages 등록 후 APNs 토큰이
+ * 들어올 때까지(최대 ~5s) 폴링한 뒤 getToken 을 호출한다.
  */
 export async function requestAndGetFcmToken(): Promise<string | null> {
   try {
@@ -16,7 +21,23 @@ export async function requestAndGetFcmToken(): Promise<string | null> {
     const granted =
       status === messaging.AuthorizationStatus.AUTHORIZED ||
       status === messaging.AuthorizationStatus.PROVISIONAL;
-    if (!granted) return null;
+    if (!granted) {
+      console.warn('[push] permission not granted:', status);
+      return null;
+    }
+
+    if (Platform.OS === 'ios') {
+      if (!messaging().isDeviceRegisteredForRemoteMessages) {
+        await messaging().registerDeviceForRemoteMessages();
+      }
+      // APNs 토큰이 준비될 때까지 폴링(없으면 getToken 이 실패).
+      for (let i = 0; i < 10; i += 1) {
+        const apns = await messaging().getAPNSToken();
+        if (apns) break;
+        await sleep(500);
+      }
+    }
+
     return await messaging().getToken();
   } catch (e) {
     console.warn('[push] token fetch failed', e);
