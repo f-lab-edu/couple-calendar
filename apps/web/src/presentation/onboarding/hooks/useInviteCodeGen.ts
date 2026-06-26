@@ -89,6 +89,22 @@ const useInviteCodeGen = () => {
 		}
 	};
 
+	// OS 공유 시트로 코드 전송(카톡 등). Web Share 미지원/취소 시 복사로 폴백.
+	const shareCode = async () => {
+		if (!invite) return;
+		const text = `커플 캘린더 초대 코드: ${invite.code}\n앱에서 "코드 입력하기"에 넣어 우리 캘린더에 연결해줘 💌`;
+		if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+			try {
+				await navigator.share({ title: "커플 캘린더 초대 코드", text });
+				return;
+			} catch {
+				// 사용자가 공유를 취소한 경우 등 — 조용히 무시(복사 폴백도 하지 않음).
+				return;
+			}
+		}
+		await copyCode();
+	};
+
 	return {
 		today,
 		startDate: effectiveStartDate,
@@ -100,6 +116,7 @@ const useInviteCodeGen = () => {
 		copied,
 		generateCode,
 		copyCode,
+		shareCode,
 		goBack: () => router.back(),
 		generating: generate.isPending,
 		generateError: generate.isError

@@ -8,6 +8,15 @@ import { formatKoreanDate } from "@/shared/lib/date";
 
 const formatCode = (code: string) => code.match(/.{1,2}/g)?.join(" ") ?? code;
 
+/** 만료까지 남은 시간 라벨. */
+const remainingLabel = (expiresAt: string): string => {
+	const ms = Date.parse(expiresAt) - Date.now();
+	if (ms <= 0) return "만료됨 — 새 코드를 만들어 주세요";
+	const hours = Math.floor(ms / 3_600_000);
+	const minutes = Math.floor((ms % 3_600_000) / 60_000);
+	return hours > 0 ? `${hours}시간 ${minutes}분 후 만료` : `${minutes}분 후 만료`;
+};
+
 const CodeGenPage = () => {
 	const {
 		today,
@@ -19,6 +28,7 @@ const CodeGenPage = () => {
 		copied,
 		generateCode,
 		copyCode,
+		shareCode,
 		goBack,
 		generating,
 		generateError,
@@ -109,14 +119,35 @@ const CodeGenPage = () => {
 						>
 							{formatCode(invite.code)}
 						</div>
-						<button
-							type="button"
-							onClick={copyCode}
-							className="wb-btn wb-btn--secondary wb-btn--sm"
-							style={{ marginTop: 18, gap: 6 }}
-						>
-							<CopyIcon s={14} /> {copied ? "복사 완료" : "코드 복사"}
-						</button>
+						<div className="wb-caption" style={{ marginTop: 10, color: "var(--text-tertiary)" }}>
+							{remainingLabel(invite.expiresAt)}
+						</div>
+						<div className="flex items-center justify-center" style={{ marginTop: 16, gap: 8 }}>
+							<button
+								type="button"
+								onClick={copyCode}
+								className="wb-btn wb-btn--secondary wb-btn--sm"
+								style={{ gap: 6 }}
+							>
+								<CopyIcon s={14} /> {copied ? "복사 완료" : "코드 복사"}
+							</button>
+							<button
+								type="button"
+								onClick={shareCode}
+								className="wb-btn wb-btn--primary wb-btn--sm"
+								style={{ gap: 6 }}
+							>
+								공유하기
+							</button>
+						</div>
+					</div>
+
+					<div
+						className="flex items-center justify-center"
+						style={{ marginTop: 18, gap: 8, color: "var(--text-secondary)" }}
+					>
+						<span className="animate-pulse" aria-hidden style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--action-primary)" }} />
+						<span className="wb-body-sm">상대방 연결을 기다리는 중…</span>
 					</div>
 
 					<div
