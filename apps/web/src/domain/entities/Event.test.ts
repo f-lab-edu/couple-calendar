@@ -10,6 +10,7 @@ describe("Event", () => {
 			"2026-06-06T10:00:00.000Z",
 			"2026-06-06T12:00:00.000Z",
 			"DATE",
+			"user-1",
 			"홍대에서",
 			"홍대입구역",
 		);
@@ -21,6 +22,7 @@ describe("Event", () => {
 			startTime: "2026-06-06T10:00:00.000Z",
 			endTime: "2026-06-06T12:00:00.000Z",
 			category: "DATE",
+			authorId: "user-1",
 			description: "홍대에서",
 			location: "홍대입구역",
 		});
@@ -34,6 +36,7 @@ describe("Event", () => {
 			"2026-06-06T00:00:00.000Z",
 			"2026-06-07T00:00:00.000Z",
 			"ANNIVERSARY",
+			"user-1",
 			null,
 			null,
 		);

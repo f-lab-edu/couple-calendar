@@ -2,8 +2,11 @@ import { useState } from "react";
 import { ChevronIcon } from "@/presentation/components/icons";
 import EventDetailSheet from "@/presentation/events/components/EventDetailSheet";
 import { formatRange } from "@/presentation/events/lib/eventDisplay";
+import { eventBadgeLabel } from "@/presentation/events/lib/eventBadge";
 import { CATEGORY_STYLE, WEEK_LABELS } from "@/presentation/home/lib/calendar";
+import useCoupleProfile from "@/presentation/settings/hooks/useCoupleProfile";
 import type Event from "@/domain/entities/Event";
+import type User from "@/domain/entities/User";
 
 interface Props {
 	/** 1-based 연도. 선택일 요일 계산용. */
@@ -13,9 +16,13 @@ interface Props {
 	events: Event[];
 }
 
-const EventRow = ({ event, onSelect }: { event: Event; onSelect: (event: Event) => void }) => {
+const EventRow = ({
+	event,
+	partner,
+	onSelect,
+}: { event: Event; partner: User | null; onSelect: (event: Event) => void }) => {
 	const style = CATEGORY_STYLE[event.category];
-	const sub = `${formatRange(event)} · ${style.label}`;
+	const sub = `${formatRange(event)} · ${eventBadgeLabel(event, partner)}`;
 	return (
 		<button
 			type="button"
@@ -56,6 +63,8 @@ const DayEvents = ({ year, day, month, events }: Props) => {
 	const date = new Date(year, month - 1, day);
 	const weekday = WEEK_LABELS[date.getDay()];
 	const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+	const { data: profile } = useCoupleProfile();
+	const partner = profile?.partner ?? null;
 
 	return (
 		<section className="mt-5 flex flex-col px-1 pb-24">
@@ -79,7 +88,7 @@ const DayEvents = ({ year, day, month, events }: Props) => {
 			) : (
 				<div>
 					{events.map((event) => (
-						<EventRow key={event.id} event={event} onSelect={setSelectedEvent} />
+						<EventRow key={event.id} event={event} partner={partner} onSelect={setSelectedEvent} />
 					))}
 				</div>
 			)}

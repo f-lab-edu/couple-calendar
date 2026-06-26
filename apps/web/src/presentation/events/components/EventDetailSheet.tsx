@@ -5,8 +5,10 @@ import { CloseIcon } from "@/presentation/components/icons";
 import type Event from "@/domain/entities/Event";
 import EventForm from "@/presentation/events/components/EventForm";
 import useDeleteEvent from "@/presentation/events/hooks/useDeleteEvent";
+import { eventBadgeLabel } from "@/presentation/events/lib/eventBadge";
 import { formatFullDate, formatRange } from "@/presentation/events/lib/eventDisplay";
 import { CATEGORY_STYLE } from "@/presentation/home/lib/calendar";
+import useCoupleProfile from "@/presentation/settings/hooks/useCoupleProfile";
 
 interface Props {
 	/** Event to show details for. `null` keeps the sheet closed. */
@@ -26,6 +28,8 @@ const Row = ({ label, value }: { label: string; value: string }) => (
 const EventDetailSheet = ({ event, onClose }: Props) => {
 	const open = event !== null;
 	const style = event ? CATEGORY_STYLE[event.category] : null;
+	const { data: profile } = useCoupleProfile();
+	const badgeLabel = event ? eventBadgeLabel(event, profile?.partner ?? null) : "";
 
 	const [mode, setMode] = useState<"detail" | "edit">("detail");
 	const [confirmingDelete, setConfirmingDelete] = useState(false);
@@ -93,7 +97,7 @@ const EventDetailSheet = ({ event, onClose }: Props) => {
 								color: style.color,
 							}}
 						>
-							{style.label}
+							{badgeLabel}
 						</span>
 					) : (
 						<span />

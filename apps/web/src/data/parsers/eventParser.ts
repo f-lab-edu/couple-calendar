@@ -22,6 +22,7 @@ export const parseEvent = (raw: EventResponse): Event => {
 		raw.startTime,
 		raw.endTime,
 		parseCategory(raw.category),
+		raw.authorId,
 		raw.description,
 		raw.location,
 	);

@@ -41,7 +41,22 @@ const useInviteCodeGen = () => {
 		queryFn: () => coupleRepository.getMyCouple(),
 		retry: false,
 		staleTime: 0,
+		// 파트너 대기(미완성 커플) 동안 4초마다 연결 여부를 확인한다. 연결되면(완성) 폴링 중단.
+		refetchInterval: (query) => {
+			const couple = query.state.data;
+			return couple && !couple.isComplete ? 4000 : false;
+		},
 	});
+
+	// 코드 발급 직후, 갓 생성된 커플(파트너 대기)을 불러와 폴링을 시작시킨다.
+	useEffect(() => {
+		if (generate.isSuccess) existing.refetch();
+	}, [generate.isSuccess, existing.refetch]);
+
+	// 상대가 코드를 입력해 연결이 완성되면 자동으로 홈으로 이동(화면에 적힌 약속대로).
+	useEffect(() => {
+		if (existing.data?.isComplete) router.replace("/home");
+	}, [existing.data?.isComplete, router]);
 
 	// 파트너 대기(미완성) + 아직 만료되지 않은 코드만 "기존 코드"로 인정한다.
 	const existingInvite = useMemo(() => {
