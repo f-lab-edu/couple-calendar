@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  NativeModules,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import type { WebViewMessageEvent } from 'react-native-webview';
 import { PooledWebView, useWebViewPool } from 'react-native-instant-webview';
 
 import { WEB_APP_URL } from './config';
@@ -94,6 +96,17 @@ function WebViewScreen(): React.JSX.Element {
         automaticallyAdjustContentInsets={false}
         contentInsetAdjustmentBehavior="never"
         allowsBackForwardNavigationGestures
+        onMessage={(e: WebViewMessageEvent) => {
+          // 웹(홈)이 보낸 위젯 데이터 → 네이티브가 App Group 에 저장 + 위젯 리로드.
+          try {
+            const msg = JSON.parse(e.nativeEvent.data);
+            if (msg?.type === 'widget' && msg.payload) {
+              NativeModules.WidgetBridge?.update?.(JSON.stringify(msg.payload));
+            }
+          } catch {
+            // 위젯과 무관한 메시지 — 무시.
+          }
+        }}
         onLoadEnd={() => {
           setLoading(false);
           loadedRef.current = true;

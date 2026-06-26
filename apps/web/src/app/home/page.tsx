@@ -10,6 +10,7 @@ import DayEvents from "@/presentation/home/components/DayEvents";
 import DdayCard from "@/presentation/home/components/DdayCard";
 import MonthNav from "@/presentation/home/components/MonthNav";
 import PullToRefreshIndicator from "@/presentation/home/components/PullToRefreshIndicator";
+import WidgetSync from "@/presentation/home/components/WidgetSync";
 import useHomeCalendar from "@/presentation/home/hooks/useHomeCalendar";
 import usePullToRefresh from "@/presentation/home/hooks/usePullToRefresh";
 import useRequireCoupleConnected from "@/presentation/home/hooks/useRequireCoupleConnected";
@@ -38,6 +39,7 @@ export default function HomePage() {
 	return (
 		<>
 			<PullToRefreshIndicator pull={pull} refreshing={refreshing} armed={armed} />
+			<WidgetSync />
 			<main
 				className="dark-scroll relative mx-auto flex min-h-dvh max-w-[420px] flex-col"
 				style={{
