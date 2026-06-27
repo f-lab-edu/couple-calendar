@@ -58,9 +58,3 @@ export function buildTokenInjection(token: string, platform: PushPlatform): stri
   const payload = JSON.stringify({ token, platform });
   return `(function(){try{window.__couplePushToken=${payload};window.dispatchEvent(new Event('couple-push-token'));}catch(e){}})();true;`;
 }
-
-/** 진단 상태를 WebView 로 전달(window.__couplePushDebug + 이벤트). */
-export function buildDebugInjection(status: string): string {
-  const payload = JSON.stringify(status);
-  return `(function(){try{window.__couplePushDebug=${payload};window.dispatchEvent(new Event('couple-push-token'));}catch(e){}})();true;`;
-}

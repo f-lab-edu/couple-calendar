@@ -12,7 +12,6 @@ import { PooledWebView, useWebViewPool } from 'react-native-instant-webview';
 
 import { WEB_APP_URL, WEB_BG_COLOR } from './config';
 import {
-  buildDebugInjection,
   buildTokenInjection,
   type FcmResult,
   onFcmTokenRefresh,
@@ -42,10 +41,8 @@ function WebViewScreen(): React.JSX.Element {
   );
 
   const pushCurrent = useCallback(() => {
-    const r = resultRef.current;
-    if (!r) return;
-    if (r.token) inject(buildTokenInjection(r.token, pushPlatform()));
-    else if (r.error) inject(buildDebugInjection(r.error));
+    const token = resultRef.current?.token;
+    if (token) inject(buildTokenInjection(token, pushPlatform()));
   }, [inject]);
 
   useEffect(() => {
@@ -110,7 +107,6 @@ function WebViewScreen(): React.JSX.Element {
         onLoadEnd={() => {
           setLoading(false);
           loadedRef.current = true;
-          inject(buildDebugInjection('native-alive'));
           pushCurrent();
         }}
         onError={fail}
