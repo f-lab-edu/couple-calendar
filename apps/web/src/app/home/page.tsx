@@ -60,6 +60,7 @@ export default function HomePage() {
 				{/* 스크롤 본문: D-day 카드 + 달력 + 선택일 상세. 좌우 스와이프로 월 전환. */}
 				<div
 					className="dark-scroll flex-1 overflow-auto px-3 pt-1.5"
+					style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 96px)" }}
 					onTouchStart={swipe.onTouchStart}
 					onTouchEnd={swipe.onTouchEnd}
 				>
@@ -86,22 +87,29 @@ export default function HomePage() {
 					/>
 				</div>
 
-				{/* 하단 커맨드바: 홈/탐색/프로필 pill (FAB는 아래에서 absolute로 띄운다) */}
-				<div
-					className="flex shrink-0 items-center"
-					style={{ padding: "8px 16px calc(env(safe-area-inset-bottom) + 18px)" }}
+				{/* 플로팅 하단 네비: 화면 하단 중앙에 떠 있는 캡슐. 홈 · 개인 · 이벤트 추가.
+				    스크롤해도 항상 보이도록 fixed로 띄운다(본문은 아래 paddingBottom으로 가림 방지). */}
+				<nav
+					className="fixed inset-x-0 z-30 flex justify-center"
+					style={{ bottom: "calc(env(safe-area-inset-bottom) + 16px)", pointerEvents: "none" }}
 				>
 					<div
 						className="flex items-center gap-1 p-1.5"
-						style={{ borderRadius: 999, background: "#1a1a1c", border: "1px solid rgba(255,255,255,0.08)" }}
+						style={{
+							borderRadius: 999,
+							background: "#1a1a1c",
+							border: "1px solid rgba(255,255,255,0.08)",
+							boxShadow: "0 12px 32px rgba(0,0,0,0.5)",
+							pointerEvents: "auto",
+						}}
 					>
+						{/* 홈 (현재 페이지, 활성) */}
 						<button
 							type="button"
 							aria-label="홈"
 							aria-current="page"
-							className="inline-flex items-center gap-1.5"
+							className="flex h-12 w-14 items-center justify-center"
 							style={{
-								padding: "9px 16px",
 								borderRadius: 999,
 								border: "none",
 								cursor: "pointer",
@@ -109,41 +117,35 @@ export default function HomePage() {
 								color: "#0d0d0e",
 							}}
 						>
-							<HomeIcon s={17} />
-							<span style={{ fontSize: 13.5, fontWeight: 700 }}>홈</span>
+							<HomeIcon s={20} />
 						</button>
+						{/* 개인 (설정) */}
 						<Link
 							href={ROUTES.SETTINGS}
-							aria-label="프로필"
-							className="flex h-10 w-10 items-center justify-center"
-							style={{ borderRadius: "50%", color: "var(--text-secondary)" }}
+							aria-label="개인"
+							className="flex h-12 w-14 items-center justify-center"
+							style={{ borderRadius: 999, color: "var(--text-secondary)" }}
 						>
-							<UserIcon s={19} />
+							<UserIcon s={21} />
 						</Link>
+						{/* 이벤트 추가 (주요 액션) */}
+						<button
+							type="button"
+							aria-label="새 이벤트 추가"
+							onClick={() => setSheetOpen(true)}
+							className="flex h-12 w-14 items-center justify-center"
+							style={{
+								borderRadius: 999,
+								border: "none",
+								cursor: "pointer",
+								background: "#F26419",
+								color: "#fff",
+							}}
+						>
+							<PlusIcon s={22} />
+						</button>
 					</div>
-				</div>
-
-				{/* 플로팅 FAB: 뷰포트 우하단에 fixed로 떠 있어 스크롤해도 항상 보인다(콘텐츠 위 오버레이). */}
-				<button
-					type="button"
-					aria-label="새 이벤트 추가"
-					onClick={() => setSheetOpen(true)}
-					className="fixed flex items-center justify-center"
-					style={{
-						right: 20,
-						bottom: "calc(env(safe-area-inset-bottom) + 44px)",
-						zIndex: 30,
-						width: 54,
-						height: 54,
-						borderRadius: "50%",
-						background: "#F26419",
-						color: "#fff",
-						border: "none",
-						cursor: "pointer",
-					}}
-				>
-					<PlusIcon s={24} />
-				</button>
+				</nav>
 
 				<AddEventSheet
 						open={sheetOpen}
