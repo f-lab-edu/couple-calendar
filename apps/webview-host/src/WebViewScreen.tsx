@@ -10,7 +10,7 @@ import {
 import type { WebViewMessageEvent } from 'react-native-webview';
 import { PooledWebView, useWebViewPool } from 'react-native-instant-webview';
 
-import { WEB_APP_URL } from './config';
+import { WEB_APP_URL, WEB_BG_COLOR } from './config';
 import {
   buildDebugInjection,
   buildTokenInjection,
@@ -121,7 +121,7 @@ function WebViewScreen(): React.JSX.Element {
       />
       {loading && !error && (
         <View style={styles.overlay} pointerEvents="none">
-          <ActivityIndicator size="large" />
+          <ActivityIndicator size="large" color="#f4f4f3" />
         </View>
       )}
       {error && (
@@ -137,8 +137,8 @@ function WebViewScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  webview: { backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: WEB_BG_COLOR },
+  webview: { backgroundColor: WEB_BG_COLOR },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',
