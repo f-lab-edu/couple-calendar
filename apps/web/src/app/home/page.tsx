@@ -22,8 +22,10 @@ export default function HomePage() {
 			</section>
 
 			<CalendarGrid
+				key={`${calendar.year}-${calendar.month}`}
 				cells={calendar.cells}
 				selected={calendar.selected}
+				navigationDirection={calendar.navigationDirection}
 				onSelect={calendar.selectDay}
 				categoriesByDate={calendar.categoriesByDate}
 			/>

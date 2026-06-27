@@ -4,12 +4,21 @@ import type { EEventCategory } from "@/domain/entities/Event";
 interface Props {
 	cells: Cell[];
 	selected: number;
+	navigationDirection: "prev" | "next" | null;
 	onSelect: (d: number) => void;
 	categoriesByDate: Record<number, EEventCategory[]>;
 }
 
-const CalendarGrid = ({ cells, selected, onSelect, categoriesByDate }: Props) => (
-	<section className="shrink-0">
+const animationClass = {
+	prev: "animate-calendar-slide-from-left",
+	next: "animate-calendar-slide-from-right",
+};
+
+const CalendarGrid = ({ cells, selected, navigationDirection, onSelect, categoriesByDate }: Props) => (
+	<section
+		className={`shrink-0 ${navigationDirection ? animationClass[navigationDirection] : ""}`}
+		aria-live="polite"
+	>
 		<div className="grid grid-cols-7 pb-2 text-center text-xs">
 			{WEEK_LABELS.map((w, i) => (
 				<span key={w} className={i === 0 ? "text-[#e74c3c]" : i === 6 ? "text-[#3b82f6]" : "text-neutral-500"}>

@@ -24,6 +24,7 @@ const useHomeCalendar = () => {
 	const today = useMemo(todayParts, []);
 	const [cursor, setCursor] = useState({ year: today.year, month: today.month });
 	const [selected, setSelected] = useState(today.day);
+	const [navigationDirection, setNavigationDirection] = useState<"prev" | "next" | null>(null);
 
 	const cells = useMemo(() => buildMonthCells(cursor.year, cursor.month), [cursor]);
 
@@ -54,9 +55,11 @@ const useHomeCalendar = () => {
 	}, [monthlyEvents, cursor.year, cursor.month]);
 
 	const goPrev = () => {
+		setNavigationDirection("prev");
 		setCursor((c) => (c.month === 0 ? { year: c.year - 1, month: 11 } : { year: c.year, month: c.month - 1 }));
 	};
 	const goNext = () => {
+		setNavigationDirection("next");
 		setCursor((c) => (c.month === 11 ? { year: c.year + 1, month: 0 } : { year: c.year, month: c.month + 1 }));
 	};
 
@@ -64,6 +67,7 @@ const useHomeCalendar = () => {
 		year: cursor.year,
 		month: cursor.month,
 		selected,
+		navigationDirection,
 		cells,
 		categoriesByDate,
 		selectedDayEvents,
