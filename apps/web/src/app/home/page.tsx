@@ -93,72 +93,73 @@ export default function HomePage() {
 					/>
 				</div>
 
-				{/* 플로팅 하단 네비: 화면 하단 중앙에 떠 있는 캡슐. 홈 · 개인 · 이벤트 추가.
-				    스크롤해도 항상 보이도록 fixed로 띄운다(본문은 아래 paddingBottom으로 가림 방지). */}
-				<nav
-					className="fixed inset-x-0 z-30 flex justify-center"
-					style={{ bottom: "calc(env(safe-area-inset-bottom) + 4px)", pointerEvents: "none" }}
-				>
-					<div
-						className="flex items-center gap-1 p-1.5"
-						style={{
-							borderRadius: 999,
-							background: "#1a1a1c",
-							border: "1px solid rgba(255,255,255,0.08)",
-							boxShadow: "0 12px 32px rgba(0,0,0,0.5)",
-							pointerEvents: "auto",
-						}}
-					>
-						{/* 홈 (현재 페이지, 활성) */}
-						<button
-							type="button"
-							aria-label="홈"
-							aria-current="page"
-							className="flex h-12 w-14 items-center justify-center"
-							style={{
-								borderRadius: 999,
-								border: "none",
-								cursor: "pointer",
-								background: "#f4f4f3",
-								color: "#0d0d0e",
-							}}
-						>
-							<HomeIcon s={20} />
-						</button>
-						{/* 개인 (설정) */}
-						<Link
-							href={ROUTES.SETTINGS}
-							aria-label="개인"
-							className="flex h-12 w-14 items-center justify-center"
-							style={{ borderRadius: 999, color: "var(--text-secondary)" }}
-						>
-							<UserIcon s={21} />
-						</Link>
-						{/* 이벤트 추가 (주요 액션) */}
-						<button
-							type="button"
-							aria-label="새 이벤트 추가"
-							onClick={() => setSheetOpen(true)}
-							className="flex h-12 w-14 items-center justify-center"
-							style={{
-								borderRadius: 999,
-								border: "none",
-								cursor: "pointer",
-								background: "#F26419",
-								color: "#fff",
-							}}
-						>
-							<PlusIcon s={22} />
-						</button>
-					</div>
-				</nav>
-
 				<AddEventSheet
 						open={sheetOpen}
 						onClose={() => setSheetOpen(false)}
 						initialDate={dateString(calendar.year, calendar.month, calendar.selected)}
 					/>
 			</main>
+
+			{/* 플로팅 하단 네비: 화면 하단 중앙 캡슐. 홈 · 개인 · 이벤트 추가.
+			    <main> 밖(형제)에 둬서 당겨서-새로고침 transform 의 영향을 받지 않고
+			    항상 뷰포트 기준으로 고정된다(좌우 드래그 중 사라졌다 나타나는 현상 방지). */}
+			<nav
+				className="fixed inset-x-0 z-30 flex justify-center"
+				style={{ bottom: "calc(env(safe-area-inset-bottom) + 4px)", pointerEvents: "none" }}
+			>
+				<div
+					className="flex items-center gap-1 p-1.5"
+					style={{
+						borderRadius: 999,
+						background: "#1a1a1c",
+						border: "1px solid rgba(255,255,255,0.08)",
+						boxShadow: "0 12px 32px rgba(0,0,0,0.5)",
+						pointerEvents: "auto",
+					}}
+				>
+					{/* 홈 (현재 페이지, 활성) */}
+					<button
+						type="button"
+						aria-label="홈"
+						aria-current="page"
+						className="flex h-12 w-14 items-center justify-center"
+						style={{
+							borderRadius: 999,
+							border: "none",
+							cursor: "pointer",
+							background: "#f4f4f3",
+							color: "#0d0d0e",
+						}}
+					>
+						<HomeIcon s={20} />
+					</button>
+					{/* 개인 (설정) */}
+					<Link
+						href={ROUTES.SETTINGS}
+						aria-label="개인"
+						className="flex h-12 w-14 items-center justify-center"
+						style={{ borderRadius: 999, color: "var(--text-secondary)" }}
+					>
+						<UserIcon s={21} />
+					</Link>
+					{/* 이벤트 추가 (주요 액션) */}
+					<button
+						type="button"
+						aria-label="새 이벤트 추가"
+						onClick={() => setSheetOpen(true)}
+						className="flex h-12 w-14 items-center justify-center"
+						style={{
+							borderRadius: 999,
+							border: "none",
+							cursor: "pointer",
+							background: "#F26419",
+							color: "#fff",
+						}}
+					>
+						<PlusIcon s={22} />
+					</button>
+				</div>
+			</nav>
 		</>
 	);
 }
