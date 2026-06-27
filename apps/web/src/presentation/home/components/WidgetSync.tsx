@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import useAnniversaries from "@/presentation/anniversaries/hooks/useAnniversaries";
-import { formatDday, pickNearestUpcoming } from "@/presentation/anniversaries/lib/anniversaryDisplay";
 import useMonthlyEvents from "@/presentation/home/hooks/useMonthlyEvents";
 import { todayParts } from "@/presentation/home/lib/calendar";
 import useCoupleProfile from "@/presentation/settings/hooks/useCoupleProfile";
@@ -29,11 +27,10 @@ const formatWhen = (iso: string): string => {
 /**
  * 홈 데이터(커플/ D-day / 다음 일정)를 네이티브 WebView 로 전달해 홈 위젯을 갱신한다.
  * WebView(ReactNativeWebView) 안에서만 동작하고, 일반 브라우저에선 no-op. 렌더는 없음.
- * D-day 산출은 DdayCard 와 동일 규칙(가까운 AUTO 마일스톤 → 없으면 D+시작일).
+ * D-day 산출은 DdayCard 와 동일 규칙(시작일 기준 D+ 함께한 일수).
  */
 const WidgetSync = () => {
 	const { data: profile } = useCoupleProfile();
-	const { data: anniversaries } = useAnniversaries();
 	const today = todayParts();
 	const { data: monthEvents } = useMonthlyEvents(today.year, today.month + 1);
 
@@ -43,18 +40,9 @@ const WidgetSync = () => {
 
 		const myName = profile.me.name ?? "나";
 		const partnerName = profile.partner?.name ?? "상대방";
-		const nearest = pickNearestUpcoming((anniversaries ?? []).filter((a) => a.type === "AUTO"));
 		const hasStart = profile.couple.startDate != null;
-		const ddayLabel = nearest
-			? formatDday(nearest.daysUntil)
-			: hasStart
-				? `D+${profile.couple.daysFromStart ?? 0}`
-				: "—";
-		const ddaySub = nearest
-			? `${nearest.title} · ${formatKoreanDate(nearest.date)}`
-			: hasStart
-				? `${formatKoreanDate(profile.couple.startDate)} 부터 함께`
-				: "";
+		const ddayLabel = hasStart ? `D+${profile.couple.daysFromStart ?? 0}` : "—";
+		const ddaySub = hasStart ? `${formatKoreanDate(profile.couple.startDate)} 부터 함께` : "";
 
 		const now = Date.now();
 		const upcoming = (monthEvents ?? [])
@@ -69,7 +57,7 @@ const WidgetSync = () => {
 			nextEventWhen: upcoming ? formatWhen(upcoming.startTime) : null,
 		};
 		window.ReactNativeWebView.postMessage(JSON.stringify({ type: "widget", payload }));
-	}, [profile, anniversaries, monthEvents]);
+	}, [profile, monthEvents]);
 
 	return null;
 };
