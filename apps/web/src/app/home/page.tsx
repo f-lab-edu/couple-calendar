@@ -67,10 +67,12 @@ export default function HomePage() {
 					</div>
 
 					<CalendarGrid
+						key={`${calendar.year}-${calendar.month}`}
 						year={calendar.year}
 						month={calendar.month}
 						cells={calendar.cells}
 						selected={calendar.selected}
+						navigationDirection={calendar.navigationDirection}
 						onSelect={calendar.selectDay}
 						categoriesByDate={calendar.categoriesByDate}
 					/>
