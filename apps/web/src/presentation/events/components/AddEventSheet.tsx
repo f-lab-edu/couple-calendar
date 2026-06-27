@@ -2,6 +2,7 @@
 
 import { CloseIcon } from "@/presentation/components/icons";
 import EventForm from "@/presentation/events/components/EventForm";
+import useScrollLock from "@/shared/hooks/useScrollLock";
 
 interface Props {
 	open: boolean;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const AddEventSheet = ({ open, onClose, initialDate }: Props) => {
+	useScrollLock(open);
 	return (
 		<>
 			<button

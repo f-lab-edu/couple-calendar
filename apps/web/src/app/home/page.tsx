@@ -59,6 +59,7 @@ export default function HomePage() {
 
 				{/* 스크롤 본문: D-day 카드 + 달력 + 선택일 상세. 좌우 스와이프로 월 전환. */}
 				<div
+					id="app-scroll"
 					className="dark-scroll flex-1 overflow-auto px-3 pt-1.5"
 					style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 96px)" }}
 					onTouchStart={swipe.onTouchStart}
@@ -91,7 +92,7 @@ export default function HomePage() {
 				    스크롤해도 항상 보이도록 fixed로 띄운다(본문은 아래 paddingBottom으로 가림 방지). */}
 				<nav
 					className="fixed inset-x-0 z-30 flex justify-center"
-					style={{ bottom: "calc(env(safe-area-inset-bottom) + 16px)", pointerEvents: "none" }}
+					style={{ bottom: "calc(env(safe-area-inset-bottom) + 4px)", pointerEvents: "none" }}
 				>
 					<div
 						className="flex items-center gap-1 p-1.5"
