@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useCallback, useState } from "react";
 import { HomeIcon, PlusIcon, UserIcon } from "@/presentation/components/icons";
 import AddEventSheet from "@/presentation/events/components/AddEventSheet";
+import { dateString } from "@/presentation/events/lib/eventForm";
 import CalendarGrid from "@/presentation/home/components/CalendarGrid";
 import DayEvents from "@/presentation/home/components/DayEvents";
 import DdayCard from "@/presentation/home/components/DdayCard";
@@ -144,7 +145,11 @@ export default function HomePage() {
 					<PlusIcon s={24} />
 				</button>
 
-				<AddEventSheet open={sheetOpen} onClose={() => setSheetOpen(false)} />
+				<AddEventSheet
+						open={sheetOpen}
+						onClose={() => setSheetOpen(false)}
+						initialDate={dateString(calendar.year, calendar.month, calendar.selected)}
+					/>
 			</main>
 		</>
 	);

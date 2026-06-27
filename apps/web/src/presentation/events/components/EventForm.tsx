@@ -31,6 +31,8 @@ interface Props {
 	footerClassName: string;
 	/** 주어지면 수정 모드: 초기값을 채우고 저장 시 PATCH 경로를 탄다. */
 	event?: Event | null;
+	/** 생성 모드 초기 날짜(`yyyy-mm-dd`). 없으면 오늘. 달력에서 선택한 날을 미리 채울 때 사용. */
+	initialDate?: string;
 	/** 알림 행 노출 여부. 바텀시트(시트)는 숨기고 풀페이지는 보여준다(디자인 원본). */
 	showReminder?: boolean;
 }
@@ -43,7 +45,7 @@ const fieldLabel = "block text-[12px] font-semibold uppercase tracking-[0.04em]"
  * 레이아웃 래퍼만 달리하여 재사용한다. `event` prop이 주어지면 수정 모드로 동작한다.
  * Bold B 다크 스킨: 시각만 교체하고 저장/카테고리/시간/알림 계약은 그대로 유지한다.
  */
-const EventForm = ({ onSuccess, bodyClassName, footerClassName, event, showReminder = true }: Props) => {
+const EventForm = ({ onSuccess, bodyClassName, footerClassName, event, initialDate, showReminder = true }: Props) => {
 	const isEditMode = event != null;
 	const editAllDay = isEditMode ? isAllDay(event) : false;
 
@@ -57,7 +59,7 @@ const EventForm = ({ onSuccess, bodyClassName, footerClassName, event, showRemin
 
 	const [title, setTitle] = useState(event?.title ?? "");
 	const [category, setCategory] = useState<CategoryId>(isEditMode ? DTO_TO_CATEGORY[event.category] : "date");
-	const [date, setDate] = useState(isEditMode ? isoToDateString(event.startTime) : todayString());
+	const [date, setDate] = useState(isEditMode ? isoToDateString(event.startTime) : (initialDate ?? todayString()));
 	const [startTime, setStartTime] = useState(isEditMode ? isoToTimeString(event.startTime) : "19:00");
 	const [endTime, setEndTime] = useState(isEditMode ? isoToTimeString(event.endTime) : "21:00");
 	const [allDay, setAllDay] = useState(editAllDay);

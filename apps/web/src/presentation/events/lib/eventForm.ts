@@ -28,6 +28,12 @@ export const todayString = (): string => {
 	return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 };
 
+/** 달력 파트(month는 0-based, UI 규약)로 `yyyy-mm-dd` 문자열을 만든다. */
+export const dateString = (year: number, month0Based: number, day: number): string => {
+	const pad = (n: number) => String(n).padStart(2, "0");
+	return `${year}-${pad(month0Based + 1)}-${pad(day)}`;
+};
+
 /** Combine a `yyyy-mm-dd` date and `HH:mm` time into a KST-anchored ISO string. */
 export const toKstIso = (date: string, time: string): string => `${date}T${time}:00${KST_OFFSET}`;
 export const allDayStartIso = (date: string): string => `${date}T00:00:00${KST_OFFSET}`;
