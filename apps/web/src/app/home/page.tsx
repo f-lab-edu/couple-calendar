@@ -15,7 +15,7 @@ import WidgetSync from "@/presentation/home/components/WidgetSync";
 import useHomeCalendar from "@/presentation/home/hooks/useHomeCalendar";
 import usePullToRefresh from "@/presentation/home/hooks/usePullToRefresh";
 import useRequireCoupleConnected from "@/presentation/home/hooks/useRequireCoupleConnected";
-import useSwipe from "@/presentation/home/hooks/useSwipe";
+import useCalendarSwipeDrag from "@/presentation/home/hooks/useCalendarSwipeDrag";
 import { ROUTES } from "@/shared/constants/routes";
 
 export default function HomePage() {
@@ -30,9 +30,10 @@ export default function HomePage() {
 		enabled: ready && !sheetOpen,
 	});
 
-	// 좌우 스와이프로 월 넘기기(왼쪽=다음 달, 오른쪽=이전 달). 가로 우세 제스처만
-	// 인정하므로 세로 스크롤·당겨서 새로고침과 충돌하지 않는다.
-	const swipe = useSwipe({ onSwipeLeft: calendar.goNext, onSwipeRight: calendar.goPrev });
+	// 좌우 드래그로 월 넘기기: 캘린더가 손가락을 따라 움직이고(왼쪽=다음 달, 오른쪽=이전 달),
+	// 임계 도달 후 놓으면 마저 밀려나며 전환, 미달이면 스냅백. 가로 우세 제스처만 추종하므로
+	// 세로 스크롤·당겨서 새로고침과 충돌하지 않는다.
+	const swipe = useCalendarSwipeDrag({ onNext: calendar.goNext, onPrev: calendar.goPrev });
 
 	// 커플 연결이 확인되기 전(또는 미연결로 온보딩 리다이렉트 중)에는 홈을 그리지 않는다.
 	if (!ready) return null;
@@ -60,25 +61,29 @@ export default function HomePage() {
 				{/* 스크롤 본문: D-day 카드 + 달력 + 선택일 상세. 좌우 스와이프로 월 전환. */}
 				<div
 					id="app-scroll"
-					className="dark-scroll flex-1 overflow-auto px-3 pt-1.5"
+					className="dark-scroll flex-1 overflow-x-hidden overflow-y-auto px-3 pt-1.5"
 					style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 96px)" }}
 					onTouchStart={swipe.onTouchStart}
+					onTouchMove={swipe.onTouchMove}
 					onTouchEnd={swipe.onTouchEnd}
 				>
 					<div className="px-2 pb-4">
 						<DdayCard />
 					</div>
 
-					<CalendarGrid
-						key={`${calendar.year}-${calendar.month}`}
-						year={calendar.year}
-						month={calendar.month}
-						cells={calendar.cells}
-						selected={calendar.selected}
-						navigationDirection={calendar.navigationDirection}
-						onSelect={calendar.selectDay}
-						badgesByDate={calendar.badgesByDate}
-					/>
+					{/* 드래그 추종 래퍼: 손가락 따라 translateX 되고, 안의 CalendarGrid는 월별로 remount된다. */}
+					<div ref={swipe.trackRef} className="will-change-transform">
+						<CalendarGrid
+							key={`${calendar.year}-${calendar.month}`}
+							year={calendar.year}
+							month={calendar.month}
+							cells={calendar.cells}
+							selected={calendar.selected}
+							navigationDirection={calendar.navigationDirection}
+							onSelect={calendar.selectDay}
+							badgesByDate={calendar.badgesByDate}
+						/>
+					</div>
 
 					<DayEvents
 						year={calendar.year}
