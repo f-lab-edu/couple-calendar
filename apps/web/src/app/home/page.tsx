@@ -74,7 +74,7 @@ export default function HomePage() {
 						selected={calendar.selected}
 						navigationDirection={calendar.navigationDirection}
 						onSelect={calendar.selectDay}
-						categoriesByDate={calendar.categoriesByDate}
+						badgesByDate={calendar.badgesByDate}
 					/>
 
 					<DayEvents

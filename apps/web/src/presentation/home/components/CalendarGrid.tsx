@@ -1,5 +1,5 @@
-import { type Cell, CATEGORY_STYLE, todayParts } from "@/presentation/home/lib/calendar";
-import type { EEventCategory } from "@/domain/entities/Event";
+import { type Cell, todayParts } from "@/presentation/home/lib/calendar";
+import type { DayBadge } from "@/presentation/home/hooks/useHomeCalendar";
 
 interface Props {
 	/** 0-based 월(현재 그리드가 그리는 달). 오늘 강조를 정확히 판정하기 위해 사용. */
@@ -10,7 +10,8 @@ interface Props {
 	/** 월 전환 방향(이전/다음). 슬라이드 애니메이션 방향 결정. */
 	navigationDirection: "prev" | "next" | null;
 	onSelect: (d: number) => void;
-	categoriesByDate: Record<number, EEventCategory[]>;
+	/** 날짜별 배지(작성자 반영: 상대방 개인 일정은 상대방 이름으로 표시). */
+	badgesByDate: Record<number, DayBadge[]>;
 }
 
 /** SUN~SAT 대문자 요일 라벨(Archivo). 일요일은 오렌지 강조. */
@@ -23,11 +24,11 @@ const ANIMATION_CLASS = {
 } as const;
 
 /**
- * Bold B 둥근 다크 셀 달력. 데이터 계약(cells / categoriesByDate / selected)은
- * 그대로 유지하고 시각만 다크 셀로 교체한다. 각 셀은 날짜 숫자 + 카테고리 점·라벨을
+ * Bold B 둥근 다크 셀 달력. 데이터 계약(cells / badgesByDate / selected)은
+ * 그대로 유지하고 시각만 다크 셀로 교체한다. 각 셀은 날짜 숫자 + 배지 점·라벨을
  * 최대 2개 보여주고, 그 이상은 +N으로 표시한다. 월 전환 시 방향에 맞춰 슬라이드한다.
  */
-const CalendarGrid = ({ year, month, cells, selected, navigationDirection, onSelect, categoriesByDate }: Props) => {
+const CalendarGrid = ({ year, month, cells, selected, navigationDirection, onSelect, badgesByDate }: Props) => {
 	const today = todayParts();
 	const isTodayMonth = today.year === year && today.month === month;
 
@@ -55,11 +56,11 @@ const CalendarGrid = ({ year, month, cells, selected, navigationDirection, onSel
 
 			<div className="grid grid-cols-7 gap-1.5">
 				{cells.map((cell) => {
-					const categories = cell.inMonth ? categoriesByDate[cell.date] : undefined;
+					const badges = cell.inMonth ? badgesByDate[cell.date] : undefined;
 					const isSelected = cell.inMonth && cell.date === selected;
 					const isToday = cell.inMonth && isTodayMonth && cell.date === today.day;
-					const shown = categories?.slice(0, 2) ?? [];
-					const extra = (categories?.length ?? 0) - shown.length;
+					const shown = badges?.slice(0, 2) ?? [];
+					const extra = (badges?.length ?? 0) - shown.length;
 
 					return (
 						<button
@@ -92,27 +93,24 @@ const CalendarGrid = ({ year, month, cells, selected, navigationDirection, onSel
 								{cell.date}
 							</span>
 							<span className="flex min-w-0 flex-col gap-0.5">
-								{shown.map((category) => {
-									const style = CATEGORY_STYLE[category];
-									return (
+								{shown.map((badge) => (
+									<span
+										key={`${cell.key}-${badge.label}`}
+										className="flex min-w-0 items-center gap-1"
+										style={{ opacity: cell.inMonth ? 1 : 0.4 }}
+									>
 										<span
-											key={`${cell.key}-${category}`}
-											className="flex min-w-0 items-center gap-1"
-											style={{ opacity: cell.inMonth ? 1 : 0.4 }}
+											className="shrink-0"
+											style={{ width: 5, height: 5, borderRadius: 1.5, background: badge.color }}
+										/>
+										<span
+											className="bold-grotesk truncate"
+											style={{ fontSize: 8.5, fontWeight: 600, color: "var(--text-secondary)" }}
 										>
-											<span
-												className="shrink-0"
-												style={{ width: 5, height: 5, borderRadius: 1.5, background: style.color }}
-											/>
-											<span
-												className="bold-grotesk truncate"
-												style={{ fontSize: 8.5, fontWeight: 600, color: "var(--text-secondary)" }}
-											>
-												{style.label}
-											</span>
+											{badge.label}
 										</span>
-									);
-								})}
+									</span>
+								))}
 								{extra > 0 ? (
 									<span
 										className="bold-grotesk"

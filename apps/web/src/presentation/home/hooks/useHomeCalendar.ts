@@ -3,8 +3,16 @@
 import { useMemo, useState } from "react";
 import type Event from "@/domain/entities/Event";
 import type { EEventCategory } from "@/domain/entities/Event";
+import { eventBadgeLabel } from "@/presentation/events/lib/eventBadge";
 import useMonthlyEvents from "@/presentation/home/hooks/useMonthlyEvents";
-import { buildMonthCells, compareCategories, todayParts } from "@/presentation/home/lib/calendar";
+import { buildMonthCells, CATEGORY_STYLE, compareCategories, todayParts } from "@/presentation/home/lib/calendar";
+import useCoupleProfile from "@/presentation/settings/hooks/useCoupleProfile";
+
+/** 달력 셀에 찍히는 점·라벨 한 개(작성자까지 반영된 표시값). */
+export interface DayBadge {
+	color: string;
+	label: string;
+}
 
 const eventStartsOnLocalDay = (event: Event, year: number, month0Based: number, day: number): boolean => {
 	const start = new Date(event.startTime);
@@ -30,29 +38,39 @@ const useHomeCalendar = () => {
 
 	// cursor.month는 0-based(UI 규약), 훅은 1-based 월을 기대한다.
 	const { data: monthlyEvents } = useMonthlyEvents(cursor.year, cursor.month + 1);
+	const { data: profile } = useCoupleProfile();
+	const partner = profile?.partner ?? null;
 
 	const selectedDayEvents = useMemo<Event[]>(() => {
 		if (!monthlyEvents) return [];
 		return monthlyEvents.filter((event) => eventStartsOnLocalDay(event, cursor.year, cursor.month, selected));
 	}, [monthlyEvents, cursor.year, cursor.month, selected]);
 
-	const categoriesByDate = useMemo<Record<number, EEventCategory[]>>(() => {
+	// 날짜별 배지. 카테고리만 묶지 않고 작성자까지 반영해서, 상대방의 '개인' 일정은
+	// "개인" 대신 상대방 이름으로 보이게 한다(목록·상세와 동일 규칙: eventBadgeLabel).
+	// 같은 라벨끼리는 한 개로 합치고, 카테고리 순서로 정렬한다.
+	const badgesByDate = useMemo<Record<number, DayBadge[]>>(() => {
 		if (!monthlyEvents) return {};
-		const buckets: Record<number, Set<EEventCategory>> = {};
+		const buckets: Record<number, Map<string, DayBadge & { category: EEventCategory }>> = {};
 		for (const event of monthlyEvents) {
 			const start = new Date(event.startTime);
 			if (Number.isNaN(start.getTime())) continue;
 			if (start.getFullYear() !== cursor.year || start.getMonth() !== cursor.month) continue;
 			const day = start.getDate();
-			buckets[day] ??= new Set<EEventCategory>();
-			buckets[day].add(event.category);
+			const label = eventBadgeLabel(event, partner);
+			buckets[day] ??= new Map();
+			if (!buckets[day].has(label)) {
+				buckets[day].set(label, { color: CATEGORY_STYLE[event.category].color, label, category: event.category });
+			}
 		}
-		const result: Record<number, EEventCategory[]> = {};
-		for (const [day, set] of Object.entries(buckets)) {
-			result[Number(day)] = Array.from(set).sort(compareCategories);
+		const result: Record<number, DayBadge[]> = {};
+		for (const [day, map] of Object.entries(buckets)) {
+			result[Number(day)] = Array.from(map.values())
+				.sort((a, b) => compareCategories(a.category, b.category))
+				.map(({ color, label }) => ({ color, label }));
 		}
 		return result;
-	}, [monthlyEvents, cursor.year, cursor.month]);
+	}, [monthlyEvents, cursor.year, cursor.month, partner]);
 
 	const goPrev = () => {
 		setNavigationDirection("prev");
@@ -69,7 +87,7 @@ const useHomeCalendar = () => {
 		selected,
 		navigationDirection,
 		cells,
-		categoriesByDate,
+		badgesByDate,
 		selectedDayEvents,
 		selectDay: setSelected,
 		goPrev,
