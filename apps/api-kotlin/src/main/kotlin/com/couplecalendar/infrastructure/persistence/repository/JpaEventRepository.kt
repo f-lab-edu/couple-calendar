@@ -23,4 +23,7 @@ interface JpaEventRepository : JpaRepository<EventEntity, UUID> {
         startDate: Instant,
         endDate: Instant
     ): List<EventEntity>
+
+    /** 리마인더 스케줄러용 — 시작 시각이 구간에 드는 모든 커플의 이벤트. */
+    fun findByStartTimeBetween(start: Instant, end: Instant): List<EventEntity>
 }

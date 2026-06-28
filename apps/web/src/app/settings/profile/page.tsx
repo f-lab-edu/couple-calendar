@@ -1,11 +1,22 @@
 "use client";
 
-import { Button, Text } from "woosign-system";
 import { SectionLabel } from "@/presentation/settings/components/SectionLabel";
+import { FieldRow } from "@/presentation/settings/components/SettingsRows";
 import { SettingsEditHeader } from "@/presentation/settings/components/SettingsEditHeader";
 import { SettingsLoadState } from "@/presentation/settings/components/SettingsLoadState";
 import useCoupleProfile from "@/presentation/settings/hooks/useCoupleProfile";
 import useProfileEditForm from "@/presentation/settings/hooks/useProfileEditForm";
+
+const rightInputStyle = {
+	background: "transparent",
+	textAlign: "right" as const,
+	fontSize: 16,
+	fontWeight: 600,
+	color: "var(--text-brand)",
+	outline: "none",
+	border: "none",
+	width: "100%",
+};
 
 const ProfileEditPage = () => {
 	const { data, isLoading, isError } = useCoupleProfile();
@@ -13,94 +24,69 @@ const ProfileEditPage = () => {
 	const { register, submit, today, saving, saveDisabled, saveError, cancel } = useProfileEditForm(me);
 
 	return (
-		<div className="flex flex-col min-h-[100dvh] bg-[#f7f4ef]">
+		<div className="flex min-h-[100dvh] flex-col" style={{ background: "var(--bg-section)" }}>
 			<SettingsEditHeader title="내 프로필 수정" onSave={submit} saveDisabled={saveDisabled} saving={saving} />
 
 			<SettingsLoadState isLoading={isLoading} isError={isError} errorText="프로필을 불러오지 못했어요." />
 
 			{me && (
 				<>
-					<div className="flex flex-col items-center gap-2 bg-white pb-7 pt-2">
+					<div className="flex flex-col items-center gap-2 pb-7 pt-4" style={{ background: "var(--cream-200)" }}>
 						<button
 							type="button"
 							onClick={() => window.alert("프로필 사진 변경은 준비 중이에요.")}
 							className="relative flex h-24 w-24 items-center justify-center rounded-full text-4xl"
-							style={{ backgroundColor: "#fbd5dc" }}
+							style={{ background: "#3a2e33" }}
 						>
 							<span aria-hidden>🌷</span>
 							<span
-								className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full text-white"
-								style={{ backgroundColor: "#0f3a2d", fontSize: 14 }}
+								className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full"
+								style={{ background: "var(--text-brand)", color: "var(--cream-100)", fontSize: 13 }}
 								aria-hidden
 							>
 								📷
 							</span>
 						</button>
-						<Text as="span" variant="small" style={{ color: "#6b7280" }}>
-							탭하여 사진 변경
-						</Text>
+						<span className="wb-caption">탭하여 사진 변경</span>
 					</div>
 
 					<SectionLabel>기본 정보</SectionLabel>
-					<div className="bg-white">
-						<div className="flex items-center justify-between border-b border-gray-100 px-5 py-4">
-							<Text as="span" variant="p" style={{ color: "#374151" }}>
-								이름
-							</Text>
-							<input
-								type="text"
-								{...register("name")}
-								className="w-1/2 bg-transparent text-right text-base font-semibold text-gray-900 outline-none"
-							/>
-						</div>
-						<div className="flex items-start justify-between border-b border-gray-100 px-5 py-4">
-							<Text as="span" variant="p" style={{ color: "#374151" }}>
-								닉네임
-							</Text>
-							<div className="flex w-1/2 flex-col items-end">
-								<input
-									type="text"
-									{...register("nickname")}
-									className="w-full bg-transparent text-right text-base font-semibold text-gray-900 outline-none"
-								/>
-								<Text as="span" variant="small" style={{ marginTop: 2, color: "#9ca3af", fontSize: 12 }}>
-									상대방에게 보이는 이름
-								</Text>
-							</div>
-						</div>
-						<div className="flex items-center justify-between px-5 py-4">
-							<Text as="span" variant="p" style={{ color: "#374151" }}>
-								생일
-							</Text>
-							<input
-								type="date"
-								max={today}
-								{...register("birthday")}
-								className="bg-transparent text-right text-base font-semibold text-gray-900 outline-none"
-							/>
-						</div>
+					<div>
+						<FieldRow label="이름">
+							<input type="text" {...register("name")} style={rightInputStyle} />
+						</FieldRow>
+						<FieldRow label="닉네임" align="start">
+							<input type="text" {...register("nickname")} style={rightInputStyle} />
+							<span className="wb-caption" style={{ marginTop: 2, fontSize: 12 }}>
+								상대방에게 보이는 이름
+							</span>
+						</FieldRow>
+						<FieldRow label="생일">
+							<input type="date" max={today} {...register("birthday")} style={{ ...rightInputStyle, width: "auto" }} />
+						</FieldRow>
 					</div>
 
 					<SectionLabel>소개</SectionLabel>
-					<div className="bg-white px-5 py-4">
+					<div style={{ background: "#1a1a1c", padding: "14px 16px", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
 						<textarea
 							{...register("bio")}
 							rows={3}
 							placeholder="자기소개를 입력해 주세요."
-							className="w-full resize-none bg-transparent text-base text-gray-900 outline-none placeholder:text-gray-300"
+							className="w-full resize-none"
+							style={{ background: "transparent", fontSize: 16, color: "var(--text-brand)", outline: "none", border: "none" }}
 						/>
 					</div>
 
 					{saveError && (
-						<Text as="p" variant="small" style={{ padding: "12px 20px 0", color: "#dc2626" }}>
+						<p className="wb-body-sm" style={{ padding: "12px 20px 0", color: "var(--error-red)" }}>
 							{saveError}
-						</Text>
+						</p>
 					)}
 
-					<div className="mt-auto px-5 py-6">
-						<Button variant="secondary" size="lg" fullWidth onPress={cancel}>
+					<div className="mt-auto px-5 pt-6 pb-[calc(env(safe-area-inset-bottom)_+_1.5rem)]">
+						<button type="button" onClick={cancel} className="wb-btn wb-btn--secondary wb-btn--lg" style={{ width: "100%" }}>
 							취소
-						</Button>
+						</button>
 					</div>
 				</>
 			)}

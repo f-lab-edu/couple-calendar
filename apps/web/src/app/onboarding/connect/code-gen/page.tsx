@@ -1,13 +1,21 @@
 "use client";
 
 import { createPortal } from "react-dom";
-import { Button, Card, colors, Eyebrow, Text, Toast } from "woosign-system";
+import { ChevronIcon, CopyIcon } from "@/presentation/components/icons";
+import LogoutLink from "@/presentation/onboarding/components/LogoutLink";
 import useInviteCodeGen from "@/presentation/onboarding/hooks/useInviteCodeGen";
-import ChevronLeft from "@/shared/components/icon/ChevronLeft";
-import CopyIcon from "@/shared/components/icon/CopyIcon";
 import { formatKoreanDate } from "@/shared/lib/date";
 
 const formatCode = (code: string) => code.match(/.{1,2}/g)?.join(" ") ?? code;
+
+/** 만료까지 남은 시간 라벨. */
+const remainingLabel = (expiresAt: string): string => {
+	const ms = Date.parse(expiresAt) - Date.now();
+	if (ms <= 0) return "만료됨 — 새 코드를 만들어 주세요";
+	const hours = Math.floor(ms / 3_600_000);
+	const minutes = Math.floor((ms % 3_600_000) / 60_000);
+	return hours > 0 ? `${hours}시간 ${minutes}분 후 만료` : `${minutes}분 후 만료`;
+};
 
 const CodeGenPage = () => {
 	const {
@@ -15,141 +23,216 @@ const CodeGenPage = () => {
 		startDate,
 		setStartDate,
 		invite,
+		loading,
 		mounted,
 		copied,
 		generateCode,
 		copyCode,
+		shareCode,
 		goBack,
 		generating,
 		generateError,
 	} = useInviteCodeGen();
 
 	return (
-		<div className="flex flex-col min-h-[100dvh] px-5 pt-3 pb-6 bg-white">
+		<div
+			className="wb-page flex flex-col"
+			style={{
+				minHeight: "100dvh",
+				padding:
+					"calc(env(safe-area-inset-top) + 12px) 24px calc(env(safe-area-inset-bottom) + 28px)",
+			}}
+		>
+			<LogoutLink />
 			<button
 				type="button"
 				aria-label="뒤로 가기"
-				className="-ml-2 mb-2 flex h-10 w-10 items-center justify-center"
+				className="-ml-2 mb-2 flex items-center"
 				onClick={goBack}
+				style={{
+					alignSelf: "flex-start",
+					background: "none",
+					border: "none",
+					color: "var(--text-secondary)",
+					cursor: "pointer",
+					padding: 8,
+				}}
 			>
-				<ChevronLeft />
+				<ChevronIcon s={20} dir="left" />
 			</button>
 
-			{invite ? (
+			{loading ? (
+				<div className="flex flex-1 items-center justify-center">
+					<div className="wb-body-sm" style={{ color: "var(--text-tertiary)" }}>
+						불러오는 중…
+					</div>
+				</div>
+			) : invite ? (
 				<>
-					<div className="mb-6">
-						<Text as="h1" variant="h1" weight="bold" style={{ fontSize: 24, lineHeight: "32px", color: "#111827" }}>
+					<div style={{ marginTop: 8 }}>
+						<div
+							style={{
+								fontSize: 22,
+								fontWeight: 600,
+								letterSpacing: "var(--ls-display)",
+								color: "var(--text-brand)",
+							}}
+						>
 							상대방에게 이 코드를 알려주세요.
-						</Text>
-						<Text as="p" variant="muted" style={{ marginTop: 6, fontSize: 14, lineHeight: "20px", color: "#6b7280" }}>
+						</div>
+						<div className="wb-body-sm" style={{ color: "var(--text-secondary)", marginTop: 6 }}>
 							{formatKoreanDate(startDate)}부터 시작 · 24시간 동안 유효해요.
-						</Text>
+						</div>
 					</div>
 
-					<Card
-						variant="default"
-						fullWidth
+					<div
 						style={{
-							display: "flex",
-							flexDirection: "column",
-							alignItems: "center",
-							borderRadius: 16,
-							padding: "28px 20px",
+							marginTop: 36,
+							background: "var(--bg-card)",
+							borderRadius: "var(--radius-lg)",
+							padding: "32px 24px",
+							boxShadow: "var(--shadow-card)",
+							textAlign: "center",
 						}}
 					>
-						<Eyebrow tone="brand">INVITE CODE</Eyebrow>
-						<Text
-							as="p"
-							weight="bold"
+						<div
 							style={{
-								marginTop: 12,
-								fontSize: 40,
-								lineHeight: "48px",
-								letterSpacing: "0.04em",
-								color: "#0f3a2d",
+								fontSize: 11,
+								fontWeight: 600,
+								letterSpacing: 1.2,
+								textTransform: "uppercase",
+								color: "var(--action-primary)",
+							}}
+						>
+							INVITE CODE
+						</div>
+						<div
+							style={{
+								marginTop: 14,
+								fontFamily: "var(--font-sans)",
+								fontSize: 44,
+								fontWeight: 700,
+								letterSpacing: 6,
+								color: "var(--text-brand)",
 								fontVariantNumeric: "tabular-nums",
 							}}
 						>
 							{formatCode(invite.code)}
-						</Text>
+						</div>
+						<div className="wb-caption" style={{ marginTop: 10, color: "var(--text-tertiary)" }}>
+							{remainingLabel(invite.expiresAt)}
+						</div>
+						<div className="flex items-center justify-center" style={{ marginTop: 16, gap: 8 }}>
+							<button
+								type="button"
+								onClick={copyCode}
+								className="wb-btn wb-btn--secondary wb-btn--sm"
+								style={{ gap: 6 }}
+							>
+								<CopyIcon s={14} /> {copied ? "복사 완료" : "코드 복사"}
+							</button>
+							<button
+								type="button"
+								onClick={shareCode}
+								className="wb-btn wb-btn--primary wb-btn--sm"
+								style={{ gap: 6 }}
+							>
+								공유하기
+							</button>
+						</div>
+					</div>
 
-						<Button
-							variant="secondary"
-							size="sm"
-							leftIcon={<CopyIcon />}
-							onPress={copyCode}
-							style={{ marginTop: 20, borderRadius: 999 }}
-						>
-							{copied ? "복사 완료" : "코드 복사"}
-						</Button>
-					</Card>
+					<div
+						className="flex items-center justify-center"
+						style={{ marginTop: 18, gap: 8, color: "var(--text-secondary)" }}
+					>
+						<span className="animate-pulse" aria-hidden style={{ width: 8, height: 8, borderRadius: "50%", background: "var(--action-primary)" }} />
+						<span className="wb-body-sm">상대방 연결을 기다리는 중…</span>
+					</div>
 
-					<Card variant="warm" fullWidth style={{ marginTop: 20, borderRadius: 12, padding: "12px 16px" }}>
-						<ul className="space-y-0.5">
-							<li className="flex gap-2">
-								<span style={{ color: "#6b7280" }}>•</span>
-								<Text
-									as="span"
-									variant="small"
-									style={{ fontSize: 13, lineHeight: "20px", color: colors.textTertiary }}
-								>
-									상대방이 코드를 입력하면 자동으로 연결됩니다.
-								</Text>
-							</li>
-							<li className="flex gap-2">
-								<span style={{ color: "#6b7280" }}>•</span>
-								<Text
-									as="span"
-									variant="small"
-									style={{ fontSize: 13, lineHeight: "20px", color: colors.textTertiary }}
-								>
-									코드는 다른 사람에게 노출되지 않게 주의해주세요.
-								</Text>
-							</li>
-						</ul>
-					</Card>
+					<div
+						style={{
+							marginTop: 16,
+							padding: 14,
+							background: "var(--cream-200)",
+							borderRadius: "var(--radius-md)",
+						}}
+					>
+						<div className="wb-caption" style={{ color: "var(--text-secondary)", lineHeight: 1.6 }}>
+							• 상대방이 코드를 입력하면 자동으로 연결됩니다.
+							<br />• 코드는 다른 사람에게 노출되지 않게 주의해주세요.
+						</div>
+					</div>
 				</>
 			) : (
 				<>
-					<div className="mb-6">
-						<Text as="h1" variant="h1" weight="bold" style={{ fontSize: 24, lineHeight: "32px", color: "#111827" }}>
+					<div style={{ marginTop: 8 }}>
+						<div
+							style={{
+								fontSize: 22,
+								fontWeight: 600,
+								letterSpacing: "var(--ls-display)",
+								color: "var(--text-brand)",
+							}}
+						>
 							언제부터 시작했나요?
-						</Text>
-						<Text as="p" variant="muted" style={{ marginTop: 6, fontSize: 14, lineHeight: "20px", color: "#6b7280" }}>
+						</div>
+						<div className="wb-body-sm" style={{ color: "var(--text-secondary)", marginTop: 6 }}>
 							두 사람이 시작한 날을 선택하면 초대 코드를 만들어 드려요.
-						</Text>
+						</div>
 					</div>
 
-					<label className="flex flex-col gap-2">
-						<Text as="span" variant="small" weight="semibold" style={{ fontSize: 13, color: "#374151" }}>
+					<div style={{ marginTop: 28 }}>
+						<div
+							style={{
+								fontSize: 12,
+								fontWeight: 600,
+								letterSpacing: 0.6,
+								textTransform: "uppercase",
+								color: "var(--text-secondary)",
+								marginBottom: 8,
+							}}
+						>
 							우리 시작일
-						</Text>
+						</div>
 						<input
 							type="date"
+							className="wb-input"
 							value={startDate}
 							max={today}
 							onChange={(event) => setStartDate(event.target.value)}
-							className="rounded-xl border border-gray-200 px-4 py-3 text-base text-gray-900 outline-none focus:border-gray-400"
+							style={{ colorScheme: "dark" }}
 						/>
-					</label>
+					</div>
 
 					{generateError && (
-						<Text as="p" variant="small" style={{ marginTop: 8, color: "#dc2626", lineHeight: "20px" }}>
+						<div className="wb-body-sm" style={{ marginTop: 8, color: "var(--error-red)", lineHeight: 1.5 }}>
 							{generateError}
-						</Text>
+						</div>
 					)}
 
-					<div className="mt-auto pt-6">
-						<Button size="lg" fullWidth disabled={!startDate || generating} loading={generating} onPress={generateCode}>
-							초대 코드 만들기
-						</Button>
-					</div>
+					<div style={{ flex: 1 }} />
+
+					<button
+						type="button"
+						disabled={!startDate || generating}
+						onClick={generateCode}
+						className="wb-btn wb-btn--primary wb-btn--lg"
+						style={{
+							width: "100%",
+							justifyContent: "center",
+							opacity: !startDate || generating ? 0.5 : 1,
+						}}
+					>
+						{generating ? "만드는 중..." : "초대 코드 만들기"}
+					</button>
 				</>
 			)}
 
 			{mounted && copied
 				? createPortal(
 						<div
+							className="wb-toast"
 							style={{
 								position: "fixed",
 								left: "50%",
@@ -159,7 +242,8 @@ const CodeGenPage = () => {
 								pointerEvents: "none",
 							}}
 						>
-							<Toast tone="success" title="초대 코드를 복사했어요." />
+							<span style={{ color: "var(--action-primary)", fontWeight: 700 }}>♥</span>
+							<span style={{ fontSize: 14, fontWeight: 600 }}>초대 코드를 복사했어요.</span>
 						</div>,
 						document.body,
 					)

@@ -2,6 +2,7 @@ package com.couplecalendar.application.service
 
 import com.couplecalendar.application.command.event.CreateEventCommand
 import com.couplecalendar.application.command.event.CreateEventCommandHandler
+import com.couplecalendar.application.notification.PartnerEventNotifier
 import com.couplecalendar.application.command.event.DeleteEventCommand
 import com.couplecalendar.application.command.event.DeleteEventCommandHandler
 import com.couplecalendar.application.command.event.UpdateEventCommand
@@ -24,7 +25,8 @@ class EventsService(
     private val updateEventCommandHandler: UpdateEventCommandHandler,
     private val deleteEventCommandHandler: DeleteEventCommandHandler,
     private val getEventsQueryHandler: GetEventsQueryHandler,
-    private val usersService: UsersService
+    private val usersService: UsersService,
+    private val partnerEventNotifier: PartnerEventNotifier
 ) {
 
     fun getEvents(userId: UUID, queryRequest: EventQueryRequest): List<EventResponse> {
@@ -68,6 +70,8 @@ class EventsService(
         )
 
         val event = createEventCommandHandler.handle(command)
+        // 커밋 이후 파트너에게 즉시 알림(실패해도 생성에는 영향 없음).
+        partnerEventNotifier.notifyEventCreated(userId, coupleId, event.title)
         return EventResponse.fromAggregate(event)
     }
 

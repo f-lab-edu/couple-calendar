@@ -10,10 +10,12 @@
     "test": "jest"
   },
   "dependencies": {
+    "@react-native-firebase/app": "^25.1.0",
+    "@react-native-firebase/messaging": "^25.1.0",
+    "@react-native/new-app-screen": "0.83.1",
     "react": "19.2.0",
     "react-native": "0.83.1",
-    "@react-native/new-app-screen": "0.83.1",
-    "react-native-instant-webview": "^0.2.1",
+    "react-native-instant-webview": "^0.2.2",
     "react-native-safe-area-context": "^5.5.2",
     "react-native-webview": "^13.16.1"
   },

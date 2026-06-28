@@ -16,8 +16,11 @@ const mockJwtSignature = "MOCK_SIGNATURE_NOT_VALID";
 
 export const mockAccessToken = `${mockJwtHeader}.${mockJwtPayload}.${mockJwtSignature}`;
 
+export const mockRefreshToken = "mock-refresh-token-not-valid";
+
 export const mockAuthResponse: AuthResponse = {
 	accessToken: mockAccessToken,
+	refreshToken: mockRefreshToken,
 	user: {
 		id: MOCK_IDS.me,
 		email: "jisoo@example.com",
@@ -27,6 +30,7 @@ export const mockAuthResponse: AuthResponse = {
 
 export const mockAuthNewUserResponse: AuthResponse = {
 	accessToken: mockAccessToken,
+	refreshToken: mockRefreshToken,
 	user: {
 		id: "5f1c8e4a-2d3b-4f6e-9c7d-0a1b2c3d4e5f",
 		email: "newbie@example.com",

@@ -1,6 +1,7 @@
 import { AuthDataSource } from "@/data/apis/AuthDataSource";
 import { AuthRepositoryImpl } from "@/data/repositories/AuthRepositoryImpl";
 import { SignInWithAppleUseCase } from "@/domain/useCases/SignInWithAppleUseCase";
+import { SignInWithEmailUseCase } from "@/domain/useCases/SignInWithEmailUseCase";
 
 /**
  * Auth 도메인 조립 루트(composition root).
@@ -12,3 +13,5 @@ const dataSource = new AuthDataSource();
 export const authRepository = new AuthRepositoryImpl(dataSource);
 
 export const signInWithAppleUseCase = new SignInWithAppleUseCase(authRepository);
+
+export const signInWithEmailUseCase = new SignInWithEmailUseCase(authRepository);

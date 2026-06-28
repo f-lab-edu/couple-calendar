@@ -1,11 +1,11 @@
 ---
 name: fullstack-qa
-description: "couple-calendar의 백엔드 API ↔ 모바일(RN/FSD) ↔ 웹(React/Clean Architecture) 3-way 통합 정합성을 검증. API Response DTO ↔ 모바일 TypeScript 타입 / 웹 data/dto 타입, 엔드포인트 ↔ 모바일 Hook / 웹 UseCase·DataSource 매핑, Request DTO ↔ 양쪽 요청 body, Enum 값, 날짜 포맷, 웹 Clean Architecture 레이어 경계를 교차 비교하여 런타임 에러 및 아키텍처 역방향 import를 사전 차단. 기능 개발 완료 후 또는 '정합성 검증', '경계면 체크', 'QA', '통합 테스트', '웹 QA', '아키텍처 경계 검증' 요청 시 반드시 이 스킬을 사용할 것."
+description: "couple-calendar의 백엔드 API ↔ 웹(Clean Architecture) 2-way 통합 정합성을 검증. API Response DTO ↔ 웹 data/dto 타입, 엔드포인트 ↔ 웹 UseCase·DataSource 매핑, Request DTO ↔ 웹 요청 body, Enum 값, 날짜 포맷, 웹 Clean Architecture 레이어 경계를 교차 비교하여 런타임 에러 및 아키텍처 역방향 import를 사전 차단. 기능 개발 완료 후 또는 '정합성 검증', '경계면 체크', 'QA', '통합 테스트', '웹 QA', '아키텍처 경계 검증' 요청 시 반드시 이 스킬을 사용할 것."
 ---
 
-# Full-Stack QA — API ↔ Mobile ↔ Web 3-way 통합 정합성 검증
+# Full-Stack QA — API ↔ Web 2-way 통합 정합성 검증
 
-백엔드 Kotlin API와 프론트엔드(React Native 모바일, React 웹) 사이의 **경계면**을 교차 비교하여 런타임 버그와 아키텍처 위반을 사전 차단한다.
+백엔드 Kotlin API와 프론트엔드(React 웹, Clean Architecture) 사이의 **경계면**을 교차 비교하여 런타임 버그와 아키텍처 위반을 사전 차단한다.
 
 ## 왜 경계면 검증이 중요한가
 
@@ -13,17 +13,17 @@ description: "couple-calendar의 백엔드 API ↔ 모바일(RN/FSD) ↔ 웹(Rea
 
 ## 검증 원칙
 
-### "양쪽 동시 읽기" (3-way로 확장)
+### "양쪽 동시 읽기"
 
-한쪽만 읽으면 경계면 버그를 잡을 수 없다. 반드시 **양쪽 코드를 동시에 열어** 비교한다. 3-way는 백엔드 기준으로 모바일/웹 각각 2-way 검증을 수행한다.
+한쪽만 읽으면 경계면 버그를 잡을 수 없다. 반드시 **양쪽 코드를 동시에 열어** 비교한다.
 
-| 검증 영역 | 백엔드 (생산자) | 모바일 (소비자) | 웹 (소비자) |
-|---------|-------------|---------------|-----------|
-| Response shape | Response DTO (Kotlin) | shared/types + fetchJson<T> | `data/dto/*.ts` |
-| Request shape | Request DTO (Kotlin) | Hook 요청 body | `data/datasources/*.ts` 요청 body |
-| URL / Method | @RequestMapping 등 | Hook의 fetch URL/method | DataSource 메서드 |
-| Enum 값 | Kotlin enum | TS literal union | TS literal union (DTO) |
-| Nullable | Kotlin `?` | TS `?` / `\| null` | TS `?` / `\| null` (DTO) |
+| 검증 영역 | 백엔드 (생산자) | 웹 (소비자) |
+|---------|-------------|-----------|
+| Response shape | Response DTO (Kotlin) | `data/dto/*.ts` |
+| Request shape | Request DTO (Kotlin) | `data/datasources/*.ts` 요청 body |
+| URL / Method | @RequestMapping 등 | DataSource 메서드 |
+| Enum 값 | Kotlin enum | TS literal union (DTO) |
+| Nullable | Kotlin `?` | TS `?` / `\| null` (DTO) |
 
 **웹 전용 검증:** `domain/entities`는 내부 모델이므로 DTO와 일치할 필요 없음. 검증 대상은 `data/dto/**` + `data/datasources/**` 뿐. Entity는 Mapper의 유닛 테스트 영역.
 
@@ -39,13 +39,12 @@ description: "couple-calendar의 백엔드 API ↔ 모바일(RN/FSD) ↔ 웹(Rea
 
 ### Step 1: 검증 범위 파악
 - `_workspace/02_backend_api_spec.md` 읽기 → 백엔드가 선언한 API 스펙
-- `_workspace/02_mobile_api_integration.md` 읽기 → 모바일이 구현한 hook 목록 (있으면)
 - `_workspace/02_web_api_integration.md` 읽기 → 웹이 구현한 UseCase/Hook/DTO 목록 (있으면)
 
 각 산출물 파일이 없으면 해당 축 검증을 SKIP으로 처리.
 
 ### Step 2: 엔드포인트 매핑 검증
-백엔드 스펙의 모든 엔드포인트와 모바일/웹 Hook을 각각 1:1 매칭.
+백엔드 스펙의 모든 엔드포인트와 웹 UseCase/DataSource를 1:1 매칭.
 
 ```
 백엔드 스펙          →  프론트 Hook
@@ -121,7 +120,7 @@ Aggregate의 상태 메서드가 프론트 상태 로직에 반영되었는지 �
 - 프론트: string으로 수신 후 Date로 파싱할 때 타임존 처리는 일관된가?
 
 ### Step 8: 웹 Clean Architecture 경계 검증
-웹의 3-way 검증 외 추가로 수행. 도메인이 오염되면 QA가 잡지 못한 이상 뒤늦게 드러나므로 필수.
+도메인이 오염되면 QA가 잡지 못한 이상 뒤늦게 드러나므로 필수.
 
 1. `grep -rE "from 'react'|from '@tanstack" apps/web/src/domains/*/domain/` 결과가 비어 있어야 함
 2. `grep -rE "from '.*/data/'|from '.*/presentation/'" apps/web/src/domains/*/domain/` 결과가 비어 있어야 함
@@ -195,14 +194,14 @@ vs
 - **문제:** 백엔드는 `description: String?` (nullable), 프론트는 `description: string` (non-nullable)
 - **영향:** null 수신 시 프론트에서 타입 단언 실패, 런타임 에러 가능
 - **수정 제안:** 
-  - [mobile-dev] `description: string | null` 또는 `description?: string`로 변경
+  - [web-dev] `data/dto`에서 `description: string | null` 또는 `description?: string`로 변경
   - **또는** [backend-dev] null이 절대 반환되지 않는다면 DTO를 `String`(non-null)으로 변경 + 빈 문자열 기본값
 
-### [2] 엔드포인트 대응 Hook 누락
+### [2] 엔드포인트 대응 DataSource 메서드 누락
 - **백엔드:** `POST /api/couples/invite` (존재)
-- **프론트:** 대응 Hook 없음
-- **영향:** 커플 초대 기능이 프론트에서 호출 불가
-- **수정 제안:** [mobile-dev] `useCreateInvite` hook 추가
+- **웹:** 대응 DataSource 메서드 없음
+- **영향:** 커플 초대 기능이 웹에서 호출 불가
+- **수정 제안:** [web-dev] `data/datasources`에 `createInvite` 메서드 추가
 
 ---
 

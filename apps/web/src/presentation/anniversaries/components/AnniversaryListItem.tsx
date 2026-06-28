@@ -1,6 +1,5 @@
 "use client";
 
-import { Text } from "woosign-system";
 import type Anniversary from "@/domain/entities/Anniversary";
 import { formatDday } from "@/presentation/anniversaries/lib/anniversaryDisplay";
 import { formatKoreanDate } from "@/shared/lib/date";
@@ -18,28 +17,29 @@ const AnniversaryListItem = ({ anniversary, onPress }: Props) => (
 	<button
 		type="button"
 		onClick={() => onPress(anniversary)}
-		className="flex w-full items-center justify-between gap-3 rounded-2xl bg-white px-4 py-4 text-left shadow-sm active:bg-neutral-50"
-		style={{ minHeight: 64 }}
+		className="wb-card dark-cell flex w-full items-center justify-between gap-3 text-left"
+		style={{ minHeight: 64, padding: "14px 16px" }}
 	>
 		<div className="flex min-w-0 flex-col gap-0.5">
 			<div className="flex items-center gap-2">
-				<Text as="p" variant="p" weight="semibold" style={{ fontSize: 15, color: "#111827" }}>
-					{anniversary.title}
-				</Text>
+				<span style={{ fontSize: 15, fontWeight: 600, color: "var(--text-brand)" }}>{anniversary.title}</span>
 				{anniversary.type === "AUTO" ? (
-					<span className="rounded-full bg-neutral-100 px-2 py-0.5 text-[11px] text-neutral-500">
+					<span
+						className="rounded-full px-2 py-0.5"
+						style={{ fontSize: 11, background: "rgba(255,255,255,0.08)", color: "var(--text-tertiary)" }}
+					>
 						자동
 					</span>
 				) : null}
 			</div>
-			<Text as="p" variant="muted" style={{ fontSize: 12, color: "#9CA3AF" }}>
+			<span style={{ fontSize: 12, color: "var(--text-tertiary)" }}>
 				{formatKoreanDate(anniversary.date)}
 				{anniversary.isRecurring ? " · 매년" : ""}
-			</Text>
+			</span>
 		</div>
-		<Text as="p" variant="small" weight="semibold" style={{ color: "#ef6f5b", flexShrink: 0 }}>
+		<span style={{ fontSize: 14, fontWeight: 600, color: "var(--action-primary)", flexShrink: 0 }}>
 			{formatDday(anniversary.daysUntil)}
-		</Text>
+		</span>
 	</button>
 );
 

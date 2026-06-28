@@ -1,28 +1,11 @@
 "use client";
 
-import { Pill, Switch, Text } from "woosign-system";
 import { SectionLabel } from "@/presentation/settings/components/SectionLabel";
+import { ToggleRow } from "@/presentation/settings/components/SettingsRows";
 import { SettingsEditHeader } from "@/presentation/settings/components/SettingsEditHeader";
 import { SettingsLoadState } from "@/presentation/settings/components/SettingsLoadState";
 import useNotificationForm from "@/presentation/settings/hooks/useNotificationForm";
 import { ANNIVERSARY_REMINDERS, EVENT_REMINDERS } from "@/shared/constants/notifications";
-
-const ToggleRow = ({
-	title,
-	checked,
-	onChange,
-}: {
-	title: string;
-	checked: boolean;
-	onChange: (next: boolean) => void;
-}) => (
-	<div className="flex items-center justify-between px-5 py-4">
-		<Text as="span" variant="p" weight="semibold" style={{ color: "#111827" }}>
-			{title}
-		</Text>
-		<Switch checked={checked} onCheckedChange={onChange} size="sm" />
-	</div>
-);
 
 const ReminderPicker = ({
 	options,
@@ -33,11 +16,19 @@ const ReminderPicker = ({
 	value: string;
 	onSelect: (next: string) => void;
 }) => (
-	<div className="flex flex-wrap gap-2 border-t border-gray-100 px-5 py-4">
+	<div
+		className="flex flex-wrap gap-2"
+		style={{ background: "#1a1a1c", padding: "12px 16px 16px", borderTop: "1px solid rgba(255,255,255,0.06)" }}
+	>
 		{options.map((option) => (
-			<Pill key={option} active={value === option} onPress={() => onSelect(option)}>
+			<button
+				key={option}
+				type="button"
+				onClick={() => onSelect(option)}
+				className={value === option ? "wb-pill wb-pill--active" : "wb-pill"}
+			>
 				{option}
-			</Pill>
+			</button>
 		))}
 	</div>
 );
@@ -46,7 +37,7 @@ const NotificationsPage = () => {
 	const { isLoading, isError, form, updateField, save, saving, saveDisabled, saveError } = useNotificationForm();
 
 	return (
-		<div className="flex flex-col min-h-[100dvh] bg-[#f7f4ef]">
+		<div className="flex min-h-[100dvh] flex-col" style={{ background: "var(--bg-section)" }}>
 			<SettingsEditHeader title="알림 설정" onSave={save} saveDisabled={saveDisabled} saving={saving} />
 
 			<SettingsLoadState isLoading={isLoading} isError={isError} errorText="알림 설정을 불러오지 못했어요." />
@@ -54,10 +45,10 @@ const NotificationsPage = () => {
 			{form && (
 				<>
 					<SectionLabel>일정 알림</SectionLabel>
-					<div className="bg-white">
+					<div>
 						<ToggleRow
-							title="일정 알림 받기"
-							checked={form.eventEnabled}
+							label="일정 알림 받기"
+							on={form.eventEnabled}
 							onChange={(next) => updateField("eventEnabled", next)}
 						/>
 						{form.eventEnabled && (
@@ -70,10 +61,10 @@ const NotificationsPage = () => {
 					</div>
 
 					<SectionLabel>기념일 알림</SectionLabel>
-					<div className="bg-white">
+					<div>
 						<ToggleRow
-							title="기념일 알림 받기"
-							checked={form.anniversaryEnabled}
+							label="기념일 알림 받기"
+							on={form.anniversaryEnabled}
 							onChange={(next) => updateField("anniversaryEnabled", next)}
 						/>
 						{form.anniversaryEnabled && (
@@ -85,24 +76,31 @@ const NotificationsPage = () => {
 						)}
 					</div>
 
-					<SectionLabel>기타</SectionLabel>
-					<div className="bg-white">
+					<SectionLabel>상대방 활동</SectionLabel>
+					<div>
 						<ToggleRow
-							title="상대방 활동 알림"
-							checked={form.partnerActivityEnabled}
+							label="상대방 활동 알림"
+							on={form.partnerActivityEnabled}
 							onChange={(next) => updateField("partnerActivityEnabled", next)}
 						/>
 					</div>
 
 					{saveError && (
-						<Text as="p" variant="small" style={{ padding: "12px 20px 0", color: "#dc2626" }}>
+						<p className="wb-body-sm" style={{ padding: "12px 20px 0", color: "var(--error-red)" }}>
 							{saveError}
-						</Text>
+						</p>
 					)}
 
-					<Text as="p" variant="small" style={{ padding: "16px 20px", color: "#9ca3af", fontSize: 12 }}>
+					<p
+						className="wb-caption"
+						style={{
+							padding: "16px 20px",
+							paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)",
+							fontSize: 12,
+						}}
+					>
 						알림은 두 사람 각자의 기기 설정을 따릅니다.
-					</Text>
+					</p>
 				</>
 			)}
 		</div>

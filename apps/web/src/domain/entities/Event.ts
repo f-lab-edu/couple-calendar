@@ -13,6 +13,8 @@ class Event {
 	readonly startTime: string;
 	readonly endTime: string;
 	readonly category: EEventCategory;
+	/** 작성자(커플 구성원) id. 일정 배지를 작성자별로 구분하는 데 쓴다. */
+	readonly authorId: string;
 	readonly description: string | null;
 	readonly location: string | null;
 
@@ -23,6 +25,7 @@ class Event {
 		startTime: string,
 		endTime: string,
 		category: EEventCategory,
+		authorId: string,
 		description: string | null,
 		location: string | null,
 	) {
@@ -32,6 +35,7 @@ class Event {
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.category = category;
+		this.authorId = authorId;
 		this.description = description;
 		this.location = location;
 	}

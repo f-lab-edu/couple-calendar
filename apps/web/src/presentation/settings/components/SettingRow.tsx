@@ -1,5 +1,6 @@
-import { Card, Text } from "woosign-system";
-import ChevronRight from "@/shared/components/icon/ChevronRight";
+"use client";
+
+import { ChevronIcon } from "@/presentation/components/icons";
 
 interface Props {
 	title: string;
@@ -8,35 +9,38 @@ interface Props {
 	onClick?: () => void;
 }
 
-export const SettingRow = ({ title, description, destructive = false, onClick }: Props) => {
-	const titleColor = destructive ? "#dc2626" : "#111827";
-	const chevronColor = destructive ? "#dc2626" : "#9ca3af";
-
-	return (
-		<Card
-			variant="outline"
-			fullWidth
-			onPress={onClick}
-			style={{
-				display: "flex",
-				alignItems: "center",
-				justifyContent: "space-between",
-				borderRadius: 12,
-				padding: "16px",
-				textAlign: "left",
-			}}
-		>
-			<div className="flex flex-col gap-1">
-				<Text as="span" variant="p" weight="semibold" style={{ lineHeight: "22px", color: titleColor }}>
-					{title}
-				</Text>
-				{description && (
-					<Text as="span" variant="small" style={{ lineHeight: "20px", color: "#6b7280" }}>
-						{description}
-					</Text>
-				)}
-			</div>
-			<ChevronRight color={chevronColor} />
-		</Card>
-	);
-};
+export const SettingRow = ({ title, description, destructive = false, onClick }: Props) => (
+	<button
+		type="button"
+		onClick={onClick}
+		className="wb-card"
+		style={{
+			display: "flex",
+			alignItems: "center",
+			justifyContent: "space-between",
+			padding: "14px 16px",
+			textAlign: "left",
+			width: "100%",
+			cursor: onClick ? "pointer" : "default",
+		}}
+	>
+		<div className="flex flex-col gap-1">
+			<span
+				style={{
+					fontSize: 14,
+					fontWeight: 600,
+					lineHeight: "22px",
+					color: destructive ? "var(--error-red)" : "var(--text-brand)",
+				}}
+			>
+				{title}
+			</span>
+			{description && (
+				<span className="wb-caption" style={{ lineHeight: "18px" }}>
+					{description}
+				</span>
+			)}
+		</div>
+		<ChevronIcon s={16} style={{ color: destructive ? "var(--error-red)" : "var(--text-tertiary)" }} />
+	</button>
+);

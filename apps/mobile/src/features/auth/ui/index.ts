@@ -1,1 +1,0 @@
-export {AppleSignInButton} from './AppleSignInButton';

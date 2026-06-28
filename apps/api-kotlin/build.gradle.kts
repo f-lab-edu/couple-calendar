@@ -12,7 +12,11 @@ group = "com.couplecalendar"
 version = "0.0.1-SNAPSHOT"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
+    // JDK 21 고정. toolchain은 JAVA_HOME(예: jenv가 17로 고정한 경우)과 무관하게
+    // Gradle이 설치된 JDK 21(~/.jdks 등)을 자동 탐지·사용하게 한다.
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
 }
 
 repositories {
@@ -34,6 +38,9 @@ dependencies {
 
     // HTTP Client for Supabase Auth
     implementation("org.springframework.boot:spring-boot-starter-webflux")
+
+    // Firebase Admin SDK — FCM 푸시 발송
+    implementation("com.google.firebase:firebase-admin:9.4.1")
 
     // Testing
     testImplementation("org.springframework.boot:spring-boot-starter-test")

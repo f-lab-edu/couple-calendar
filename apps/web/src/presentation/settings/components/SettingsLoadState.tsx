@@ -1,7 +1,5 @@
 "use client";
 
-import { Text } from "woosign-system";
-
 interface Props {
 	isLoading: boolean;
 	isError: boolean;
@@ -15,17 +13,17 @@ interface Props {
 export const SettingsLoadState = ({ isLoading, isError, errorText }: Props) => (
 	<>
 		{isLoading && (
-			<div className="flex flex-1 items-center justify-center">
-				<Text as="p" variant="small" style={{ color: "#9ca3af" }}>
+			<div className="flex flex-1 items-center justify-center px-6">
+				<p className="wb-body-sm" style={{ color: "var(--text-secondary)" }}>
 					불러오는 중…
-				</Text>
+				</p>
 			</div>
 		)}
 		{isError && (
 			<div className="flex flex-1 items-center justify-center px-6">
-				<Text as="p" variant="small" style={{ color: "#dc2626" }}>
+				<p className="wb-body-sm" style={{ color: "var(--error-red)" }}>
 					{errorText}
-				</Text>
+				</p>
 			</div>
 		)}
 	</>

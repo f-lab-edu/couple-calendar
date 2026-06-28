@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Text } from "woosign-system";
 import { logoutAction } from "@/app/settings/actions";
 import { CoupleHero } from "@/presentation/settings/components/CoupleHero";
 import { DisconnectDialog } from "@/presentation/settings/components/DisconnectDialog";
@@ -11,11 +10,15 @@ import { StartDateDialog } from "@/presentation/settings/components/StartDateDia
 import useCoupleProfile from "@/presentation/settings/hooks/useCoupleProfile";
 import useDisconnectDialog from "@/presentation/settings/hooks/useDisconnectDialog";
 import useStartDateDialog from "@/presentation/settings/hooks/useStartDateDialog";
-import { ROUTES } from "@/shared/constants/routes";
+import { LEGAL_LINKS, ROUTES } from "@/shared/constants/routes";
 import { formatBirthday, formatKoreanDate } from "@/shared/lib/date";
 
 const describeProfile = (nickname: string, birthday: string | null): string =>
 	birthday ? `${nickname}, ${formatBirthday(birthday)}` : nickname;
+
+const openExternal = (url: string): void => {
+	window.open(url, "_blank", "noopener,noreferrer");
+};
 
 const SettingsPage = () => {
 	const router = useRouter();
@@ -24,37 +27,35 @@ const SettingsPage = () => {
 	const disconnect = useDisconnectDialog();
 
 	return (
-		<div className="flex flex-col min-h-[100dvh] bg-white">
+		<div className="flex min-h-[100dvh] flex-col" style={{ background: "var(--bg-section)" }}>
 			<SettingsHeader title="설정" />
 
 			{isLoading && (
 				<div className="flex flex-1 items-center justify-center px-6">
-					<Text as="p" variant="small" style={{ color: "#9ca3af" }}>
+					<p className="wb-body-sm" style={{ color: "var(--text-secondary)" }}>
 						불러오는 중…
-					</Text>
+					</p>
 				</div>
 			)}
 
 			{isError && (
 				<div className="flex flex-1 items-center justify-center px-6">
-					<Text as="p" variant="small" style={{ color: "#dc2626" }}>
+					<p className="wb-body-sm" style={{ color: "var(--error-red)" }}>
 						정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.
-					</Text>
+					</p>
 				</div>
 			)}
 
 			{data && (
 				<>
-					<div className="px-5 pt-2">
-						<CoupleHero
-							myName={data.me.name}
-							partnerName={data.partner?.name ?? "상대방"}
-							startedAt={formatKoreanDate(data.couple.startDate)}
-							dPlus={data.couple.daysFromStart}
-						/>
-					</div>
+					<CoupleHero
+						myName={data.me.name}
+						partnerName={data.partner?.name ?? "상대방"}
+						startedAt={formatKoreanDate(data.couple.startDate)}
+						dPlus={data.couple.daysFromStart}
+					/>
 
-					<div className="mt-5 flex flex-col gap-3 px-5">
+					<div className="mt-2 flex flex-col gap-1.5 px-5 pb-[calc(env(safe-area-inset-bottom)_+_1.5rem)]">
 						<SettingRow
 							title="우리 시작일"
 							description={formatKoreanDate(data.couple.startDate)}
@@ -80,6 +81,8 @@ const SettingsPage = () => {
 							description="일정 1일 전 / 기념일 당일"
 							onClick={() => router.push(ROUTES.SETTINGS_NOTIFICATIONS)}
 						/>
+						<SettingRow title="개인정보 처리방침" onClick={() => openExternal(LEGAL_LINKS.PRIVACY)} />
+						<SettingRow title="이용약관" onClick={() => openExternal(LEGAL_LINKS.TERMS)} />
 						<SettingRow title="로그아웃" onClick={() => logoutAction()} />
 						<SettingRow title="연결 끊기" destructive onClick={disconnect.show} />
 					</div>
@@ -89,6 +92,7 @@ const SettingsPage = () => {
 			<DisconnectDialog
 				open={disconnect.open}
 				loading={disconnect.loading}
+				partnerName={data?.partner?.name}
 				onCancel={disconnect.hide}
 				onConfirm={disconnect.confirm}
 			/>

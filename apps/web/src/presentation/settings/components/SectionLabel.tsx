@@ -1,12 +1,19 @@
 "use client";
 
-import { Text } from "woosign-system";
-
 /**
- * 설정 화면 섹션 구분용 라벨(연한 회색 소제목).
+ * 설정 화면 섹션 구분용 라벨(대문자 tertiary 소제목).
  */
 export const SectionLabel = ({ children }: { children: string }) => (
-	<Text as="p" variant="small" weight="semibold" style={{ padding: "16px 20px 8px", fontSize: 13, color: "#9ca3af" }}>
+	<div
+		style={{
+			fontSize: 11,
+			fontWeight: 700,
+			letterSpacing: 0.6,
+			textTransform: "uppercase",
+			color: "var(--text-tertiary)",
+			padding: "18px 20px 8px",
+		}}
+	>
 		{children}
-	</Text>
+	</div>
 );

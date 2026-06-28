@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Badge, Button, Text } from "woosign-system";
 import type Anniversary from "@/domain/entities/Anniversary";
+import { CloseIcon } from "@/presentation/components/icons";
 import AnniversaryForm from "@/presentation/anniversaries/components/AnniversaryForm";
 import useDeleteAnniversary from "@/presentation/anniversaries/hooks/useDeleteAnniversary";
 import { formatDday } from "@/presentation/anniversaries/lib/anniversaryDisplay";
@@ -16,12 +16,8 @@ interface Props {
 
 const Row = ({ label, value }: { label: string; value: string }) => (
 	<div className="flex flex-col gap-1">
-		<Text as="p" variant="muted" style={{ fontSize: 12, color: "#9CA3AF" }}>
-			{label}
-		</Text>
-		<Text as="p" variant="p" style={{ fontSize: 15, color: "#111827", whiteSpace: "pre-wrap" }}>
-			{value}
-		</Text>
+		<p style={{ fontSize: 12, color: "var(--text-tertiary)" }}>{label}</p>
+		<p style={{ fontSize: 15, color: "var(--text-brand)", whiteSpace: "pre-wrap" }}>{value}</p>
 	</div>
 );
 
@@ -69,27 +65,34 @@ const AnniversaryDetailSheet = ({ anniversary, onClose }: Props) => {
 				aria-label="배경"
 				tabIndex={-1}
 				onClick={handleClose}
-				className={`fixed inset-0 z-40 bg-black/40 transition-opacity duration-300 ${
+				className={`fixed inset-0 z-40 transition-opacity duration-300 ${
 					open ? "pointer-events-auto opacity-100" : "pointer-events-none opacity-0"
 				}`}
+				style={{ background: "rgba(0,0,0,0.6)" }}
 			/>
 			<div
 				role="dialog"
 				aria-modal="true"
 				aria-hidden={!open}
-				className={`fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[90dvh] w-full max-w-[420px] flex-col rounded-t-2xl bg-white shadow-2xl transition-transform duration-300 ease-out ${
+				className={`fixed inset-x-0 bottom-0 z-50 mx-auto flex max-h-[90dvh] w-full max-w-[420px] flex-col rounded-t-2xl transition-transform duration-300 ease-out ${
 					open ? "translate-y-0" : "pointer-events-none translate-y-full"
 				}`}
+				style={{
+					background: "var(--bg-section)",
+					borderTop: "1px solid rgba(255,255,255,0.08)",
+					boxShadow: "var(--shadow-modal)",
+				}}
 			>
 				<header className="flex shrink-0 items-center justify-between px-5 pt-4 pb-3">
 					{mode === "edit" ? (
-						<Text as="p" variant="p" weight="semibold" style={{ color: "#111827" }}>
-							기념일 수정
-						</Text>
+						<span style={{ fontSize: 16, fontWeight: 600, color: "var(--text-brand)" }}>기념일 수정</span>
 					) : anniversary ? (
-						<Badge variant="secondary">
+						<span
+							className="rounded-full px-2.5 py-1"
+							style={{ fontSize: 12, background: "rgba(255,255,255,0.08)", color: "var(--text-secondary)" }}
+						>
 							{anniversary.type === "AUTO" ? "자동 기념일" : "내 기념일"}
-						</Badge>
+						</span>
 					) : (
 						<span />
 					)}
@@ -97,9 +100,10 @@ const AnniversaryDetailSheet = ({ anniversary, onClose }: Props) => {
 						type="button"
 						aria-label="닫기"
 						onClick={handleClose}
-						className="grid size-8 place-items-center text-2xl text-neutral-800"
+						className="grid size-8 place-items-center"
+						style={{ color: "var(--text-secondary)" }}
 					>
-						×
+						<CloseIcon s={20} />
 					</button>
 				</header>
 
@@ -107,67 +111,63 @@ const AnniversaryDetailSheet = ({ anniversary, onClose }: Props) => {
 					<AnniversaryForm
 						anniversary={anniversary}
 						onSuccess={handleClose}
-						bodyClassName="flex min-h-0 flex-1 flex-col gap-7 overflow-y-auto px-5 pt-2 pb-4"
-						footerClassName="shrink-0 border-neutral-100 border-t bg-white px-5 py-4"
+						bodyClassName="flex min-h-0 flex-1 flex-col gap-7 overflow-y-auto px-5 pt-2 pb-4 dark-scroll"
+						footerClassName="shrink-0 px-5 pt-4 pb-[calc(env(safe-area-inset-bottom)_+_1rem)]"
 					/>
 				) : null}
 
 				{anniversary && mode === "detail" ? (
 					<>
-						<div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-5 pt-1 pb-4">
+						<div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-5 pt-1 pb-[calc(env(safe-area-inset-bottom)_+_1rem)] dark-scroll">
 							<div className="flex flex-col gap-1">
-								<Text as="h2" variant="h2" weight="bold" style={{ fontSize: 22, color: "#111827" }}>
-									{anniversary.title}
-								</Text>
-								<Text as="p" variant="small" weight="semibold" style={{ color: "#ef6f5b" }}>
+								<h2 style={{ fontSize: 22, fontWeight: 700, color: "var(--text-brand)" }}>{anniversary.title}</h2>
+								<p style={{ fontSize: 14, fontWeight: 600, color: "var(--action-primary)" }}>
 									{formatDday(anniversary.daysUntil)}
-								</Text>
+								</p>
 							</div>
 
 							<Row label="날짜" value={formatKoreanDate(anniversary.date)} />
 							{anniversary.isRecurring ? <Row label="반복" value="매년 반복" /> : null}
-							{anniversary.description ? (
-								<Row label="메모" value={anniversary.description} />
-							) : null}
+							{anniversary.description ? <Row label="메모" value={anniversary.description} /> : null}
 
 							{!isEditable ? (
-								<Text as="p" variant="small" style={{ color: "#9CA3AF" }}>
+								<p className="wb-body-sm" style={{ color: "var(--text-tertiary)" }}>
 									자동으로 생성된 기념일은 수정하거나 삭제할 수 없어요.
-								</Text>
+								</p>
 							) : null}
 						</div>
 
 						{isEditable ? (
-							<div className="shrink-0 border-neutral-100 border-t bg-white px-5 py-4">
+							<div className="shrink-0 px-5 pt-4 pb-[calc(env(safe-area-inset-bottom)_+_1rem)]">
 								{deleteError ? (
-									<Text as="p" variant="small" className="mb-2" style={{ color: "#dc2626" }}>
+									<p className="wb-body-sm mb-2" style={{ color: "var(--error-red)" }}>
 										{deleteError.message}
-									</Text>
+									</p>
 								) : null}
 								{confirmingDelete ? (
-									<Text as="p" variant="small" className="mb-2" style={{ color: "#dc2626" }}>
+									<p className="wb-body-sm mb-2" style={{ color: "var(--error-red)" }}>
 										정말 삭제할까요? 한 번 더 누르면 삭제됩니다.
-									</Text>
+									</p>
 								) : null}
 								<div className="flex gap-2">
-									<Button
-										variant="outline"
-										size="lg"
-										fullWidth
+									<button
+										type="button"
+										onClick={() => setMode("edit")}
 										disabled={isDeleting}
-										onPress={() => setMode("edit")}
+										className="wb-btn wb-btn--secondary wb-btn--lg"
+										style={{ flex: 1 }}
 									>
 										수정
-									</Button>
-									<Button
-										variant="destructive"
-										size="lg"
-										fullWidth
+									</button>
+									<button
+										type="button"
+										onClick={handleDelete}
 										disabled={isDeleting}
-										onPress={handleDelete}
+										className="wb-btn wb-btn--danger wb-btn--lg"
+										style={{ flex: 1 }}
 									>
 										{isDeleting ? "삭제 중..." : confirmingDelete ? "삭제 확인" : "삭제"}
-									</Button>
+									</button>
 								</div>
 							</div>
 						) : null}

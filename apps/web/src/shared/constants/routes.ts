@@ -13,3 +13,8 @@ export const ROUTES = {
 	ONBOARDING_CONNECT_CODE_INPUT: "/onboarding/connect/code-input",
 	ONBOARDING_STEP: (step: Step) => `/onboarding?step=${step}`,
 };
+
+export const LEGAL_LINKS = {
+	PRIVACY: "https://woo-bottle.com/couple-calendar/privacy.html",
+	TERMS: "https://woo-bottle.com/couple-calendar/terms.html",
+};

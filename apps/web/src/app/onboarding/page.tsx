@@ -2,6 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense } from "react";
+import LogoutLink from "@/presentation/onboarding/components/LogoutLink";
 import OnboardingConnectPage from "@/presentation/onboarding/components/OnboardingConnectPage";
 import OnboardingProfilePage from "@/presentation/onboarding/components/OnboardingProfilePage";
 import { ProgressBar } from "@/presentation/onboarding/components/ProgressBar";
@@ -18,7 +19,8 @@ const OnboardingContent = () => {
 	};
 
 	return (
-		<div>
+		<div className="wb-page">
+			<LogoutLink />
 			<ProgressBar step={step} />
 			{step === STEP.PROFILE && <OnboardingProfilePage onPressNextButton={moveToConnectStep} />}
 			{step === STEP.CONNECT && <OnboardingConnectPage />}
@@ -28,7 +30,7 @@ const OnboardingContent = () => {
 
 const OnboardingPage = () => (
 	// useSearchParams는 Suspense 경계 안에 있어야 정적 프리렌더(빌드)가 통과한다.
-	<Suspense fallback={<ProgressBar step={STEP.PROFILE} />}>
+	<Suspense fallback={<div className="wb-page" style={{ minHeight: "100dvh" }} />}>
 		<OnboardingContent />
 	</Suspense>
 );
