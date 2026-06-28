@@ -25,9 +25,10 @@ const EventSearchSheet = ({ open, onClose }: Props) => {
 	const inputRef = useRef<HTMLInputElement | null>(null);
 	useScrollLock(open);
 
-	// 시트가 열릴 때 입력에 포커스(검색 바로 시작). 닫히면 트랜지션이라 굳이 blur 안 한다.
+	// 시트가 열릴 때 입력에 포커스(검색 바로 시작). preventScroll 로 브라우저가 입력을
+	// 보이려고 페이지를 스크롤(=시트가 아래로 밀려 보이는 현상)하는 걸 막는다.
 	useEffect(() => {
-		if (open) inputRef.current?.focus();
+		if (open) inputRef.current?.focus({ preventScroll: true });
 	}, [open]);
 
 	const { data: all, isLoading } = useAllEvents(open);
@@ -46,7 +47,7 @@ const EventSearchSheet = ({ open, onClose }: Props) => {
 				role="dialog"
 				aria-modal="true"
 				aria-hidden={!open}
-				className={`fixed inset-0 z-50 mx-auto flex w-full max-w-[420px] flex-col transition-transform duration-300 ease-out ${
+				className={`fixed inset-0 z-50 mx-auto flex w-full max-w-[420px] flex-col overflow-x-hidden transition-transform duration-300 ease-out ${
 					open ? "translate-y-0" : "pointer-events-none translate-y-full"
 				}`}
 				style={{
@@ -94,7 +95,7 @@ const EventSearchSheet = ({ open, onClose }: Props) => {
 				</div>
 
 				{/* 결과 영역 */}
-				<div className="dark-scroll flex-1 overflow-y-auto px-4" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)" }}>
+				<div className="dark-scroll flex-1 overflow-x-hidden overflow-y-auto px-4" style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 16px)" }}>
 					{trimmed.length === 0 ? (
 						<p style={{ marginTop: 24, fontSize: 13, color: "var(--text-tertiary)" }}>
 							일정 제목, 메모, 장소로 검색할 수 있어요.
