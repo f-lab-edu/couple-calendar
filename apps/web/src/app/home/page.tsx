@@ -2,7 +2,7 @@
 
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { HomeIcon, PlusIcon, SearchIcon, UserIcon } from "@/presentation/components/icons";
 import AddEventSheet from "@/presentation/events/components/AddEventSheet";
 import EventSearchSheet from "@/presentation/events/components/EventSearchSheet";
@@ -50,11 +50,28 @@ export default function HomePage() {
 		cursorKey: `${calendar.year}-${calendar.month}-${calendar.selected}`,
 	});
 
+	// 임시 디버그: 실제 DOM(트랙 transform·폭) — 그리드가 이전 달을 보이는 원인 추적용.
+	const [domDbg, setDomDbg] = useState("");
+	useEffect(() => {
+		const read = () => {
+			const vp = document.querySelector<HTMLElement>('[data-cal="month-vp"]');
+			const tr = document.querySelector<HTMLElement>('[data-cal="month-track"]');
+			if (!vp || !tr) {
+				setDomDbg("no-el");
+				return;
+			}
+			const t = getComputedStyle(tr).transform;
+			setDomDbg(`vpW=${Math.round(vp.offsetWidth)} trW=${Math.round(tr.offsetWidth)} tf=${t}`);
+		};
+		read();
+		const id = window.setInterval(read, 1000);
+		return () => window.clearInterval(id);
+	}, []);
+
 	// 커플 연결이 확인되기 전(또는 미연결로 온보딩 리다이렉트 중)에는 홈을 그리지 않는다.
 	if (!ready) return null;
 
-	// 임시 디버그: 현재 달 패널 배지일수 / 선택일 이벤트수 / 뷰모드 — 그리드 미표시 원인 추적용.
-	const dbg = `m1=${calendar.months[1]?.key} badgeDays=${Object.keys(calendar.months[1]?.badgesByDate ?? {}).length} list=${calendar.selectedDayEvents.length} view=${calendar.viewMode}`;
+	const dbg = `m1=${calendar.months[1]?.key} badgeDays=${Object.keys(calendar.months[1]?.badgesByDate ?? {}).length} list=${calendar.selectedDayEvents.length} view=${calendar.viewMode} | ${domDbg}`;
 
 	return (
 		<>
@@ -145,6 +162,7 @@ export default function HomePage() {
 					    않는다 — 퍼센트 정렬이라 숨겨져도 위치가 유지돼 복귀 시 재정렬이 필요 없다. */}
 					<div
 						ref={carousel.viewportRef}
+						data-cal="month-vp"
 						className={`overflow-hidden ${calendar.viewMode === "week" ? "hidden" : ""}`}
 						onTouchStart={carousel.onTouchStart}
 						onTouchMove={carousel.onTouchMove}
@@ -152,7 +170,7 @@ export default function HomePage() {
 					>
 						{/* 트랙 폭=뷰포트×3, 패널 각 1/3(=1뷰포트). 명시적 폭이라 transform 퍼센트가
 						    측정 없이 정확히 맞아 첫 페인트부터 가운데(현재) 패널이 보인다. */}
-						<div ref={carousel.trackRef} className="flex will-change-transform" style={{ width: "300%" }}>
+						<div ref={carousel.trackRef} data-cal="month-track" className="flex will-change-transform" style={{ width: "300%" }}>
 							{calendar.months.map((m, i) => (
 								<div key={m.key} className="shrink-0" style={{ width: `${100 / 3}%` }}>
 									<CalendarGrid
