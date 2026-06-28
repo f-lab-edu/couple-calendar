@@ -3,8 +3,9 @@
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useCallback, useState } from "react";
-import { HomeIcon, PlusIcon, UserIcon } from "@/presentation/components/icons";
+import { HomeIcon, PlusIcon, SearchIcon, UserIcon } from "@/presentation/components/icons";
 import AddEventSheet from "@/presentation/events/components/AddEventSheet";
+import EventSearchSheet from "@/presentation/events/components/EventSearchSheet";
 import { dateString } from "@/presentation/events/lib/eventForm";
 import CalendarGrid from "@/presentation/home/components/CalendarGrid";
 import DayEvents from "@/presentation/home/components/DayEvents";
@@ -22,12 +23,13 @@ export default function HomePage() {
 	const { ready } = useRequireCoupleConnected();
 	const calendar = useHomeCalendar();
 	const [sheetOpen, setSheetOpen] = useState(false);
+	const [searchOpen, setSearchOpen] = useState(false);
 	const queryClient = useQueryClient();
 
 	const handleRefresh = useCallback(() => queryClient.refetchQueries({ type: "active" }), [queryClient]);
 	const { pull, refreshing, armed } = usePullToRefresh({
 		onRefresh: handleRefresh,
-		enabled: ready && !sheetOpen,
+		enabled: ready && !sheetOpen && !searchOpen,
 	});
 
 	// 좌우 드래그로 월 넘기기(카루셀): 현재 달 양옆에 이전·다음 달이 함께 깔려 있어 드래그하면
@@ -59,7 +61,14 @@ export default function HomePage() {
 			>
 				{/* 큰 영문 월 헤더 + 좌우 원형 버튼 (버튼도 카루셀 전환을 탄다) */}
 				<section className="shrink-0 px-5 pt-1.5 pb-1">
-					<MonthNav year={calendar.year} month={calendar.month} onPrev={carousel.prev} onNext={carousel.next} />
+					<MonthNav
+						year={calendar.year}
+						month={calendar.month}
+						onPrev={carousel.prev}
+						onNext={carousel.next}
+						onToday={calendar.goToday}
+						isTodayMonth={calendar.isTodayMonth}
+					/>
 				</section>
 
 				{/* 스크롤 본문: D-day 카드 + 달력(카루셀) + 선택일 상세. */}
@@ -145,6 +154,16 @@ export default function HomePage() {
 					>
 						<HomeIcon s={20} />
 					</button>
+					{/* 검색 */}
+					<button
+						type="button"
+						aria-label="일정 검색"
+						onClick={() => setSearchOpen(true)}
+						className="flex h-12 w-14 items-center justify-center"
+						style={{ borderRadius: 999, border: "none", background: "transparent", color: "var(--text-secondary)", cursor: "pointer" }}
+					>
+						<SearchIcon s={20} />
+					</button>
 					{/* 개인 (설정) */}
 					<Link
 						href={ROUTES.SETTINGS}
@@ -172,6 +191,8 @@ export default function HomePage() {
 					</button>
 				</div>
 			</nav>
+
+			<EventSearchSheet open={searchOpen} onClose={() => setSearchOpen(false)} />
 		</>
 	);
 }

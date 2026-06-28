@@ -149,6 +149,12 @@ const useHomeCalendar = () => {
 
 	const goPrev = () => setCursor((c) => shiftMonth(c.year, c.month, -1));
 	const goNext = () => setCursor((c) => shiftMonth(c.year, c.month, 1));
+	// 오늘이 있는 달로 즉시 복귀하고 오늘을 선택한다(먼 달로 이동했을 때 한 번에 돌아오기).
+	const goToday = () => {
+		setCursor({ year: today.year, month: today.month });
+		setSelected(today.day);
+	};
+	const isTodayMonth = cursor.year === today.year && cursor.month === today.month;
 
 	return {
 		year: cursor.year,
@@ -156,9 +162,11 @@ const useHomeCalendar = () => {
 		selected,
 		months,
 		selectedDayEvents,
+		isTodayMonth,
 		selectDay: setSelected,
 		goPrev,
 		goNext,
+		goToday,
 	};
 };
 

@@ -131,6 +131,15 @@ export function CloseIcon({ s = 20, style, className }: IconProps) {
 	);
 }
 
+export function SearchIcon({ s = 20, style, className }: IconProps) {
+	return (
+		<svg width={s} height={s} viewBox="0 0 24 24" strokeWidth={2} style={style} className={className} aria-hidden {...base}>
+			<circle cx="11" cy="11" r="7" />
+			<path d="m20 20-3.2-3.2" />
+		</svg>
+	);
+}
+
 export function ListIcon({ s = 18, style, className }: IconProps) {
 	return (
 		<svg width={s} height={s} viewBox="0 0 24 24" strokeWidth={1.8} style={style} className={className} aria-hidden {...base}>

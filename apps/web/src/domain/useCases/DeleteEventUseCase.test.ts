@@ -4,6 +4,7 @@ import { DeleteEventUseCase } from "./DeleteEventUseCase";
 
 const makeRepository = (): EventRepository => ({
 	getMonthlyEvents: vi.fn(),
+	getAllEvents: vi.fn(),
 	createEvent: vi.fn(),
 	updateEvent: vi.fn(),
 	deleteEvent: vi.fn(async () => undefined),
