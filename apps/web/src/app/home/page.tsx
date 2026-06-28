@@ -12,6 +12,7 @@ import DayEvents from "@/presentation/home/components/DayEvents";
 import DdayCard from "@/presentation/home/components/DdayCard";
 import MonthNav from "@/presentation/home/components/MonthNav";
 import PullToRefreshIndicator from "@/presentation/home/components/PullToRefreshIndicator";
+import WeekStrip from "@/presentation/home/components/WeekStrip";
 import WidgetSync from "@/presentation/home/components/WidgetSync";
 import useCalendarCarousel from "@/presentation/home/hooks/useCalendarCarousel";
 import useHomeCalendar from "@/presentation/home/hooks/useHomeCalendar";
@@ -64,8 +65,8 @@ export default function HomePage() {
 					<MonthNav
 						year={calendar.year}
 						month={calendar.month}
-						onPrev={carousel.prev}
-						onNext={carousel.next}
+						onPrev={calendar.viewMode === "week" ? calendar.goPrevWeek : carousel.prev}
+						onNext={calendar.viewMode === "week" ? calendar.goNextWeek : carousel.next}
 						onToday={calendar.goToday}
 						isTodayMonth={calendar.isTodayMonth}
 					/>
@@ -81,11 +82,43 @@ export default function HomePage() {
 						<DdayCard />
 					</div>
 
-					{/* 카루셀 뷰포트: 가로 클립 + 터치 추종. 안의 트랙에 [이전·현재·다음] 3패널을 깔고
-					    translateX 로 움직여 인접 달이 연속으로 보이게 한다. */}
+					{/* 월/주 뷰 토글 (오른쪽 정렬 세그먼트) */}
+					<div className="mb-2 flex justify-end px-1">
+						<div
+							className="flex items-center gap-0.5 p-0.5"
+							style={{ borderRadius: 999, background: "#1a1a1c", border: "1px solid rgba(255,255,255,0.08)" }}
+						>
+							{(["month", "week"] as const).map((mode) => {
+								const active = calendar.viewMode === mode;
+								return (
+									<button
+										key={mode}
+										type="button"
+										onClick={() => calendar.setViewMode(mode)}
+										aria-pressed={active}
+										style={{
+											padding: "5px 14px",
+											borderRadius: 999,
+											border: "none",
+											cursor: "pointer",
+											fontSize: 12.5,
+											fontWeight: 700,
+											background: active ? "#f4f4f3" : "transparent",
+											color: active ? "#0d0d0e" : "var(--text-secondary)",
+										}}
+									>
+										{mode === "month" ? "월" : "주"}
+									</button>
+								);
+							})}
+						</div>
+					</div>
+
+					{/* 월 뷰: 카루셀 뷰포트(가로 클립 + 터치 추종). 주 뷰일 땐 숨기되 언마운트하지
+					    않는다 — 퍼센트 정렬이라 숨겨져도 위치가 유지돼 복귀 시 재정렬이 필요 없다. */}
 					<div
 						ref={carousel.viewportRef}
-						className="overflow-hidden"
+						className={`overflow-hidden ${calendar.viewMode === "week" ? "hidden" : ""}`}
 						onTouchStart={carousel.onTouchStart}
 						onTouchMove={carousel.onTouchMove}
 						onTouchEnd={carousel.onTouchEnd}
@@ -105,6 +138,11 @@ export default function HomePage() {
 							))}
 						</div>
 					</div>
+
+					{/* 주 뷰: 선택일이 속한 한 주만 한 줄로. */}
+					{calendar.viewMode === "week" ? (
+						<WeekStrip days={calendar.weekDays} onSelect={calendar.selectDate} />
+					) : null}
 
 					<DayEvents
 						year={calendar.year}

@@ -24,6 +24,19 @@ export interface DayBadge {
 	label: string;
 }
 
+/** 주간 뷰의 하루 칸(전체 날짜 + 배지 + 상태 플래그). */
+export interface WeekDay {
+	year: number;
+	/** 0-based 월. */
+	month: number;
+	day: number;
+	/** 현재 커서 달에 속하는 날인지(주가 월 경계를 걸칠 때 흐리게 처리용). */
+	inCursorMonth: boolean;
+	isToday: boolean;
+	isSelected: boolean;
+	badges: DayBadge[];
+}
+
 /** 캘린더 한 달치 뷰 데이터(카루셀의 한 패널). */
 export interface MonthPanel {
 	/** `${year}-${month}` — React key / 식별자. */
@@ -86,6 +99,27 @@ function buildBadgesByDate(
 	return result;
 }
 
+/** 특정 로컬 날짜 하루의 배지(여러 달에 걸친 이벤트도 포함하도록 합친 목록에서 계산). */
+function badgesForLocalDay(
+	events: Event[],
+	year: number,
+	month0: number,
+	day: number,
+	members: MemberLike[],
+): DayBadge[] {
+	const map = new Map<string, DayBadge & { category: EEventCategory }>();
+	for (const event of events) {
+		if (!eventCoversLocalDay(event.startTime, event.endTime, year, month0, day)) continue;
+		const label = eventBadgeLabel(event, members);
+		if (!map.has(label)) {
+			map.set(label, { color: CATEGORY_STYLE[event.category].color, label, category: event.category });
+		}
+	}
+	return Array.from(map.values())
+		.sort((a, b) => compareCategories(a.category, b.category))
+		.map(({ color, label }) => ({ color, label }));
+}
+
 /**
  * 홈 달력의 뷰 상태(현재 연/월 커서, 선택 날짜)와 파생 데이터를 관리하는 뷰모델 훅.
  *
@@ -140,6 +174,34 @@ const useHomeCalendar = () => {
 		members,
 	]);
 
+	// 월/주 뷰 토글. 주간 뷰는 선택일이 속한 한 주(일~토)만 한 줄로 보여준다.
+	const [viewMode, setViewMode] = useState<"month" | "week">("month");
+
+	// 선택일이 속한 주의 7일(일요일 시작). 월 경계를 넘으면 인접 달 날짜도 포함한다.
+	// 배지는 prev/cur/next 세 달 이벤트를 합쳐 계산해 경계 너머 일정도 정확히 찍는다.
+	const weekDays = useMemo<WeekDay[]>(() => {
+		const anchor = new Date(cursor.year, cursor.month, selected);
+		const sunday = new Date(anchor);
+		sunday.setDate(anchor.getDate() - anchor.getDay());
+		const merged = [...(prevEvents ?? []), ...(curEvents ?? []), ...(nextEvents ?? [])];
+		return Array.from({ length: 7 }, (_, i) => {
+			const d = new Date(sunday);
+			d.setDate(sunday.getDate() + i);
+			const y = d.getFullYear();
+			const m = d.getMonth();
+			const day = d.getDate();
+			return {
+				year: y,
+				month: m,
+				day,
+				inCursorMonth: y === cursor.year && m === cursor.month,
+				isToday: y === today.year && m === today.month && day === today.day,
+				isSelected: y === cursor.year && m === cursor.month && day === selected,
+				badges: badgesForLocalDay(merged, y, m, day, members),
+			};
+		});
+	}, [cursor.year, cursor.month, selected, prevEvents, curEvents, nextEvents, members, today]);
+
 	const selectedDayEvents = useMemo<Event[]>(() => {
 		if (!curEvents) return [];
 		return curEvents.filter((event) =>
@@ -156,16 +218,36 @@ const useHomeCalendar = () => {
 	};
 	const isTodayMonth = cursor.year === today.year && cursor.month === today.month;
 
+	// 특정 날짜를 선택(주간 뷰에서 다른 달의 날을 탭하면 커서 달도 함께 이동).
+	const selectDate = (year: number, month: number, day: number) => {
+		setCursor({ year, month });
+		setSelected(day);
+	};
+	// 주 단위 이동: 선택일을 ±7일 옮기고 커서 달도 그 날짜에 맞춘다.
+	const shiftWeek = (deltaDays: number) => {
+		const d = new Date(cursor.year, cursor.month, selected + deltaDays);
+		setCursor({ year: d.getFullYear(), month: d.getMonth() });
+		setSelected(d.getDate());
+	};
+	const goPrevWeek = () => shiftWeek(-7);
+	const goNextWeek = () => shiftWeek(7);
+
 	return {
 		year: cursor.year,
 		month: cursor.month,
 		selected,
 		months,
+		weekDays,
+		viewMode,
+		setViewMode,
 		selectedDayEvents,
 		isTodayMonth,
 		selectDay: setSelected,
+		selectDate,
 		goPrev,
 		goNext,
+		goPrevWeek,
+		goNextWeek,
 		goToday,
 	};
 };
