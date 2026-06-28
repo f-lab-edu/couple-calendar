@@ -42,6 +42,14 @@ export default function HomePage() {
 		cursorKey: `${calendar.year}-${calendar.month}`,
 	});
 
+	// 주 뷰도 동일한 3패널 카루셀을 주 단위로 재사용한다(이전·현재·다음 주). cursorKey 는
+	// 선택일까지 포함해, 주가 바뀌면 가운데로 재정렬한다.
+	const weekCarousel = useCalendarCarousel({
+		onNext: calendar.goNextWeek,
+		onPrev: calendar.goPrevWeek,
+		cursorKey: `${calendar.year}-${calendar.month}-${calendar.selected}`,
+	});
+
 	// 커플 연결이 확인되기 전(또는 미연결로 온보딩 리다이렉트 중)에는 홈을 그리지 않는다.
 	if (!ready) return null;
 
@@ -65,8 +73,8 @@ export default function HomePage() {
 					<MonthNav
 						year={calendar.year}
 						month={calendar.month}
-						onPrev={calendar.viewMode === "week" ? calendar.goPrevWeek : carousel.prev}
-						onNext={calendar.viewMode === "week" ? calendar.goNextWeek : carousel.next}
+						onPrev={calendar.viewMode === "week" ? weekCarousel.prev : carousel.prev}
+						onNext={calendar.viewMode === "week" ? weekCarousel.next : carousel.next}
 						onToday={calendar.goToday}
 						isTodayMonth={calendar.isTodayMonth}
 					/>
@@ -139,10 +147,22 @@ export default function HomePage() {
 						</div>
 					</div>
 
-					{/* 주 뷰: 선택일이 속한 한 주만 한 줄로. */}
-					{calendar.viewMode === "week" ? (
-						<WeekStrip days={calendar.weekDays} onSelect={calendar.selectDate} />
-					) : null}
+					{/* 주 뷰: 월 카루셀과 같은 3패널 필름스트립을 주 단위로. 좌우로 끌면 인접 주가 연속으로 보인다. */}
+					<div
+						ref={weekCarousel.viewportRef}
+						className={`overflow-hidden ${calendar.viewMode === "week" ? "" : "hidden"}`}
+						onTouchStart={weekCarousel.onTouchStart}
+						onTouchMove={weekCarousel.onTouchMove}
+						onTouchEnd={weekCarousel.onTouchEnd}
+					>
+						<div ref={weekCarousel.trackRef} className="flex will-change-transform">
+							{calendar.weeks.map((w, i) => (
+								<div key={w.key} className="w-full min-w-full shrink-0">
+									<WeekStrip days={w.days} onSelect={i === 1 ? calendar.selectDate : () => {}} />
+								</div>
+							))}
+						</div>
+					</div>
 
 					<DayEvents
 						year={calendar.year}

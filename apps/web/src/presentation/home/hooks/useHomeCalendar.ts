@@ -37,6 +37,13 @@ export interface WeekDay {
 	badges: DayBadge[];
 }
 
+/** 주간 카루셀의 한 패널(한 주). */
+export interface WeekPanel {
+	/** 그 주 일요일 기준 식별자 `${y}-${m}-${d}` — React key. */
+	key: string;
+	days: WeekDay[];
+}
+
 /** 캘린더 한 달치 뷰 데이터(카루셀의 한 패널). */
 export interface MonthPanel {
 	/** `${year}-${month}` — React key / 식별자. */
@@ -121,6 +128,39 @@ function badgesForLocalDay(
 }
 
 /**
+ * 한 주(anchor 가 속한 주, 일요일 시작)의 7일을 WeekDay[] 로 만든다. 선택/오늘 판정은
+ * cursor·today 기준이고, 배지는 합친 이벤트(merged)에서 날짜 단위로 계산한다.
+ */
+function buildWeek(
+	anchor: Date,
+	cursor: { year: number; month: number },
+	selected: number,
+	today: { year: number; month: number; day: number },
+	merged: Event[],
+	members: MemberLike[],
+): WeekPanel {
+	const sunday = new Date(anchor);
+	sunday.setDate(anchor.getDate() - anchor.getDay());
+	const days = Array.from({ length: 7 }, (_, i) => {
+		const d = new Date(sunday);
+		d.setDate(sunday.getDate() + i);
+		const y = d.getFullYear();
+		const m = d.getMonth();
+		const day = d.getDate();
+		return {
+			year: y,
+			month: m,
+			day,
+			inCursorMonth: y === cursor.year && m === cursor.month,
+			isToday: y === today.year && m === today.month && day === today.day,
+			isSelected: y === cursor.year && m === cursor.month && day === selected,
+			badges: badgesForLocalDay(merged, y, m, day, members),
+		};
+	});
+	return { key: `${sunday.getFullYear()}-${sunday.getMonth()}-${sunday.getDate()}`, days };
+}
+
+/**
  * 홈 달력의 뷰 상태(현재 연/월 커서, 선택 날짜)와 파생 데이터를 관리하는 뷰모델 훅.
  *
  * 좌우 드래그 전환이 인접 달을 "연속으로" 보여줄 수 있도록, 현재 달뿐 아니라
@@ -177,30 +217,17 @@ const useHomeCalendar = () => {
 	// 월/주 뷰 토글. 주간 뷰는 선택일이 속한 한 주(일~토)만 한 줄로 보여준다.
 	const [viewMode, setViewMode] = useState<"month" | "week">("month");
 
-	// 선택일이 속한 주의 7일(일요일 시작). 월 경계를 넘으면 인접 달 날짜도 포함한다.
-	// 배지는 prev/cur/next 세 달 이벤트를 합쳐 계산해 경계 너머 일정도 정확히 찍는다.
-	const weekDays = useMemo<WeekDay[]>(() => {
-		const anchor = new Date(cursor.year, cursor.month, selected);
-		const sunday = new Date(anchor);
-		sunday.setDate(anchor.getDate() - anchor.getDay());
+	// 주간 카루셀 3패널: [이전 주, 현재 주, 다음 주]. 인접 주는 현재 주에서 ±7일이라
+	// prev/cur/next 세 달 이벤트 합집합 안에 항상 들어온다(배지 정확). 월 경계를 넘는 주는
+	// 인접 달 날짜도 포함한다.
+	const weeks = useMemo<[WeekPanel, WeekPanel, WeekPanel]>(() => {
 		const merged = [...(prevEvents ?? []), ...(curEvents ?? []), ...(nextEvents ?? [])];
-		return Array.from({ length: 7 }, (_, i) => {
-			const d = new Date(sunday);
-			d.setDate(sunday.getDate() + i);
-			const y = d.getFullYear();
-			const m = d.getMonth();
-			const day = d.getDate();
-			return {
-				year: y,
-				month: m,
-				day,
-				inCursorMonth: y === cursor.year && m === cursor.month,
-				isToday: y === today.year && m === today.month && day === today.day,
-				isSelected: y === cursor.year && m === cursor.month && day === selected,
-				badges: badgesForLocalDay(merged, y, m, day, members),
-			};
-		});
-	}, [cursor.year, cursor.month, selected, prevEvents, curEvents, nextEvents, members, today]);
+		const at = (deltaDays: number) => {
+			const a = new Date(cursor.year, cursor.month, selected + deltaDays);
+			return buildWeek(a, cursor, selected, today, merged, members);
+		};
+		return [at(-7), at(0), at(7)];
+	}, [cursor, selected, prevEvents, curEvents, nextEvents, members, today]);
 
 	const selectedDayEvents = useMemo<Event[]>(() => {
 		if (!curEvents) return [];
@@ -237,7 +264,7 @@ const useHomeCalendar = () => {
 		month: cursor.month,
 		selected,
 		months,
-		weekDays,
+		weeks,
 		viewMode,
 		setViewMode,
 		selectedDayEvents,
