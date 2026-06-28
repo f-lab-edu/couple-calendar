@@ -6,7 +6,16 @@ import type { EEventCategory } from "@/domain/entities/Event";
 import type User from "@/domain/entities/User";
 import { eventBadgeLabel, type MemberLike } from "@/presentation/events/lib/eventBadge";
 import useMonthlyEvents from "@/presentation/home/hooks/useMonthlyEvents";
-import { type Cell, buildMonthCells, CATEGORY_STYLE, compareCategories, todayParts } from "@/presentation/home/lib/calendar";
+import {
+	type Cell,
+	buildMonthCells,
+	CATEGORY_STYLE,
+	compareCategories,
+	endOfLocalDay,
+	eventCoversLocalDay,
+	startOfLocalDay,
+	todayParts,
+} from "@/presentation/home/lib/calendar";
 import useCoupleProfile from "@/presentation/settings/hooks/useCoupleProfile";
 
 /** 달력 셀에 찍히는 점·라벨 한 개(작성자까지 반영된 표시값). */
@@ -26,12 +35,6 @@ export interface MonthPanel {
 	badgesByDate: Record<number, DayBadge[]>;
 }
 
-const eventStartsOnLocalDay = (event: Event, year: number, month0Based: number, day: number): boolean => {
-	const start = new Date(event.startTime);
-	if (Number.isNaN(start.getTime())) return false;
-	return start.getFullYear() === year && start.getMonth() === month0Based && start.getDate() === day;
-};
-
 /** 0-based 월 기준 delta(±1)만큼 이동한 연/월. */
 const shiftMonth = (year: number, month: number, delta: number): { year: number; month: number } => {
 	const m = month + delta;
@@ -41,9 +44,10 @@ const shiftMonth = (year: number, month: number, delta: number): { year: number;
 };
 
 /**
- * 한 달치 이벤트를 날짜별 배지로 묶는다. 카테고리만 묶지 않고 작성자까지 반영해서,
- * 상대방의 '개인' 일정은 "개인" 대신 상대방 이름으로 보이게 한다(목록·상세와 동일 규칙).
- * 같은 라벨끼리는 한 개로 합치고, 카테고리 순서로 정렬한다.
+ * 한 달치 이벤트를 날짜별 배지로 묶는다. 여러 날 일정은 시작일뿐 아니라 그 달에 걸친
+ * 모든 날에 배지를 찍는다(월 경계를 넘는 일정은 이 달에 속한 구간만 클램프). 카테고리만
+ * 묶지 않고 작성자까지 반영해서 '개인' 일정은 작성자 이름으로 보이게 한다(목록·상세와 동일 규칙).
+ * 같은 라벨끼리는 하루 안에서 한 개로 합치고, 카테고리 순서로 정렬한다.
  */
 function buildBadgesByDate(
 	events: Event[],
@@ -52,15 +56,25 @@ function buildBadgesByDate(
 	members: MemberLike[],
 ): Record<number, DayBadge[]> {
 	const buckets: Record<number, Map<string, DayBadge & { category: EEventCategory }>> = {};
+	const monthStart = startOfLocalDay(year, month0, 1);
+	const lastDay = new Date(year, month0 + 1, 0).getDate();
+	const monthEnd = endOfLocalDay(year, month0, lastDay);
+
 	for (const event of events) {
 		const start = new Date(event.startTime);
-		if (Number.isNaN(start.getTime())) continue;
-		if (start.getFullYear() !== year || start.getMonth() !== month0) continue;
-		const day = start.getDate();
+		const end = new Date(event.endTime);
+		if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) continue;
+		// 이 달과 겹치지 않으면 건너뛴다.
+		if (end.getTime() < monthStart || start.getTime() > monthEnd) continue;
+		// 이 달에 속한 구간으로 클램프: 시작이 이전 달이면 1일부터, 끝이 다음 달이면 말일까지.
+		const from = start.getTime() < monthStart ? 1 : start.getDate();
+		const to = end.getTime() > monthEnd ? lastDay : end.getDate();
 		const label = eventBadgeLabel(event, members);
-		buckets[day] ??= new Map();
-		if (!buckets[day].has(label)) {
-			buckets[day].set(label, { color: CATEGORY_STYLE[event.category].color, label, category: event.category });
+		for (let day = from; day <= to; day++) {
+			buckets[day] ??= new Map();
+			if (!buckets[day].has(label)) {
+				buckets[day].set(label, { color: CATEGORY_STYLE[event.category].color, label, category: event.category });
+			}
 		}
 	}
 	const result: Record<number, DayBadge[]> = {};
@@ -128,7 +142,9 @@ const useHomeCalendar = () => {
 
 	const selectedDayEvents = useMemo<Event[]>(() => {
 		if (!curEvents) return [];
-		return curEvents.filter((event) => eventStartsOnLocalDay(event, cursor.year, cursor.month, selected));
+		return curEvents.filter((event) =>
+			eventCoversLocalDay(event.startTime, event.endTime, cursor.year, cursor.month, selected),
+		);
 	}, [curEvents, cursor.year, cursor.month, selected]);
 
 	const goPrev = () => setCursor((c) => shiftMonth(c.year, c.month, -1));

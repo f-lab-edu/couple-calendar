@@ -45,6 +45,29 @@ export function todayParts(): { year: number; month: number; day: number } {
 	return { year: now.getFullYear(), month: now.getMonth(), day: now.getDate() };
 }
 
+export const startOfLocalDay = (year: number, month0: number, day: number): number =>
+	new Date(year, month0, day, 0, 0, 0, 0).getTime();
+export const endOfLocalDay = (year: number, month0: number, day: number): number =>
+	new Date(year, month0, day, 23, 59, 59, 999).getTime();
+
+/**
+ * 이벤트(ISO 시작/종료)가 해당 로컬 날짜를 "덮는지" 판정. 시작일만 보지 않고
+ * [시작, 종료] 구간이 그 날 [00:00, 23:59:59.999] 과 겹치면 true — 여러 날
+ * (예: 2박3일 여행) 일정이 시작일뿐 아니라 중간·마지막 날에도 보이게 한다.
+ */
+export function eventCoversLocalDay(
+	startTime: string,
+	endTime: string,
+	year: number,
+	month0: number,
+	day: number,
+): boolean {
+	const start = new Date(startTime).getTime();
+	const end = new Date(endTime).getTime();
+	if (Number.isNaN(start) || Number.isNaN(end)) return false;
+	return start <= endOfLocalDay(year, month0, day) && end >= startOfLocalDay(year, month0, day);
+}
+
 export type Cell = { date: number; inMonth: boolean; key: string };
 
 export const WEEK_LABELS = ["일", "월", "화", "수", "목", "금", "토"] as const;
