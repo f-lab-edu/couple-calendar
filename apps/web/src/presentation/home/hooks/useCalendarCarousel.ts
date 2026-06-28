@@ -50,19 +50,28 @@ const useCalendarCarousel = ({ onPrev, onNext, cursorKey, threshold = 56 }: Opti
 
 	const measure = () => viewportRef.current?.offsetWidth ?? 0;
 
-	const setX = (px: number, animate: boolean) => {
+	// 트랙 폭은 뷰포트의 3배(width:300%), 패널은 각 1뷰포트(33.3333%). 따라서 한 패널만큼
+	// 미는 양은 트랙 폭의 33.3333%다. 정지/커밋은 이 퍼센트로 옮긴다 — 레이아웃 폭을 재지
+	// 않으므로 최초 페인트부터 결정적으로 가운데(현재) 패널이 보인다(픽셀/측정 의존 제거).
+	const PANEL_PCT = 100 / 3; // ≈ 33.3333
+
+	const setPercent = (pct: number, animate: boolean) => {
 		const el = trackRef.current;
 		if (!el) return;
 		el.style.transition = animate ? `transform ${COMMIT_MS}ms cubic-bezier(0.22,0.61,0.36,1)` : "none";
-		el.style.transform = `translate3d(${-px}px,0,0)`;
+		el.style.transform = `translateX(${pct}%)`;
 	};
 
-	// 가운데(현재) 패널을 보여주는 평상시 위치(-W)로 정렬. 픽셀로 절대 위치를 지정한다.
-	const rest = () => {
-		const w = measure();
-		if (w > 0) widthRef.current = w;
-		setX(widthRef.current, false);
+	// 실시간 드래그만 픽셀(손가락 추종). 평상시 -1뷰포트(=-W)에서 dx 만큼 이동.
+	const setDragPx = (px: number) => {
+		const el = trackRef.current;
+		if (!el) return;
+		el.style.transition = "none";
+		el.style.transform = `translate3d(${px}px,0,0)`;
 	};
+
+	// 가운데(현재) 패널 정지 위치(-1패널).
+	const rest = () => setPercent(-PANEL_PCT, false);
 
 	// 커서가 바뀌면(드래그 커밋·버튼 전환) 즉시 가운데로 재정렬. 마운트 시 초기 위치도 잡는다.
 	// biome-ignore lint/correctness/useExhaustiveDependencies: cursorKey 변경 시에만 재정렬해야 한다.
@@ -71,29 +80,11 @@ const useCalendarCarousel = ({ onPrev, onNext, cursorKey, threshold = 56 }: Opti
 		committing.current = false;
 	}, [cursorKey]);
 
-	// 뷰포트 폭을 ResizeObserver 로 추적한다. 최초 레이아웃에서 폭이 0이어도(특히 WebView)
-	// 실제 폭이 잡히는 즉시 가운데 패널(-W)로 재정렬해, "현재 달이 안 보이는" 문제를 막는다.
-	// biome-ignore lint/correctness/useExhaustiveDependencies: 마운트 1회 등록 의도.
-	useLayoutEffect(() => {
-		const el = viewportRef.current;
-		if (!el) return;
-		const ro = new ResizeObserver(() => {
-			const w = measure();
-			if (w > 0 && w !== widthRef.current) {
-				widthRef.current = w;
-				if (!committing.current && start.current == null) setX(widthRef.current, false);
-			}
-		});
-		ro.observe(el);
-		return () => ro.disconnect();
-	}, []);
-
 	const commit = (dir: "prev" | "next") => {
 		if (committing.current) return;
 		committing.current = true;
-		const w = widthRef.current || measure();
-		// 다음=왼쪽 끝(-2W), 이전=오른쪽 끝(0)까지 마저 민 뒤 커서 변경.
-		setX(dir === "next" ? 2 * w : 0, true);
+		// 다음=왼쪽 끝(-2패널), 이전=오른쪽 끝(0)까지 마저 민 뒤 커서 변경.
+		setPercent(dir === "next" ? -2 * PANEL_PCT : 0, true);
 		window.setTimeout(() => {
 			if (dir === "next") onNext();
 			else onPrev();
@@ -121,8 +112,8 @@ const useCalendarCarousel = ({ onPrev, onNext, cursorKey, threshold = 56 }: Opti
 			axis.current = Math.abs(dx) > Math.abs(dy) ? "h" : "v";
 		}
 		if (axis.current !== "h") return;
-		// 평상시 -W 에서 손가락 이동량 dx 만큼: translate(-W+dx) = setX(W - dx).
-		setX(widthRef.current - dx, false);
+		// 평상시 -W(가운데)에서 손가락 이동량 dx 만큼.
+		setDragPx(-widthRef.current + dx);
 	};
 
 	const onTouchEnd = (e: ReactTouchEvent) => {
@@ -133,7 +124,7 @@ const useCalendarCarousel = ({ onPrev, onNext, cursorKey, threshold = 56 }: Opti
 		axis.current = null;
 		if (!horizontal) return;
 		if (Math.abs(dx) >= threshold) commit(dx < 0 ? "next" : "prev");
-		else setX(widthRef.current, true); // 임계 미달 → 스냅백(-W)
+		else setPercent(-PANEL_PCT, true); // 임계 미달 → 가운데로 스냅백(애니메이션)
 	};
 
 	return {

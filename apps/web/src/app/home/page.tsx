@@ -150,9 +150,11 @@ export default function HomePage() {
 						onTouchMove={carousel.onTouchMove}
 						onTouchEnd={carousel.onTouchEnd}
 					>
-						<div ref={carousel.trackRef} className="flex will-change-transform">
+						{/* 트랙 폭=뷰포트×3, 패널 각 1/3(=1뷰포트). 명시적 폭이라 transform 퍼센트가
+						    측정 없이 정확히 맞아 첫 페인트부터 가운데(현재) 패널이 보인다. */}
+						<div ref={carousel.trackRef} className="flex will-change-transform" style={{ width: "300%" }}>
 							{calendar.months.map((m, i) => (
-								<div key={m.key} className="w-full min-w-full shrink-0">
+								<div key={m.key} className="shrink-0" style={{ width: `${100 / 3}%` }}>
 									<CalendarGrid
 										year={m.year}
 										month={m.month}
@@ -174,9 +176,9 @@ export default function HomePage() {
 						onTouchMove={weekCarousel.onTouchMove}
 						onTouchEnd={weekCarousel.onTouchEnd}
 					>
-						<div ref={weekCarousel.trackRef} className="flex will-change-transform">
+						<div ref={weekCarousel.trackRef} className="flex will-change-transform" style={{ width: "300%" }}>
 							{calendar.weeks.map((w, i) => (
-								<div key={w.key} className="w-full min-w-full shrink-0">
+								<div key={w.key} className="shrink-0" style={{ width: `${100 / 3}%` }}>
 									<WeekStrip days={w.days} onSelect={i === 1 ? calendar.selectDate : () => {}} />
 								</div>
 							))}
