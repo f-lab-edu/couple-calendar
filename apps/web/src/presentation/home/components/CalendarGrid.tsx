@@ -7,8 +7,6 @@ interface Props {
 	month: number;
 	cells: Cell[];
 	selected: number;
-	/** 월 전환 방향(이전/다음). 슬라이드 애니메이션 방향 결정. */
-	navigationDirection: "prev" | "next" | null;
 	onSelect: (d: number) => void;
 	/** 날짜별 배지(작성자 반영: 상대방 개인 일정은 상대방 이름으로 표시). */
 	badgesByDate: Record<number, DayBadge[]>;
@@ -17,26 +15,17 @@ interface Props {
 /** SUN~SAT 대문자 요일 라벨(Archivo). 일요일은 오렌지 강조. */
 const EN_WEEK = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"] as const;
 
-/** 월 전환 방향별 슬라이드 애니메이션 클래스(globals.css). */
-const ANIMATION_CLASS = {
-	prev: "animate-calendar-slide-from-left",
-	next: "animate-calendar-slide-from-right",
-} as const;
-
 /**
  * Bold B 둥근 다크 셀 달력. 데이터 계약(cells / badgesByDate / selected)은
  * 그대로 유지하고 시각만 다크 셀로 교체한다. 각 셀은 날짜 숫자 + 배지 점·라벨을
- * 최대 2개 보여주고, 그 이상은 +N으로 표시한다. 월 전환 시 방향에 맞춰 슬라이드한다.
+ * 최대 2개 보여주고, 그 이상은 +N으로 표시한다. 월 전환 애니메이션은 카루셀이 담당한다.
  */
-const CalendarGrid = ({ year, month, cells, selected, navigationDirection, onSelect, badgesByDate }: Props) => {
+const CalendarGrid = ({ year, month, cells, selected, onSelect, badgesByDate }: Props) => {
 	const today = todayParts();
 	const isTodayMonth = today.year === year && today.month === month;
 
 	return (
-		<section
-			className={`shrink-0 ${navigationDirection ? ANIMATION_CLASS[navigationDirection] : ""}`}
-			aria-live="polite"
-		>
+		<section className="shrink-0" aria-live="polite">
 			<div className="grid grid-cols-7 gap-1.5 px-0.5 pb-2">
 				{EN_WEEK.map((d, i) => (
 					<div

@@ -12,10 +12,10 @@ import DdayCard from "@/presentation/home/components/DdayCard";
 import MonthNav from "@/presentation/home/components/MonthNav";
 import PullToRefreshIndicator from "@/presentation/home/components/PullToRefreshIndicator";
 import WidgetSync from "@/presentation/home/components/WidgetSync";
+import useCalendarCarousel from "@/presentation/home/hooks/useCalendarCarousel";
 import useHomeCalendar from "@/presentation/home/hooks/useHomeCalendar";
 import usePullToRefresh from "@/presentation/home/hooks/usePullToRefresh";
 import useRequireCoupleConnected from "@/presentation/home/hooks/useRequireCoupleConnected";
-import useCalendarSwipeDrag from "@/presentation/home/hooks/useCalendarSwipeDrag";
 import { ROUTES } from "@/shared/constants/routes";
 
 export default function HomePage() {
@@ -30,10 +30,14 @@ export default function HomePage() {
 		enabled: ready && !sheetOpen,
 	});
 
-	// 좌우 드래그로 월 넘기기: 캘린더가 손가락을 따라 움직이고(왼쪽=다음 달, 오른쪽=이전 달),
-	// 임계 도달 후 놓으면 마저 밀려나며 전환, 미달이면 스냅백. 가로 우세 제스처만 추종하므로
-	// 세로 스크롤·당겨서 새로고침과 충돌하지 않는다.
-	const swipe = useCalendarSwipeDrag({ onNext: calendar.goNext, onPrev: calendar.goPrev });
+	// 좌우 드래그로 월 넘기기(카루셀): 현재 달 양옆에 이전·다음 달이 함께 깔려 있어 드래그하면
+	// 인접 달이 연속으로 보인다. 손가락을 따라 움직이고, 임계 도달 후 놓으면 마저 전환, 미달이면
+	// 스냅백. 월 네비 버튼도 같은 카루셀 전환을 탄다. 가로 우세 제스처만 추종한다.
+	const carousel = useCalendarCarousel({
+		onNext: calendar.goNext,
+		onPrev: calendar.goPrev,
+		cursorKey: `${calendar.year}-${calendar.month}`,
+	});
 
 	// 커플 연결이 확인되기 전(또는 미연결로 온보딩 리다이렉트 중)에는 홈을 그리지 않는다.
 	if (!ready) return null;
@@ -53,36 +57,44 @@ export default function HomePage() {
 					transition: pull === 0 ? "transform 200ms ease" : "none",
 				}}
 			>
-				{/* 큰 영문 월 헤더 + 좌우 원형 버튼 */}
+				{/* 큰 영문 월 헤더 + 좌우 원형 버튼 (버튼도 카루셀 전환을 탄다) */}
 				<section className="shrink-0 px-5 pt-1.5 pb-1">
-					<MonthNav year={calendar.year} month={calendar.month} onPrev={calendar.goPrev} onNext={calendar.goNext} />
+					<MonthNav year={calendar.year} month={calendar.month} onPrev={carousel.prev} onNext={carousel.next} />
 				</section>
 
-				{/* 스크롤 본문: D-day 카드 + 달력 + 선택일 상세. 좌우 스와이프로 월 전환. */}
+				{/* 스크롤 본문: D-day 카드 + 달력(카루셀) + 선택일 상세. */}
 				<div
 					id="app-scroll"
 					className="dark-scroll flex-1 overflow-x-hidden overflow-y-auto px-3 pt-1.5"
 					style={{ paddingBottom: "calc(env(safe-area-inset-bottom) + 96px)" }}
-					onTouchStart={swipe.onTouchStart}
-					onTouchMove={swipe.onTouchMove}
-					onTouchEnd={swipe.onTouchEnd}
 				>
 					<div className="px-2 pb-4">
 						<DdayCard />
 					</div>
 
-					{/* 드래그 추종 래퍼: 손가락 따라 translateX 되고, 안의 CalendarGrid는 월별로 remount된다. */}
-					<div ref={swipe.trackRef} className="will-change-transform">
-						<CalendarGrid
-							key={`${calendar.year}-${calendar.month}`}
-							year={calendar.year}
-							month={calendar.month}
-							cells={calendar.cells}
-							selected={calendar.selected}
-							navigationDirection={calendar.navigationDirection}
-							onSelect={calendar.selectDay}
-							badgesByDate={calendar.badgesByDate}
-						/>
+					{/* 카루셀 뷰포트: 가로 클립 + 터치 추종. 안의 트랙에 [이전·현재·다음] 3패널을 깔고
+					    translateX 로 움직여 인접 달이 연속으로 보이게 한다. */}
+					<div
+						ref={carousel.viewportRef}
+						className="overflow-hidden"
+						onTouchStart={carousel.onTouchStart}
+						onTouchMove={carousel.onTouchMove}
+						onTouchEnd={carousel.onTouchEnd}
+					>
+						<div ref={carousel.trackRef} className="flex will-change-transform">
+							{calendar.months.map((m, i) => (
+								<div key={m.key} className="w-full min-w-full shrink-0">
+									<CalendarGrid
+										year={m.year}
+										month={m.month}
+										cells={m.cells}
+										selected={i === 1 ? calendar.selected : -1}
+										onSelect={i === 1 ? calendar.selectDay : () => {}}
+										badgesByDate={m.badgesByDate}
+									/>
+								</div>
+							))}
+						</div>
 					</div>
 
 					<DayEvents
