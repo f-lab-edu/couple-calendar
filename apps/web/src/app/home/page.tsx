@@ -53,8 +53,27 @@ export default function HomePage() {
 	// 커플 연결이 확인되기 전(또는 미연결로 온보딩 리다이렉트 중)에는 홈을 그리지 않는다.
 	if (!ready) return null;
 
+	// 임시 디버그: 현재 달 패널 배지일수 / 선택일 이벤트수 / 뷰모드 — 그리드 미표시 원인 추적용.
+	const dbg = `m1=${calendar.months[1]?.key} badgeDays=${Object.keys(calendar.months[1]?.badgesByDate ?? {}).length} list=${calendar.selectedDayEvents.length} view=${calendar.viewMode}`;
+
 	return (
 		<>
+			<div
+				style={{
+					position: "fixed",
+					top: "calc(env(safe-area-inset-top) + 2px)",
+					left: 4,
+					zIndex: 100,
+					fontSize: 10,
+					color: "#0f0",
+					background: "rgba(0,0,0,0.7)",
+					padding: "2px 4px",
+					borderRadius: 4,
+					pointerEvents: "none",
+				}}
+			>
+				{dbg}
+			</div>
 			<PullToRefreshIndicator pull={pull} refreshing={refreshing} armed={armed} />
 			<WidgetSync />
 			<main
