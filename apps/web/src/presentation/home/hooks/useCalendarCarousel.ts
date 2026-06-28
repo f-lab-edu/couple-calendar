@@ -1,6 +1,6 @@
 "use client";
 
-import { type TouchEvent as ReactTouchEvent, useLayoutEffect, useRef } from "react";
+import { type TouchEvent as ReactTouchEvent, useCallback, useLayoutEffect, useRef } from "react";
 
 interface Options {
 	/** 오른쪽으로 끝까지 끌었을 때(이전 달). */
@@ -16,8 +16,9 @@ interface Options {
 interface Result {
 	/** 가로폭을 재고 내용을 클립하는 뷰포트. 터치 핸들러도 여기에 단다. */
 	viewportRef: React.RefObject<HTMLDivElement | null>;
-	/** [prev, cur, next] 3패널을 가로로 늘어놓은 트랙. translateX 로 움직인다. */
-	trackRef: React.RefObject<HTMLDivElement | null>;
+	/** [prev, cur, next] 3패널을 가로로 늘어놓은 트랙. translateX 로 움직인다.
+	 *  callback ref — DOM 연결 순간 가운데로 정렬한다(마운트 타이밍 무관). */
+	trackRef: (el: HTMLDivElement | null) => void;
 	onTouchStart: (e: ReactTouchEvent) => void;
 	onTouchMove: (e: ReactTouchEvent) => void;
 	onTouchEnd: (e: ReactTouchEvent) => void;
@@ -42,7 +43,7 @@ const AXIS_LOCK_PX = 8;
  */
 const useCalendarCarousel = ({ onPrev, onNext, cursorKey, threshold = 56 }: Options): Result => {
 	const viewportRef = useRef<HTMLDivElement | null>(null);
-	const trackRef = useRef<HTMLDivElement | null>(null);
+	const trackEl = useRef<HTMLDivElement | null>(null);
 	const start = useRef<{ x: number; y: number } | null>(null);
 	const axis = useRef<"h" | "v" | null>(null);
 	const committing = useRef(false);
@@ -56,7 +57,7 @@ const useCalendarCarousel = ({ onPrev, onNext, cursorKey, threshold = 56 }: Opti
 	const PANEL_PCT = 100 / 3; // ≈ 33.3333
 
 	const setPercent = (pct: number, animate: boolean) => {
-		const el = trackRef.current;
+		const el = trackEl.current;
 		if (!el) return;
 		el.style.transition = animate ? `transform ${COMMIT_MS}ms cubic-bezier(0.22,0.61,0.36,1)` : "none";
 		el.style.transform = `translateX(${pct}%)`;
@@ -64,7 +65,7 @@ const useCalendarCarousel = ({ onPrev, onNext, cursorKey, threshold = 56 }: Opti
 
 	// 실시간 드래그만 픽셀(손가락 추종). 평상시 -1뷰포트(=-W)에서 dx 만큼 이동.
 	const setDragPx = (px: number) => {
-		const el = trackRef.current;
+		const el = trackEl.current;
 		if (!el) return;
 		el.style.transition = "none";
 		el.style.transform = `translate3d(${px}px,0,0)`;
@@ -73,7 +74,18 @@ const useCalendarCarousel = ({ onPrev, onNext, cursorKey, threshold = 56 }: Opti
 	// 가운데(현재) 패널 정지 위치(-1패널).
 	const rest = () => setPercent(-PANEL_PCT, false);
 
-	// 커서가 바뀌면(드래그 커밋·버튼 전환) 즉시 가운데로 재정렬. 마운트 시 초기 위치도 잡는다.
+	// 트랙 callback ref. DOM 이 연결되는 "그 순간" 가운데로 정렬한다. /home 가드(!ready)로
+	// 트랙이 늦게 마운트돼도(초기엔 null) 연결 즉시 transform 이 박혀, 이전 달 패널이 보이는
+	// 문제를 원천 차단한다(useLayoutEffect 는 cursorKey 가 안 바뀌면 재실행되지 않으므로 부족).
+	const trackRef = useCallback((el: HTMLDivElement | null) => {
+		trackEl.current = el;
+		if (el) {
+			el.style.transition = "none";
+			el.style.transform = `translateX(${-PANEL_PCT}%)`;
+		}
+	}, []);
+
+	// 커서가 바뀌면(드래그 커밋·버튼 전환) 즉시 가운데로 재정렬.
 	// biome-ignore lint/correctness/useExhaustiveDependencies: cursorKey 변경 시에만 재정렬해야 한다.
 	useLayoutEffect(() => {
 		rest();
