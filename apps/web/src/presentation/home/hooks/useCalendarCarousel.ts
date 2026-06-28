@@ -50,17 +50,28 @@ const useCalendarCarousel = ({ onPrev, onNext, cursorKey, threshold = 56 }: Opti
 
 	const measure = () => viewportRef.current?.offsetWidth ?? widthRef.current;
 
-	const setX = (px: number, animate: boolean) => {
+	// 정렬·커밋은 퍼센트로 옮긴다. 패널이 각각 w-full(=100%)이라 레이아웃 폭을 몰라도
+	// 정확히 맞아떨어진다 — 최초 마운트 시 offsetWidth 가 0이어도 가운데(현재) 패널이
+	// 보장된다(픽셀이면 0폭일 때 translateX(0)=이전 달에 멈춰 "이벤트가 안 보이는" 버그).
+	const setPercent = (pct: number, animate: boolean) => {
 		const el = trackRef.current;
 		if (!el) return;
 		el.style.transition = animate ? `transform ${COMMIT_MS}ms cubic-bezier(0.22,0.61,0.36,1)` : "none";
+		el.style.transform = `translateX(${pct}%)`;
+	};
+
+	// 실시간 드래그만 픽셀(손가락 추종). 터치 시작 시점이라 레이아웃 폭이 항상 유효하다.
+	const setPx = (px: number) => {
+		const el = trackRef.current;
+		if (!el) return;
+		el.style.transition = "none";
 		el.style.transform = `translate3d(${px}px,0,0)`;
 	};
 
-	// 가운데(현재) 패널을 보여주는 평상시 위치로 정렬.
+	// 가운데(현재) 패널을 보여주는 평상시 위치로 정렬(-100%).
 	const rest = () => {
 		widthRef.current = measure();
-		setX(-widthRef.current, false);
+		setPercent(-100, false);
 	};
 
 	// 커서가 바뀌면(드래그 커밋·버튼 전환) 즉시 가운데로 재정렬. 마운트 시 초기 위치도 잡는다.
@@ -84,8 +95,8 @@ const useCalendarCarousel = ({ onPrev, onNext, cursorKey, threshold = 56 }: Opti
 	const commit = (dir: "prev" | "next") => {
 		if (committing.current) return;
 		committing.current = true;
-		const w = widthRef.current || measure();
-		setX(dir === "next" ? -2 * w : 0, true);
+		// 다음=왼쪽 끝(-200%), 이전=오른쪽 끝(0%)까지 마저 민 뒤 커서 변경.
+		setPercent(dir === "next" ? -200 : 0, true);
 		window.setTimeout(() => {
 			if (dir === "next") onNext();
 			else onPrev();
@@ -112,7 +123,7 @@ const useCalendarCarousel = ({ onPrev, onNext, cursorKey, threshold = 56 }: Opti
 			axis.current = Math.abs(dx) > Math.abs(dy) ? "h" : "v";
 		}
 		if (axis.current !== "h") return;
-		setX(-widthRef.current + dx, false);
+		setPx(-widthRef.current + dx);
 	};
 
 	const onTouchEnd = (e: ReactTouchEvent) => {
@@ -123,7 +134,7 @@ const useCalendarCarousel = ({ onPrev, onNext, cursorKey, threshold = 56 }: Opti
 		axis.current = null;
 		if (!horizontal) return;
 		if (Math.abs(dx) >= threshold) commit(dx < 0 ? "next" : "prev");
-		else setX(-widthRef.current, true); // 임계 미달 → 스냅백
+		else setPercent(-100, true); // 임계 미달 → 스냅백
 	};
 
 	return {

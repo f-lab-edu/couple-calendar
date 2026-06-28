@@ -107,7 +107,7 @@ const EventForm = ({ onSuccess, bodyClassName, footerClassName, event, initialDa
 						onChange={(e) => setTitle(e.target.value)}
 						placeholder="일정 제목"
 						aria-label="일정 제목"
-						className="w-full bg-transparent outline-none"
+						className="w-full bg-transparent outline-none placeholder:font-medium placeholder:text-[color:var(--text-tertiary)]"
 						style={{
 							border: "none",
 							padding: "0 0 12px",
@@ -162,6 +162,7 @@ const EventForm = ({ onSuccess, bodyClassName, footerClassName, event, initialDa
 						value={date}
 						onChange={(e) => setDate(e.target.value)}
 						className="wb-input"
+						style={{ colorScheme: "dark" }}
 					/>
 				</section>
 

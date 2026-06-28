@@ -194,6 +194,11 @@ input[type="time"] {
 .wb-input {
 	display: block;
 	width: 100%;
+	min-width: 0;
+	/* iOS WebView 의 input[type=date] 네이티브 컨트롤은 appearance 를 리셋하지 않으면
+	   고유 폭을 가져 컨테이너를 뚫고 나간다. 리셋해도 탭하면 네이티브 피커는 그대로 열린다. */
+	-webkit-appearance: none;
+	appearance: none;
 	background: #1a1a1c;
 	color: #f4f4f3;
 	border: 1px solid rgba(255, 255, 255, 0.14);
