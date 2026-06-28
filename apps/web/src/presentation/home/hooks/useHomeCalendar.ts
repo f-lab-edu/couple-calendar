@@ -3,7 +3,8 @@
 import { useMemo, useState } from "react";
 import type Event from "@/domain/entities/Event";
 import type { EEventCategory } from "@/domain/entities/Event";
-import { eventBadgeLabel } from "@/presentation/events/lib/eventBadge";
+import type User from "@/domain/entities/User";
+import { eventBadgeLabel, type MemberLike } from "@/presentation/events/lib/eventBadge";
 import useMonthlyEvents from "@/presentation/home/hooks/useMonthlyEvents";
 import { type Cell, buildMonthCells, CATEGORY_STYLE, compareCategories, todayParts } from "@/presentation/home/lib/calendar";
 import useCoupleProfile from "@/presentation/settings/hooks/useCoupleProfile";
@@ -23,12 +24,6 @@ export interface MonthPanel {
 	month: number;
 	cells: Cell[];
 	badgesByDate: Record<number, DayBadge[]>;
-}
-
-interface PartnerLike {
-	id: string;
-	nickname: string;
-	name: string;
 }
 
 const eventStartsOnLocalDay = (event: Event, year: number, month0Based: number, day: number): boolean => {
@@ -54,7 +49,7 @@ function buildBadgesByDate(
 	events: Event[],
 	year: number,
 	month0: number,
-	partner: PartnerLike | null,
+	members: MemberLike[],
 ): Record<number, DayBadge[]> {
 	const buckets: Record<number, Map<string, DayBadge & { category: EEventCategory }>> = {};
 	for (const event of events) {
@@ -62,7 +57,7 @@ function buildBadgesByDate(
 		if (Number.isNaN(start.getTime())) continue;
 		if (start.getFullYear() !== year || start.getMonth() !== month0) continue;
 		const day = start.getDate();
-		const label = eventBadgeLabel(event, partner);
+		const label = eventBadgeLabel(event, members);
 		buckets[day] ??= new Map();
 		if (!buckets[day].has(label)) {
 			buckets[day].set(label, { color: CATEGORY_STYLE[event.category].color, label, category: event.category });
@@ -90,7 +85,11 @@ const useHomeCalendar = () => {
 	const [selected, setSelected] = useState(today.day);
 
 	const { data: profile } = useCoupleProfile();
-	const partner = profile?.partner ?? null;
+	// 커플 구성원(나·상대). '개인' 일정 배지에서 작성자 이름을 찾는 데 쓴다.
+	const members = useMemo<MemberLike[]>(
+		() => [profile?.me, profile?.partner].filter((u): u is User => u != null),
+		[profile?.me, profile?.partner],
+	);
 
 	const prev = shiftMonth(cursor.year, cursor.month, -1);
 	const next = shiftMonth(cursor.year, cursor.month, 1);
@@ -107,7 +106,7 @@ const useHomeCalendar = () => {
 			year: y,
 			month: m,
 			cells: buildMonthCells(y, m),
-			badgesByDate: buildBadgesByDate(events ?? [], y, m, partner),
+			badgesByDate: buildBadgesByDate(events ?? [], y, m, members),
 		});
 		return [
 			panel(prev.year, prev.month, prevEvents),
@@ -124,7 +123,7 @@ const useHomeCalendar = () => {
 		prevEvents,
 		curEvents,
 		nextEvents,
-		partner,
+		members,
 	]);
 
 	const selectedDayEvents = useMemo<Event[]>(() => {

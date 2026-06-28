@@ -31,7 +31,9 @@ const EventDetailSheet = ({ event, onClose }: Props) => {
 	useScrollLock(open);
 	const style = event ? CATEGORY_STYLE[event.category] : null;
 	const { data: profile } = useCoupleProfile();
-	const badgeLabel = event ? eventBadgeLabel(event, profile?.partner ?? null) : "";
+	const badgeLabel = event
+		? eventBadgeLabel(event, [profile?.me, profile?.partner].filter((u) => u != null))
+		: "";
 
 	const [mode, setMode] = useState<"detail" | "edit">("detail");
 	const [confirmingDelete, setConfirmingDelete] = useState(false);
