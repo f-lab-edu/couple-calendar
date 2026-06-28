@@ -24,3 +24,7 @@ export function resolveWebAppUrl(os: 'ios' | 'android'): string {
 export const WEB_APP_URL: string = resolveWebAppUrl(
   Platform.OS as 'ios' | 'android',
 );
+
+// 웹 앱 배경색(globals.css 의 --bg-page). 네이티브 셸(루트 뷰·WebView 기본 배경·
+// 로딩 화면)을 이 값으로 맞춰 로드/오버스크롤 시 흰색이 비치지 않게 한다.
+export const WEB_BG_COLOR = '#0d0d0e';

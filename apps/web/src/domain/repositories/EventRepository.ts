@@ -25,6 +25,8 @@ export type UpdateEventInput = Partial<CreateEventInput>;
  */
 export interface EventRepository {
 	getMonthlyEvents(year: number, month: number): Promise<Event[]>;
+	/** 커플의 전체 일정(기간 제한 없음). 검색 등 전 기간 조회에 쓴다. */
+	getAllEvents(): Promise<Event[]>;
 	createEvent(input: CreateEventInput): Promise<Event>;
 	updateEvent(id: string, input: UpdateEventInput): Promise<Event>;
 	deleteEvent(id: string): Promise<void>;

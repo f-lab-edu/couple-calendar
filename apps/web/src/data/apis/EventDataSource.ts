@@ -10,13 +10,19 @@ import type { EventResponse } from "@/data/dto/event-response";
  * so absolute URLs (e.g. http://localhost:8080) would bypass the worker.
  */
 export class EventDataSource {
-	async getEvents(startDateIso: string, endDateIso: string): Promise<EventResponse[]> {
-		const query = new URLSearchParams({
-			startDate: startDateIso,
-			endDate: endDateIso,
-		});
+	/**
+	 * 일정 조회. startDate/endDate 를 주면 그 구간(겹침)으로 좁히고,
+	 * 둘 다 생략하면 커플의 전체 일정을 받는다(검색 등 전 기간 조회용).
+	 */
+	async getEvents(startDateIso?: string, endDateIso?: string): Promise<EventResponse[]> {
+		const query = new URLSearchParams();
+		if (startDateIso && endDateIso) {
+			query.set("startDate", startDateIso);
+			query.set("endDate", endDateIso);
+		}
+		const qs = query.toString();
 
-		const response = await fetch(`/api/events?${query.toString()}`, {
+		const response = await fetch(`/api/events${qs ? `?${qs}` : ""}`, {
 			method: "GET",
 			headers: { Accept: "application/json" },
 		});

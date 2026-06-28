@@ -9,11 +9,40 @@
 /* Begin PBXBuildFile section */
 		0C80B921A6F3F58F76C31292 /* libPods-webviewhost.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-webviewhost.a */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		28D3943BAB7B96DB6F74279B /* WidgetBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43A36D17DA4504075E7B4C71 /* WidgetBridge.swift */; };
+		37824C1DF62B07A73C0F6593 /* CoupleWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A6585A22E4C1281CEC78D88 /* CoupleWidget.swift */; };
+		4AC9E5C2C5F67E491F73DD86 /* WidgetBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = B72D932CE354B271C6655368 /* WidgetBridge.m */; };
 		52744BE53ED6FAB1499DF159 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D656D38AB49B93B18E1ACB20 /* GoogleService-Info.plist */; };
+		6CCCE9EC4D0DA360CBE9ACFC /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A41FB2E155B7D4BC95AD07E4 /* Foundation.framework */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		A780366B6BD626CF970B59E7 /* CoupleWidget.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = D9C188709FF3DD817ACEF388 /* CoupleWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		CC9467F75DACBE56E079C379 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5DDD2653EDD96411368292E6 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 31ECDF4EF40D43BF91DFED34;
+			remoteInfo = CoupleWidget;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6EAE1BC90D5A8DDB8B9CCABB /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				A780366B6BD626CF970B59E7 /* CoupleWidget.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		13B07F961A680F5B00A75B9A /* webviewhost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = webviewhost.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -21,11 +50,18 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = webviewhost/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = webviewhost/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-webviewhost.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-webviewhost.debug.xcconfig"; path = "Target Support Files/Pods-webviewhost/Pods-webviewhost.debug.xcconfig"; sourceTree = "<group>"; };
+		43A36D17DA4504075E7B4C71 /* WidgetBridge.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WidgetBridge.swift; path = webviewhost/WidgetBridge.swift; sourceTree = "<group>"; };
+		49177755F807FF9374AFBFD7 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = Info.plist; path = Info.plist; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-webviewhost.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-webviewhost.release.xcconfig"; path = "Target Support Files/Pods-webviewhost/Pods-webviewhost.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-webviewhost.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-webviewhost.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A6585A22E4C1281CEC78D88 /* CoupleWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = CoupleWidget.swift; path = CoupleWidget.swift; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = webviewhost/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = webviewhost/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		96E9E5A8855E1E625841C930 /* CoupleWidget.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; name = CoupleWidget.entitlements; path = CoupleWidget.entitlements; sourceTree = "<group>"; };
+		A41FB2E155B7D4BC95AD07E4 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		B72D932CE354B271C6655368 /* WidgetBridge.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = WidgetBridge.m; path = webviewhost/WidgetBridge.m; sourceTree = "<group>"; };
 		D656D38AB49B93B18E1ACB20 /* GoogleService-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "webviewhost/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		D9C188709FF3DD817ACEF388 /* CoupleWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = CoupleWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E45FE7FAB7C55E65A9E73D1B /* webviewhost.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; name = webviewhost.entitlements; path = webviewhost/webviewhost.entitlements; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
@@ -36,6 +72,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				0C80B921A6F3F58F76C31292 /* libPods-webviewhost.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		66FEE135DDD409A3A4023A4F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6CCCE9EC4D0DA360CBE9ACFC /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -52,8 +96,18 @@
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				D656D38AB49B93B18E1ACB20 /* GoogleService-Info.plist */,
 				E45FE7FAB7C55E65A9E73D1B /* webviewhost.entitlements */,
+				43A36D17DA4504075E7B4C71 /* WidgetBridge.swift */,
+				B72D932CE354B271C6655368 /* WidgetBridge.m */,
 			);
 			name = webviewhost;
+			sourceTree = "<group>";
+		};
+		2124AB35BEB50B2A5371E7F6 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				A41FB2E155B7D4BC95AD07E4 /* Foundation.framework */,
+			);
+			name = iOS;
 			sourceTree = "<group>";
 		};
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
@@ -61,6 +115,7 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				5DCACB8F33CDC322A6C60F78 /* libPods-webviewhost.a */,
+				2124AB35BEB50B2A5371E7F6 /* iOS */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -80,6 +135,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				A7DB2C0171A9778402B4D2A0 /* CoupleWidget */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -90,8 +146,20 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* webviewhost.app */,
+				D9C188709FF3DD817ACEF388 /* CoupleWidget.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		A7DB2C0171A9778402B4D2A0 /* CoupleWidget */ = {
+			isa = PBXGroup;
+			children = (
+				6A6585A22E4C1281CEC78D88 /* CoupleWidget.swift */,
+				49177755F807FF9374AFBFD7 /* Info.plist */,
+				96E9E5A8855E1E625841C930 /* CoupleWidget.entitlements */,
+			);
+			name = CoupleWidget;
+			path = CoupleWidget;
 			sourceTree = "<group>";
 		};
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
@@ -118,15 +186,34 @@
 				00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */,
 				E235C05ADACE081382539298 /* [CP] Copy Pods Resources */,
 				57B1128BCAA4A3F356F211BB /* [CP-User] [RNFB] Core Configuration */,
+				6EAE1BC90D5A8DDB8B9CCABB /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				351D5ECFD58B67EF349E64F2 /* PBXTargetDependency */,
 			);
 			name = webviewhost;
 			productName = webviewhost;
 			productReference = 13B07F961A680F5B00A75B9A /* webviewhost.app */;
 			productType = "com.apple.product-type.application";
+		};
+		31ECDF4EF40D43BF91DFED34 /* CoupleWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A0C0364FFA8E7090468812F3 /* Build configuration list for PBXNativeTarget "CoupleWidget" */;
+			buildPhases = (
+				D25925C82065FC6FF11D2011 /* Sources */,
+				66FEE135DDD409A3A4023A4F /* Frameworks */,
+				B5B579F11D21F04B5AFA4932 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = CoupleWidget;
+			productName = CoupleWidget;
+			productReference = D9C188709FF3DD817ACEF388 /* CoupleWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -160,6 +247,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* webviewhost */,
+				31ECDF4EF40D43BF91DFED34 /* CoupleWidget */,
 			);
 		};
 /* End PBXProject section */
@@ -173,6 +261,13 @@
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				CC9467F75DACBE56E079C379 /* PrivacyInfo.xcprivacy in Resources */,
 				52744BE53ED6FAB1499DF159 /* GoogleService-Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B5B579F11D21F04B5AFA4932 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -272,12 +367,58 @@
 			buildActionMask = 2147483647;
 			files = (
 				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
+				28D3943BAB7B96DB6F74279B /* WidgetBridge.swift in Sources */,
+				4AC9E5C2C5F67E491F73DD86 /* WidgetBridge.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D25925C82065FC6FF11D2011 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				37824C1DF62B07A73C0F6593 /* CoupleWidget.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		351D5ECFD58B67EF349E64F2 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = CoupleWidget;
+			target = 31ECDF4EF40D43BF91DFED34 /* CoupleWidget */;
+			targetProxy = 5DDD2653EDD96411368292E6 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		0AA9B267A7F14DB350B1EA4A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = CoupleWidget/CoupleWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 12;
+				DEVELOPMENT_TEAM = A52B4JPCH2;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = CoupleWidget/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.woobottle.couplecalendar.CoupleWidget;
+				PRODUCT_NAME = CoupleWidget;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-webviewhost.debug.xcconfig */;
@@ -286,7 +427,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = webviewhost/webviewhost.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = A52B4JPCH2;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = webviewhost/Info.plist;
@@ -295,7 +436,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -317,7 +458,7 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = webviewhost/webviewhost.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 10;
+				CURRENT_PROJECT_VERSION = 12;
 				DEVELOPMENT_TEAM = A52B4JPCH2;
 				INFOPLIST_FILE = webviewhost/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
@@ -325,7 +466,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -337,6 +478,32 @@
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
+		};
+		67DFA973829C75C8DA4FD837 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = CoupleWidget/CoupleWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 12;
+				DEVELOPMENT_TEAM = A52B4JPCH2;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = CoupleWidget/Info.plist;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 15.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.woobottle.couplecalendar.CoupleWidget;
+				PRODUCT_NAME = CoupleWidget;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
 		};
 		83CBBA201A601CBA00E9B192 /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -501,6 +668,15 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		A0C0364FFA8E7090468812F3 /* Build configuration list for PBXNativeTarget "CoupleWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				0AA9B267A7F14DB350B1EA4A /* Release */,
+				67DFA973829C75C8DA4FD837 /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

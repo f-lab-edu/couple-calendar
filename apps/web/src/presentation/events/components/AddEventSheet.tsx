@@ -2,13 +2,17 @@
 
 import { CloseIcon } from "@/presentation/components/icons";
 import EventForm from "@/presentation/events/components/EventForm";
+import useScrollLock from "@/shared/hooks/useScrollLock";
 
 interface Props {
 	open: boolean;
 	onClose: () => void;
+	/** 달력에서 선택된 날짜(`yyyy-mm-dd`). 새 일정 폼의 날짜를 이 값으로 미리 채운다. */
+	initialDate?: string;
 }
 
-const AddEventSheet = ({ open, onClose }: Props) => {
+const AddEventSheet = ({ open, onClose, initialDate }: Props) => {
+	useScrollLock(open);
 	return (
 		<>
 			<button
@@ -47,6 +51,9 @@ const AddEventSheet = ({ open, onClose }: Props) => {
 				</header>
 
 				<EventForm
+					// 열릴 때마다 선택된 날짜로 새 폼을 띄운다(닫힘↔열림 사이 입력값도 초기화).
+					key={open ? `open-${initialDate ?? ""}` : "closed"}
+					initialDate={initialDate}
 					onSuccess={onClose}
 					showReminder={false}
 					bodyClassName="dark-scroll flex min-h-0 w-full min-w-0 flex-1 flex-col gap-7 overflow-x-hidden overflow-y-auto px-5 pt-4 pb-4 touch-pan-y"

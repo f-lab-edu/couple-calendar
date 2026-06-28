@@ -55,6 +55,11 @@ export class EventRepositoryImpl implements EventRepository {
 		return parseEvents(dtos);
 	}
 
+	async getAllEvents(): Promise<Event[]> {
+		const dtos = await this.dataSource.getEvents();
+		return parseEvents(dtos);
+	}
+
 	async createEvent(input: CreateEventInput): Promise<Event> {
 		const created = await this.dataSource.createEvent({
 			title: input.title,

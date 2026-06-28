@@ -9,9 +9,9 @@
 		"lint": "biome lint .",
 		"format": "biome format --write .",
 		"typecheck": "tsc --noEmit",
-		"test": "vitest run",
-		"test:watch": "vitest",
-		"test:coverage": "vitest run --coverage"
+		"test": "TZ=Asia/Seoul vitest run",
+		"test:watch": "TZ=Asia/Seoul vitest",
+		"test:coverage": "TZ=Asia/Seoul vitest run --coverage"
 	},
 	"dependencies": {
 		"@tanstack/react-query": "^5.100.1",

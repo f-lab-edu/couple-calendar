@@ -1,16 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
+  NativeModules,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
+import type { WebViewMessageEvent } from 'react-native-webview';
 import { PooledWebView, useWebViewPool } from 'react-native-instant-webview';
 
-import { WEB_APP_URL } from './config';
+import { WEB_APP_URL, WEB_BG_COLOR } from './config';
 import {
-  buildDebugInjection,
   buildTokenInjection,
   type FcmResult,
   onFcmTokenRefresh,
@@ -40,10 +41,8 @@ function WebViewScreen(): React.JSX.Element {
   );
 
   const pushCurrent = useCallback(() => {
-    const r = resultRef.current;
-    if (!r) return;
-    if (r.token) inject(buildTokenInjection(r.token, pushPlatform()));
-    else if (r.error) inject(buildDebugInjection(r.error));
+    const token = resultRef.current?.token;
+    if (token) inject(buildTokenInjection(token, pushPlatform()));
   }, [inject]);
 
   useEffect(() => {
@@ -94,10 +93,20 @@ function WebViewScreen(): React.JSX.Element {
         automaticallyAdjustContentInsets={false}
         contentInsetAdjustmentBehavior="never"
         allowsBackForwardNavigationGestures
+        onMessage={(e: WebViewMessageEvent) => {
+          // 웹(홈)이 보낸 위젯 데이터 → 네이티브가 App Group 에 저장 + 위젯 리로드.
+          try {
+            const msg = JSON.parse(e.nativeEvent.data);
+            if (msg?.type === 'widget' && msg.payload) {
+              NativeModules.WidgetBridge?.update?.(JSON.stringify(msg.payload));
+            }
+          } catch {
+            // 위젯과 무관한 메시지 — 무시.
+          }
+        }}
         onLoadEnd={() => {
           setLoading(false);
           loadedRef.current = true;
-          inject(buildDebugInjection('native-alive'));
           pushCurrent();
         }}
         onError={fail}
@@ -108,7 +117,7 @@ function WebViewScreen(): React.JSX.Element {
       />
       {loading && !error && (
         <View style={styles.overlay} pointerEvents="none">
-          <ActivityIndicator size="large" />
+          <ActivityIndicator size="large" color="#f4f4f3" />
         </View>
       )}
       {error && (
@@ -124,8 +133,8 @@ function WebViewScreen(): React.JSX.Element {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fff' },
-  webview: { backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: WEB_BG_COLOR },
+  webview: { backgroundColor: WEB_BG_COLOR },
   overlay: {
     ...StyleSheet.absoluteFillObject,
     alignItems: 'center',

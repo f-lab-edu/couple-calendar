@@ -5,6 +5,7 @@ import { UpdateEventUseCase } from "./UpdateEventUseCase";
 
 const makeRepository = (): EventRepository => ({
 	getMonthlyEvents: vi.fn(),
+	getAllEvents: vi.fn(),
 	createEvent: vi.fn(),
 	updateEvent: vi.fn(
 		async (id: string, input: UpdateEventInput) =>

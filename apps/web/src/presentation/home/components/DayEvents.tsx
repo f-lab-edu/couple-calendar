@@ -18,11 +18,11 @@ interface Props {
 
 const EventRow = ({
 	event,
-	partner,
+	members,
 	onSelect,
-}: { event: Event; partner: User | null; onSelect: (event: Event) => void }) => {
+}: { event: Event; members: User[]; onSelect: (event: Event) => void }) => {
 	const style = CATEGORY_STYLE[event.category];
-	const sub = `${formatRange(event)} · ${eventBadgeLabel(event, partner)}`;
+	const sub = `${formatRange(event)} · ${eventBadgeLabel(event, members)}`;
 	return (
 		<button
 			type="button"
@@ -64,7 +64,7 @@ const DayEvents = ({ year, day, month, events }: Props) => {
 	const weekday = WEEK_LABELS[date.getDay()];
 	const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 	const { data: profile } = useCoupleProfile();
-	const partner = profile?.partner ?? null;
+	const members = [profile?.me, profile?.partner].filter((u): u is User => u != null);
 
 	return (
 		<section className="mt-5 flex flex-col px-1 pb-24">
@@ -88,7 +88,7 @@ const DayEvents = ({ year, day, month, events }: Props) => {
 			) : (
 				<div>
 					{events.map((event) => (
-						<EventRow key={event.id} event={event} partner={partner} onSelect={setSelectedEvent} />
+						<EventRow key={event.id} event={event} members={members} onSelect={setSelectedEvent} />
 					))}
 				</div>
 			)}

@@ -8,6 +8,7 @@ describe("GetMonthlyEventsUseCase", () => {
 		const events = [{ id: "evt-1" }] as Event[];
 		const repository: EventRepository = {
 			getMonthlyEvents: vi.fn(async () => events),
+			getAllEvents: vi.fn(async () => events),
 			createEvent: vi.fn(),
 			updateEvent: vi.fn(),
 			deleteEvent: vi.fn(),
